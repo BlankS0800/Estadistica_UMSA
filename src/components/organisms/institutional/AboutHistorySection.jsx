@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { Award, CheckCircle2, Microscope, X } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import StatisticalOverlay from '../../atoms/data/StatisticalOverlay'
 
 const AboutHistorySection = ({ ieta }) => {
   const [isZoomed, setIsZoomed] = useState(false)
 
   return (
-    <section className="relative overflow-hidden bg-white px-6 py-24 md:px-10 md:py-32">
+    <section className="relative overflow-hidden bg-white px-6 py-16 md:px-10 md:py-24">
       <svg className="pointer-events-none absolute left-0 top-0 h-[500px] w-[500px] opacity-[0.06]" viewBox="0 0 500 500" fill="none" aria-hidden="true">
         <circle cx="100" cy="100" r="200" stroke="#00447e" strokeWidth="2" />
         <circle cx="100" cy="100" r="150" stroke="#00447e" strokeWidth="1.5" opacity="0.6" />
@@ -25,18 +25,18 @@ const AboutHistorySection = ({ ieta }) => {
       </div>
       <div className="absolute left-14 top-[62%] hidden font-mono text-[10px] font-bold tracking-[0.25em] text-[#00447e] opacity-[0.22] md:block">ARCHIVE_TRACE</div>
 
-      <div className="mx-auto grid max-w-[1440px] items-start gap-16 lg:grid-cols-[1.4fr_1fr] md:gap-24">
+      <div className="mx-auto grid max-w-6xl items-start gap-12 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
         <div>
-          <div className="mb-8 flex items-center gap-4">
-            <div className="h-1 w-16 bg-[#c2410c]" />
-            <span className="text-base sm:text-base md:text-lg font-black uppercase tracking-[0.5em] text-slate-400">Compendio Academico</span>
+          <div className="mb-5 flex items-center gap-3">
+            <div className="h-1 w-10 bg-[#c2410c]" />
+            <span className="text-xs font-bold uppercase tracking-[0.24em] text-slate-400">Compendio academico</span>
           </div>
 
-          <h2 className="mb-10 text-3xl font-black uppercase italic leading-none tracking-tighter text-slate-900 md:text-5xl">
+          <h2 className="mb-7 text-3xl font-black tracking-tight text-slate-900 md:text-4xl">
             Contexto e Impacto
           </h2>
 
-          <div className="space-y-8 text-sm font-medium leading-relaxed text-slate-600 md:text-base">
+          <div className="space-y-6 text-base leading-relaxed text-slate-600">
             <p>
               La Carrera de Estadistica de la UMSA nace de la necesidad de cuantificar el desarrollo nacional. Desde su fundacion oficial in <strong className="font-black text-[#00447e]">1984</strong>, ha evolucionado de metodos puramente matematicos a la integracion de <span className="font-bold text-[#00447e]">Ciencia de Datos y Machine Learning.</span>
             </p>
@@ -45,34 +45,34 @@ const AboutHistorySection = ({ ieta }) => {
               Somos la unidad academica encargada de formar cuadros tecnicos que lideran el INE y unidades de planificacion del pais, transformando datos en conocimiento estrategico para el desarrollo de Bolivia.
             </p>
 
-            <div className="group relative overflow-hidden rounded-[3rem] border border-slate-200 bg-[#f1f5f9] p-8">
+            <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-[#f8fafc] p-6 md:p-7">
               <StatisticalOverlay sigma="0.98" r2="0.95" n="380" />
-              <h4 className="mb-4 flex items-center gap-2 text-lg font-black uppercase text-[#00447e]">
+              <h4 className="mb-3 flex items-center gap-2 text-lg font-bold text-[#00447e]">
                 <CheckCircle2 className="text-[#c2410c]" size={20} />
                 Modalidades de Graduacion
               </h4>
-              <p className="mb-6 text-base sm:text-base md:text-lg uppercase tracking-wider text-slate-500">
+              <p className="mb-5 text-sm leading-relaxed text-slate-600 md:text-base">
                 La carrera trabaja en solucionar la brecha de titulacion con Tesis de Grado, Trabajo Dirigido y Graduacion por Excelencia.
               </p>
               <div className="flex flex-wrap gap-4">
-                <div className="rounded-full border border-slate-200 bg-white px-5 py-2 text-[10px] font-bold uppercase text-slate-400">Plan de Estudios 2021</div>
-                <div className="rounded-full border border-slate-200 bg-white px-5 py-2 text-[10px] font-bold uppercase text-slate-400">Maestria Terminal</div>
+                <div className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-500">Plan de Estudios 2021</div>
+                <div className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-500">Maestria Terminal</div>
               </div>
             </div>
           </div>
         </div>
 
         <div className="lg:sticky lg:top-40">
-          <div className="relative overflow-hidden rounded-[4rem] border-b-[8px] border-[#c2410c] bg-[#002a52] p-10 text-white shadow-2xl">
-            <h4 className="mb-6 border-b border-white/20 pb-4 text-2xl font-black uppercase tracking-widest">{ieta.title}</h4>
-            <p className="mb-10 text-base sm:text-base md:text-lg font-medium uppercase tracking-widest text-blue-100/70 md:text-base">{ieta.text}</p>
+          <div className="relative overflow-hidden rounded-2xl border-b-4 border-[#c2410c] bg-[#002a52] p-7 text-white shadow-xl">
+            <h4 className="mb-4 border-b border-white/20 pb-4 text-xl font-bold">{ieta.title}</h4>
+            <p className="mb-8 text-base leading-relaxed text-blue-100/80">{ieta.text}</p>
 
             <div className="flex items-center gap-4">
-              <div className="flex size-12 items-center justify-center rounded-2xl bg-white text-[#002a52] shadow-xl">
+              <div className="flex size-11 items-center justify-center rounded-xl bg-white text-[#002a52] shadow-xl">
                 <Microscope size={24} />
               </div>
               <div>
-                <p className="text-base sm:text-base md:text-lg font-black uppercase tracking-[0.3em]">Fundado en</p>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-100/70">Fundado en</p>
                 <p className="text-xl font-black">{ieta.founded}</p>
               </div>
             </div>

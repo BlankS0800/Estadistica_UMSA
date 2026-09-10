@@ -41,7 +41,7 @@ const AboutHeroSection = ({ hero }) => (
       <div className="relative z-10">
         <div className="mb-6 flex items-center gap-3">
           <div className="h-[2px] w-10 rounded-full bg-[#c2410c]" />
-          <span className="text-base sm:text-base md:text-lg font-black uppercase tracking-[0.3em] text-white/75">Institucional</span>
+          <span className="text-base sm:text-base md:text-lg font-black uppercase tracking-[0.3em] text-white/75">{hero.eyebrow}</span>
         </div>
 
         <h1 className="mb-6 text-4xl font-black uppercase leading-[0.95] tracking-tighter text-white md:mb-10 md:text-6xl">

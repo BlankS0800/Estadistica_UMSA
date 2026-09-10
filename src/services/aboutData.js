@@ -12,6 +12,7 @@ import {
   Target,
   Users,
 } from 'lucide-react'
+import { seccionPaginaApi } from './seccionPaginaService'
 
 export const milestones = [
   {
@@ -72,12 +73,6 @@ export const values = [
   },
 ]
 
-export const achievements = [
-  { number: '50+', label: 'Años', sublabel: 'Trayectoria', icon: History },
-  { number: '380+', label: 'Estudiantes', sublabel: 'Matrícula', icon: Users },
-  { number: '1985', label: 'IETA', sublabel: 'Fundación', icon: Microscope },
-  { number: '120+', label: 'Titulados', sublabel: 'Gestión 2025', icon: GraduationCap },
-]
 
 export const objectives = [
   {
@@ -98,6 +93,7 @@ export const objectives = [
 ]
 
 export const aboutHero = {
+  eyebrow: 'Acerca de Nosotros',
   title: ['Referente', 'de la', 'Evidencia.'],
   description:
     'Identidad institucional, misión, visión y valores que guían nuestra formación de estadísticos y científicos de datos para Bolivia.',
@@ -136,4 +132,115 @@ export const missionVision = {
 
 export const sideBadges = {
   awardIcon: Award,
+}
+
+export const aboutDataFallback = {
+  aboutHero,
+  ietaSummary,
+  milestones,
+  missionVision,
+  values,
+  objectives,
+  accreditation,
+}
+
+const ABOUT_PAGE_SLUG = '/institucional/acerca'
+
+const getRecordValue = (records, key, fallback) => {
+  const record = records.find(
+    (item) => (item.claveCampo ?? item.clave_campo) === key,
+  )
+
+  return record?.valor ?? fallback
+}
+
+const getAboutDataFromRecords = (records) => {
+  const value = (key, fallback) => getRecordValue(records, key, fallback)
+
+  return {
+    aboutHero: {
+      ...aboutHero,
+      eyebrow: value('nosotros_inicio_etiqueta', aboutHero.eyebrow),
+      title: [
+        value('nosotros_inicio_titulo_01', aboutHero.title[0]),
+        value('nosotros_inicio_titulo_02', aboutHero.title[1]),
+        value('nosotros_inicio_titulo_03', aboutHero.title[2]),
+      ],
+      description: value('nosotros_inicio_descripcion', aboutHero.description),
+      imageUrl: value('nosotros_inicio_imagen', aboutHero.imageUrl),
+    },
+    ietaSummary: {
+      ...ietaSummary,
+      title: value('nosotros_ieta_titulo', ietaSummary.title),
+      text: value('nosotros_ieta_texto', ietaSummary.text),
+      founded: value('nosotros_ieta_fundacion', ietaSummary.founded),
+    },
+    milestones: milestones.map((milestone, index) => {
+      const number = String(index + 1).padStart(2, '0')
+      return {
+        ...milestone,
+        year: value(`nosotros_hito_${number}_anio`, milestone.year),
+        title: value(`nosotros_hito_${number}_titulo`, milestone.title),
+        desc: value(`nosotros_hito_${number}_descripcion`, milestone.desc),
+      }
+    }),
+    missionVision: {
+      mission: {
+        ...missionVision.mission,
+        title: value('nosotros_mision_titulo', missionVision.mission.title),
+        text: value('nosotros_mision_texto', missionVision.mission.text),
+      },
+      vision: {
+        ...missionVision.vision,
+        title: value('nosotros_vision_titulo', missionVision.vision.title),
+        text: value('nosotros_vision_texto', missionVision.vision.text),
+      },
+    },
+    values: values.map((item, index) => {
+      const number = String(index + 1).padStart(2, '0')
+      return {
+        ...item,
+        title: value(`nosotros_valor_${number}_titulo`, item.title),
+        description: value(`nosotros_valor_${number}_descripcion`, item.description),
+        stat: value(`nosotros_valor_${number}_estadistica`, item.stat),
+      }
+    }),
+    objectives: objectives.map((item, index) => {
+      const number = String(index + 1).padStart(2, '0')
+      return {
+        ...item,
+        id: value(`nosotros_objetivo_${number}_numero`, item.id),
+        t: value(`nosotros_objetivo_${number}_titulo`, item.t),
+        d: value(`nosotros_objetivo_${number}_descripcion`, item.d),
+      }
+    }),
+    accreditation: {
+      ...accreditation,
+      title: value('nosotros_acreditacion_titulo', accreditation.title),
+      description: value(
+        'nosotros_acreditacion_descripcion',
+        accreditation.description,
+      ),
+      links: accreditation.links.map((link, index) => {
+        const number = String(index + 1).padStart(2, '0')
+        return {
+          ...link,
+          href: value(`nosotros_acreditacion_enlace_${number}_url`, link.href),
+          label: value(`nosotros_acreditacion_enlace_${number}_texto`, link.label),
+        }
+      }),
+    },
+  }
+}
+
+export async function getAboutData() {
+  const records = await seccionPaginaApi.list(ABOUT_PAGE_SLUG)
+  return records.length > 0 ? getAboutDataFromRecords(records) : aboutDataFallback
+}
+
+export async function saveAboutSection(section) {
+  return seccionPaginaApi.save({
+    ...section,
+    paginaSlug: ABOUT_PAGE_SLUG,
+  })
 }

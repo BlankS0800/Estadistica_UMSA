@@ -1,7 +1,7 @@
 import ValueCard from '../../molecules/cards/ValueCard'
 
 const AboutValuesSection = ({ values }) => (
-  <section className="relative overflow-hidden bg-white px-6 py-24 md:px-10 md:py-32">
+  <section className="relative overflow-hidden bg-white px-6 py-16 md:px-10 md:py-24">
     <svg className="pointer-events-none absolute -left-20 top-10 h-[320px] w-[320px] opacity-[0.07]" viewBox="0 0 320 320" fill="none" aria-hidden="true">
       <circle cx="160" cy="160" r="120" stroke="#00447e" strokeWidth="1.8" />
       <circle cx="160" cy="160" r="92" stroke="#00447e" strokeWidth="1.2" opacity="0.7" />
@@ -13,16 +13,15 @@ const AboutValuesSection = ({ values }) => (
     </svg>
 
     <div className="mx-auto max-w-[1440px]">
-      <div className="mb-16 text-center">
-        <div className="mb-4 flex items-center justify-center gap-3">
-          <div className="h-1 w-12 bg-[#00447e]" />
-          <span className="text-base sm:text-base md:text-lg font-black uppercase tracking-[0.4em] text-slate-400">Nuestros Principios</span>
-          <div className="h-1 w-12 bg-[#00447e]" />
+      <div className="mb-10">
+        <div className="mb-3 flex items-center gap-3">
+          <div className="h-1 w-10 bg-[#00447e]" />
+          <span className="text-xs font-bold uppercase tracking-[0.24em] text-slate-400">Nuestros principios</span>
         </div>
-        <h2 className="text-4xl font-black uppercase italic leading-none tracking-tighter text-slate-900 md:text-5xl">Valores Rectores</h2>
+        <h2 className="text-3xl font-black tracking-tight text-slate-900 md:text-4xl">Valores rectores</h2>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-5 lg:grid-cols-2">
         {values.map((value, index) => (
           <ValueCard key={value.title} value={value} index={index} />
         ))}

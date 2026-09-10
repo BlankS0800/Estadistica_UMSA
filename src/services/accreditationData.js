@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 
 export const accreditationHero = {
-  eyebrow: 'Acreditación Institucional',
+  eyebrow: 'Acreditacion',
   title: ['Garantía de', 'calidad', 'Académica.'],
   description:
     'Nuestra carrera lidera el análisis de datos en Bolivia bajo estándares estrictos del sistema universitario. La acreditación vigente ante el CEUB respalda competitividad y mejora continua.',
