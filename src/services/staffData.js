@@ -1,3 +1,5 @@
+import { httpClient } from '../api/httpClient'
+
 export const staffHero = {
   eyebrow: 'Plantel Institucional',
   title: ['Nuestro', 'Equipo.'],
@@ -61,3 +63,87 @@ export const assistants = [
   { name: 'Laura Elizabeth Quenta Marca', role: 'Auxiliar de Interacción', course: 'Interacción', stats: 'Item 2480' },
   { name: 'Alex Suxo Poma', role: 'Auxiliar de Interacción', course: 'Interacción', stats: 'Item 2481' },
 ]
+
+const getRecords = (response) => {
+  if (Array.isArray(response)) return response
+  if (Array.isArray(response?.content)) return response.content
+  if (Array.isArray(response?.data)) return response.data
+  if (Array.isArray(response?.items)) return response.items
+  if (Array.isArray(response?.records)) return response.records
+  return []
+}
+
+const readValue = (record, camelCaseKey, snakeCaseKey, fallback = null) =>
+  record?.[camelCaseKey] ?? record?.[snakeCaseKey] ?? fallback
+
+const normalizeFallbackTeacher = (teacher) => ({
+  ...teacher,
+  name: teacher.name.replace(/^(Ph\.D\.|M\.Sc\.|Lic\.|Arq\.)\s*/, ''),
+  summary: '',
+})
+
+const mapTeacher = (record) => {
+  const type = readValue(record, 'tipo', 'tipo', 'Interino')
+  const summary = readValue(record, 'resumenCv', 'resumen_cv', '')
+
+  return {
+    id: record.id,
+    name: readValue(record, 'nombre', 'nombre', ''),
+    role: `Docente ${type}`,
+    specs: summary ? [summary] : [],
+    summary,
+    email: readValue(record, 'correoInstitucional', 'correo_institucional', ''),
+    degree: readValue(record, 'gradoAcademico', 'grado_academico', 'Lic.'),
+    type,
+    photo: readValue(record, 'imagen', 'imagen', readValue(record, 'foto', 'foto', '/')),
+  }
+}
+
+const mapAdmin = (record) => ({
+  id: record.id,
+  name: readValue(record, 'nombre', 'nombre', ''),
+  role: readValue(record, 'cargo', 'cargo', ''),
+  email: readValue(record, 'correoInstitucional', 'correo_institucional', ''),
+  photo: readValue(record, 'imagen', 'imagen', readValue(record, 'foto', 'foto', '/')),
+  symbol: 'Delta',
+})
+
+const mapAssistant = (record) => {
+  const type = readValue(record, 'tipo', 'tipo', 'academico')
+  const isAcademic = type === 'academico'
+  const role = {
+    academico: 'Auxiliar de Docencia',
+    investigacion: 'Auxiliar de Investigación',
+    'interaccion social': 'Auxiliar de Interacción Social',
+  }[type] || 'Auxiliar'
+
+  return {
+    id: record.id,
+    name: readValue(record, 'nombre', 'nombre', ''),
+    role,
+    type,
+    photo: readValue(record, 'imagen', 'imagen', readValue(record, 'foto', 'foto', '/')),
+    course: isAcademic ? readValue(record, 'materia', 'materia') : null,
+    parallel: isAcademic ? readValue(record, 'paralelo', 'paralelo') : null,
+    days: isAcademic ? readValue(record, 'diasAuxiliatura', 'dias_auxiliatura') : null,
+    schedule: isAcademic ? readValue(record, 'horarioAuxiliatura', 'horario_auxiliatura') : null,
+    classroom: isAcademic ? readValue(record, 'aula', 'aula') : null,
+  }
+}
+
+const loadEndpoint = (path) => httpClient(path).then(getRecords)
+
+export async function getStaffData() {
+  const results = await Promise.allSettled([
+    loadEndpoint('/plantel/docentes'),
+    loadEndpoint('/plantel/administrativos'),
+    loadEndpoint('/plantel/auxiliares'),
+  ])
+
+  return {
+    teachers: results[0].status === 'fulfilled' ? results[0].value.map(mapTeacher) : teachers.map(normalizeFallbackTeacher),
+    admins: results[1].status === 'fulfilled' ? results[1].value.map(mapAdmin) : admins,
+    assistants: results[2].status === 'fulfilled' ? results[2].value.map(mapAssistant) : assistants,
+    hasApiError: results.some((result) => result.status === 'rejected'),
+  }
+}

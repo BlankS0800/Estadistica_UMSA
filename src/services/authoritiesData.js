@@ -1,4 +1,5 @@
 import { Briefcase, Gavel, GraduationCap, Scale, UserCheck, Users, Zap } from 'lucide-react'
+import { httpClient } from '../api/httpClient'
 
 export const authoritiesHero = {
   eyebrow: 'Gobierno y Liderazgo',
@@ -12,55 +13,7 @@ export const authoritiesHero = {
   ],
 }
 
-export const directionData = [
-  {
-    name: 'Ph.D. Juan Carlos Flores Lopez',
-    role: 'Director Carrera de Estadística',
-    email: 'jcflores@fcpn.edu.bo',
-    stats: { s: 'alpha', v: '0.05' },
-    img: '/images/institucional/director_flores.jpeg',
-    color: '#c2410c',
-  },
-  {
-    name: 'M.Sc. Lucy Gabriela Cuarita Ajno',
-    role: 'Directora Académica - Estadística',
-    email: 'lcuarita@fcpn.edu.bo',
-    stats: { s: 'lambda', v: '0.82' },
-    img: '/images/institucional/directora_cuarita.jpeg',
-    color: '#00447e',
-  },
-  {
-    name: 'M.Sc. Fernando Oday Rivero Suguiura',
-    role: 'Director a.i. del IETA',
-    email: 'friverosuguiura2004@gmail.com',
-    stats: { s: 'mu', v: '0.95' },
-    img: '/images/institucional/director_rivero.jpeg',
-    color: '#ea580c',
-  },
-]
-
-export const hccTeachers = [
-  {
-    name: 'Ph.D. Juan Carlos Flores Lopez',
-    role: 'Docente Titular',
-    email: 'jcflores@fcpn.edu.bo',
-    img: '/images/institucional/director_flores.jpeg',
-  },
-  {
-    name: 'M.Sc. Fernando Oday Rivero Suguiura',
-    role: 'Docente Titular',
-    email: 'friverosuguiura2004@gmail.com',
-    img: '/images/institucional/director_rivero.jpeg',
-  },
-  {
-    name: 'Lic. Nilda Gloria Flores de Uribe',
-    role: 'Docente Titular',
-    email: 'nildafloress@hotmail.com',
-    img: '/images/institucional/docente_flores_uribe.jpeg',
-  },
-]
-
-export const hccStudents = [
+export const hccStudentsFallback = [
   {
     name: 'Univ. Jhoseline Gloria Chambi Velasco',
     role: 'Delegada Estudiantil',
@@ -105,4 +58,77 @@ export const orgStructure = {
     { title: 'Secretaría de Dirección', icon: GraduationCap },
     { title: 'Soporte Técnico', icon: Zap },
   ],
+}
+
+const getRecords = (response) => {
+  if (Array.isArray(response)) return response
+  if (Array.isArray(response?.content)) return response.content
+  if (Array.isArray(response?.data)) return response.data
+  if (Array.isArray(response?.items)) return response.items
+  if (Array.isArray(response?.records)) return response.records
+  return []
+}
+
+const getValue = (record, camelCaseKey, snakeCaseKey, fallback = '') =>
+  record?.[camelCaseKey] ?? record?.[snakeCaseKey] ?? fallback
+
+const normalizeRole = (role) => role.trim().toLowerCase().replace(/\s+/g, ' ')
+
+const mapAuthority = (record, role, index) => ({
+  name: `${getValue(record, 'gradoAcademico', 'grado_academico')} ${getValue(record, 'nombre', 'nombre')}`.trim(),
+  role,
+  email: getValue(record, 'correoInstitucional', 'correo_institucional'),
+  stats: { s: 'autoridad', v: String(index + 1).padStart(2, '0') },
+  img: (() => {
+    const image = getValue(record, 'imagen', 'imagen', '')
+    return image && image !== '/' ? image : authoritiesHero.imageUrl
+  })(),
+  color: role === 'Director(a) de Carrera' ? '#c2410c' : '#00447e',
+})
+
+const mapStudentAuthority = (record) => {
+  const image = getValue(record, 'imagen', 'imagen', '')
+
+  return {
+    id: record.id,
+    name: getValue(record, 'nombre', 'nombre'),
+    role: getValue(record, 'cargo', 'cargo', 'Delegada Estudiantil'),
+    email: '',
+    img: image && image !== '/' ? image : authoritiesHero.imageUrl,
+  }
+}
+
+export async function getAuthoritiesData() {
+  const [teachersResult, studentsResult] = await Promise.allSettled([
+    httpClient('/plantel/docentes'),
+    httpClient('/estudiante-autoridad'),
+  ])
+  const records = teachersResult.status === 'fulfilled' ? getRecords(teachersResult.value) : []
+  const studentRecords = studentsResult.status === 'fulfilled' ? getRecords(studentsResult.value) : []
+  const authorityRecords = records.filter((record) => {
+    const role = normalizeRole(getValue(record, 'cargoAutoridad', 'cargo_autoridad'))
+    return [
+      'director(a) de carrera',
+      'director(a) academico(a)',
+      'estamento docente',
+      'estamendo docente',
+    ].includes(role)
+  })
+
+  const directionRoles = ['Director(a) de Carrera', 'Director(a) Academico(a)']
+  const directionData = authorityRecords
+    .filter((record) => directionRoles.map(normalizeRole).includes(normalizeRole(getValue(record, 'cargoAutoridad', 'cargo_autoridad'))))
+    .map((record, index) => mapAuthority(record, getValue(record, 'cargoAutoridad', 'cargo_autoridad'), index))
+  const hccTeachers = authorityRecords
+    .filter((record) => ['estamento docente', 'estamendo docente'].includes(normalizeRole(getValue(record, 'cargoAutoridad', 'cargo_autoridad'))))
+    .map((record, index) => mapAuthority(record, 'Estamento Docente', index))
+
+  return {
+    directionData,
+    hccTeachers,
+    hccStudents: studentRecords.length > 0
+      ? studentRecords.map(mapStudentAuthority)
+      : hccStudentsFallback,
+    hasApiError: teachersResult.status === 'rejected' || studentsResult.status === 'rejected',
+  }
 }

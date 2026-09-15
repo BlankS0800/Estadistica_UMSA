@@ -1,24 +1,50 @@
-import { useMemo, useState } from 'react'
-import { ArrowRight, Briefcase, GraduationCap, Mail, SearchIcon, ShieldAlert, Sigma, UserCircle, Users } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { ArrowRight, Briefcase, GraduationCap, Mail, SearchIcon, ShieldAlert, Sigma, Users } from 'lucide-react'
 import InstitutionalBackdrop from '../components/atoms/layout/InstitutionalBackdrop'
 import StatisticalSeal from '../components/atoms/data/StatisticalSeal'
-import { admins, assistants, staffHero, teachers } from '../services/staffData'
+import {
+  getStaffData,
+  staffHero,
+} from '../services/staffData'
 
 function StaffPage() {
   const [activeTab, setActiveTab] = useState('docentes')
   const [searchTerm, setSearchTerm] = useState('')
+  const [staffData, setStaffData] = useState(null)
+  const [apiError, setApiError] = useState(false)
+
+  useEffect(() => {
+    let isCurrent = true
+
+    getStaffData()
+      .then((data) => {
+        if (!isCurrent) return
+        setStaffData(data)
+        setApiError(data.hasApiError)
+      })
+      .catch(() => {
+        if (isCurrent) {
+          setStaffData({ teachers: [], admins: [], assistants: [], hasApiError: true })
+          setApiError(true)
+        }
+      })
+
+    return () => {
+      isCurrent = false
+    }
+  }, [])
 
   const filteredTeachers = useMemo(
-    () => teachers.filter((t) => t.name.toLowerCase().includes(searchTerm.toLowerCase())),
-    [searchTerm],
+    () => (staffData?.teachers ?? []).filter((t) => `${t.name} ${t.summary}`.toLowerCase().includes(searchTerm.toLowerCase())),
+    [searchTerm, staffData?.teachers],
   )
   const filteredAdmins = useMemo(
-    () => admins.filter((a) => a.name.toLowerCase().includes(searchTerm.toLowerCase())),
-    [searchTerm],
+    () => (staffData?.admins ?? []).filter((a) => `${a.name} ${a.role}`.toLowerCase().includes(searchTerm.toLowerCase())),
+    [searchTerm, staffData?.admins],
   )
   const filteredAux = useMemo(
-    () => assistants.filter((x) => x.name.toLowerCase().includes(searchTerm.toLowerCase())),
-    [searchTerm],
+    () => (staffData?.assistants ?? []).filter((x) => `${x.name} ${x.course || ''} ${x.role}`.toLowerCase().includes(searchTerm.toLowerCase())),
+    [searchTerm, staffData?.assistants],
   )
 
   const emptyState =
@@ -26,11 +52,26 @@ function StaffPage() {
     (activeTab === 'administrativos' && filteredAdmins.length === 0) ||
     (activeTab === 'auxiliares' && filteredAux.length === 0)
 
+  const getStaffImage = (image) => (image && image !== '/' ? image : staffHero.imageUrl)
+
+  if (!staffData) {
+    return (
+      <div className="institutional-page flex min-h-screen items-center justify-center bg-[#f1f5f9] text-sm font-bold uppercase tracking-[0.2em] text-slate-400">
+        Cargando personal...
+      </div>
+    )
+  }
+
   return (
     <div className="institutional-page relative min-h-screen overflow-x-hidden bg-[#f1f5f9] selection:bg-[#00447e] selection:text-white text-slate-800">
       <InstitutionalBackdrop />
 
       <section className="relative overflow-hidden px-6 pb-16 pt-8 md:px-10 md:pb-24 md:pt-12">
+        {apiError && (
+          <div className="relative z-20 mx-auto mb-6 max-w-[1440px] rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            Algunos datos del plantel no pudieron cargarse desde la API. Se muestran datos de respaldo para esos grupos.
+          </div>
+        )}
         <StatisticalSeal symbol="psi" label="PERSONAL" value="0.94" top="15%" right="5%" className="opacity-[0.12]" />
 
         <svg className="pointer-events-none absolute left-0 top-0 h-[340px] w-[720px] opacity-[0.12]" viewBox="0 0 720 340" fill="none" aria-hidden="true">
@@ -117,24 +158,28 @@ function StaffPage() {
           {activeTab === 'docentes' && (
             <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
               {filteredTeachers.map((doc) => (
-                <article key={doc.email} className="group relative overflow-hidden rounded-[3.5rem] border border-slate-100 bg-[#f8fafc] p-10 transition-[background-color,box-shadow] duration-300 hover:bg-white hover:shadow-2xl">
+                <article key={doc.id || doc.email} className="group relative overflow-hidden rounded-[3.5rem] border border-slate-100 bg-[#f8fafc] p-10 transition-[background-color,box-shadow] duration-300 hover:bg-white hover:shadow-2xl">
                   <div className="absolute right-8 top-6 font-mono text-[9px] font-black uppercase tracking-widest text-slate-200 transition-colors group-hover:text-[#c2410c]">r = 0.92</div>
-                  <div className="mb-8 flex size-14 items-center justify-center rounded-2xl border border-slate-100 bg-white text-[#c2410c] shadow-sm transition-colors group-hover:bg-[#c2410c] group-hover:text-white">
-                    <span className="text-xs font-black">{doc.degree}</span>
+                  <div className="mb-8 size-14 overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition-colors group-hover:ring-2 group-hover:ring-[#c2410c]">
+                    <img
+                      src={getStaffImage(doc.photo)}
+                      alt={`Foto de ${doc.name}`}
+                      className="h-full w-full object-cover"
+                    />
                   </div>
-                  <h3 className="mb-1 text-xl font-black uppercase leading-tight tracking-tighter text-[#002a52]">{doc.name}</h3>
+                  <h3 className="mb-1 text-xl font-black uppercase leading-tight tracking-tighter text-[#002a52]">{doc.degree} {doc.name}</h3>
                   <p className="mb-8 text-[10px] font-black uppercase tracking-[0.3em] text-[#c2410c]">{doc.role}</p>
-                  <div className="mb-10 space-y-3">
-                    <p className="border-b border-slate-100 pb-2 text-[9px] font-black uppercase tracking-widest text-slate-400">Especialidades Tecnicas:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {doc.specs.map((s) => (
-                        <span key={s} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[8px] font-bold uppercase italic tracking-tight text-slate-500">sigma {s}</span>
-                      ))}
+                  {doc.summary && (
+                    <div className="mb-10 space-y-3">
+                      <p className="border-b border-slate-100 pb-2 text-[9px] font-black uppercase tracking-widest text-slate-400">Resumen profesional:</p>
+                      <div className="flex flex-wrap gap-2">
+                        <p className="text-xs leading-relaxed text-slate-500">{doc.summary}</p>
+                      </div>
                     </div>
-                  </div>
-                  <button type="button" className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#00447e]/5 py-3 text-[9px] font-black uppercase tracking-[0.2em] text-[#00447e] transition-all hover:bg-[#00447e] hover:text-white">
+                  )}
+                  <a href={doc.email ? `mailto:${doc.email}` : undefined} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#00447e]/5 py-3 text-[9px] font-black uppercase tracking-[0.2em] text-[#00447e] transition-all hover:bg-[#00447e] hover:text-white">
                     <Mail size={14} /> Enviar Correo
-                  </button>
+                  </a>
                 </article>
               ))}
             </div>
@@ -145,8 +190,12 @@ function StaffPage() {
               {filteredAdmins.map((adm, i) => (
                 <article key={`${adm.name}-${i}`} className="group relative overflow-hidden rounded-[3rem] border border-slate-200 bg-white p-8 text-center transition-[box-shadow,border-color] duration-300 hover:shadow-xl">
                   <div className="absolute left-1/2 top-2 -translate-x-1/2 text-4xl font-black text-[#00447e] opacity-[0.04] transition-opacity group-hover:opacity-[0.12]">{adm.symbol}</div>
-                  <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full border border-slate-100 bg-[#f8fafc] text-slate-300 shadow-inner transition-colors group-hover:bg-[#c2410c] group-hover:text-white">
-                    <UserCircle size={32} />
+                  <div className="mx-auto mb-6 size-16 overflow-hidden rounded-full border border-slate-100 bg-[#f8fafc] shadow-inner transition-colors group-hover:ring-2 group-hover:ring-[#c2410c]">
+                    <img
+                      src={getStaffImage(adm.photo)}
+                      alt={`Foto de ${adm.name}`}
+                      className="h-full w-full object-cover"
+                    />
                   </div>
                   <h4 className="mb-2 text-sm font-black uppercase leading-tight text-[#002a52]">{adm.name}</h4>
                   <p className="mb-6 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">{adm.role}</p>
@@ -163,17 +212,36 @@ function StaffPage() {
             <div className="mx-auto grid max-w-4xl grid-cols-1 gap-10 md:grid-cols-2">
               {filteredAux.map((aux, i) => (
                 <article key={`${aux.name}-${i}`} className="group relative flex gap-8 overflow-hidden rounded-[4rem] border border-slate-100 bg-white p-10 shadow-xl">
-                  <div className="flex size-20 shrink-0 items-center justify-center rounded-[2rem] border border-[#c2410c]/10 bg-[#c2410c]/5 text-[#c2410c] transition-colors duration-300 group-hover:bg-[#c2410c] group-hover:text-white">
-                    <GraduationCap size={36} />
+                  <div className="size-20 shrink-0 overflow-hidden rounded-[2rem] border border-[#c2410c]/10 bg-[#c2410c]/5 transition-colors duration-300 group-hover:ring-2 group-hover:ring-[#c2410c]">
+                    <img
+                      src={getStaffImage(aux.photo)}
+                      alt={`Foto de ${aux.name}`}
+                      className="h-full w-full object-cover"
+                    />
                   </div>
                   <div className="flex-1">
                     <p className="mb-2 text-[9px] font-black uppercase tracking-[0.4em] text-slate-300">{aux.stats}</p>
                     <h3 className="mb-1 text-xl font-black uppercase tracking-tighter text-[#002a52]">{aux.name}</h3>
                     <p className="mb-6 text-[10px] font-black uppercase tracking-[0.3em] text-[#c2410c]">{aux.role}</p>
-                    <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-3">
-                      <Sigma size={14} className="text-slate-400" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{aux.course}</span>
-                    </div>
+                    {aux.type === 'academico' && (
+                      <>
+                        <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-3">
+                          <Sigma size={14} className="text-slate-400" />
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{aux.course}</span>
+                        </div>
+                        <div className="mt-3 grid grid-cols-2 gap-2 text-[9px] font-bold uppercase tracking-wider text-slate-500">
+                          <span>Paralelo: {aux.parallel}</span>
+                          <span>Días: {aux.days}</span>
+                          <span>Horario: {aux.schedule}</span>
+                          <span>Aula: {aux.classroom}</span>
+                        </div>
+                      </>
+                    )}
+                    {aux.type !== 'academico' && (
+                      <div className="rounded-2xl border border-slate-100 bg-slate-50 p-3 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                        Área de {aux.type}
+                      </div>
+                    )}
                   </div>
                   <div className="absolute right-8 top-4 font-mono text-[8px] font-black italic text-slate-50">INT f(x) dx</div>
                 </article>

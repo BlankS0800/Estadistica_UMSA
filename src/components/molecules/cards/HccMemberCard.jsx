@@ -23,7 +23,9 @@ const HccMemberCard = ({ member, index, variant = 'teacher' }) => {
       <div className="flex-1">
         <p className="mb-1 text-xs font-black uppercase tracking-[0.3em] text-slate-400">{member.role}</p>
         <h4 className="text-sm font-black uppercase leading-tight tracking-tighter text-slate-800">{member.name}</h4>
-        <p className={`mt-1 text-[10px] font-bold ${isTeacher ? 'text-[#00447e]' : 'text-[#c2410c]'} opacity-70 group-hover:opacity-100`}>{member.email}</p>
+        {member.email && (
+          <p className={`mt-1 text-[10px] font-bold ${isTeacher ? 'text-[#00447e]' : 'text-[#c2410c]'} opacity-70 group-hover:opacity-100`}>{member.email}</p>
+        )}
       </div>
 
       <div className="absolute right-8 top-4 font-mono text-[8px] font-black uppercase text-slate-50">

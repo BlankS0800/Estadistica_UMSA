@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import InstitutionalBackdrop from '../components/atoms/layout/InstitutionalBackdrop'
 import AuthoritiesDirectionSection from '../components/organisms/institutional/AuthoritiesDirectionSection'
 import AuthoritiesHccSection from '../components/organisms/institutional/AuthoritiesHccSection'
@@ -5,21 +6,55 @@ import AuthoritiesHeroSection from '../components/organisms/institutional/Author
 import AuthoritiesStructureSection from '../components/organisms/institutional/AuthoritiesStructureSection'
 import {
   authoritiesHero,
-  directionData,
+  getAuthoritiesData,
   hccMeta,
-  hccStudents,
-  hccTeachers,
   orgStructure,
 } from '../services/authoritiesData'
 
 function AuthoritiesPage() {
+  const [authorityData, setAuthorityData] = useState(null)
+  const [apiError, setApiError] = useState(false)
+
+  useEffect(() => {
+    let isCurrent = true
+
+    getAuthoritiesData()
+      .then((data) => {
+        if (!isCurrent) return
+        setAuthorityData(data)
+        setApiError(data.hasApiError)
+      })
+      .catch(() => {
+        if (!isCurrent) return
+        setAuthorityData({ directionData: [], hccTeachers: [], hccStudents: [] })
+        setApiError(true)
+      })
+
+    return () => {
+      isCurrent = false
+    }
+  }, [])
+
+  if (!authorityData) {
+    return (
+      <div className="institutional-page flex min-h-screen items-center justify-center bg-[#f1f5f9] text-sm font-bold uppercase tracking-[0.2em] text-slate-400">
+        Cargando autoridades...
+      </div>
+    )
+  }
+
   return (
     <div className="institutional-page relative min-h-screen overflow-x-hidden bg-[#f1f5f9] selection:bg-[#00447e] selection:text-white">
       <InstitutionalBackdrop />
       <div className="relative z-10">
+        {apiError && (
+          <div className="border-b border-amber-200 bg-amber-50 px-6 py-3 text-center text-sm text-amber-900">
+            No se pudieron cargar las autoridades desde la API.
+          </div>
+        )}
         <div className="render-optimized"><AuthoritiesHeroSection hero={authoritiesHero} /></div>
-        <div className="render-optimized"><AuthoritiesDirectionSection directionData={directionData} /></div>
-        <div className="render-optimized"><AuthoritiesHccSection meta={hccMeta} teachers={hccTeachers} students={hccStudents} /></div>
+        <div className="render-optimized"><AuthoritiesDirectionSection directionData={authorityData.directionData} /></div>
+        <div className="render-optimized"><AuthoritiesHccSection meta={hccMeta} teachers={authorityData.hccTeachers} students={authorityData.hccStudents} /></div>
         <div className="render-optimized"><AuthoritiesStructureSection structure={orgStructure} /></div>
       </div>
     </div>
