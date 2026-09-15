@@ -9,6 +9,7 @@ import {
   Users,
   Zap,
 } from 'lucide-react'
+import { seccionPaginaApi } from './seccionPaginaService'
 
 export const accreditationHero = {
   eyebrow: 'Acreditacion',
@@ -89,4 +90,110 @@ export const accreditationCta = {
     { href: '/institucional/acerca', label: 'Volver a Acerca', icon: CheckCircle2 },
     { href: '/institucional/autoridades', label: 'Ver Autoridades', icon: Users },
   ],
+}
+
+export const accreditationDataFallback = {
+  accreditationHero,
+  credentials,
+  impactHighlights,
+  impactCards,
+  accreditationCta,
+}
+
+const ACCREDITATION_PAGE_SLUG = '/institucional/acreditacion'
+
+const getRecordValue = (records, key, fallback) => {
+  const record = records.find(
+    (item) => (item.claveCampo ?? item.clave_campo) === key,
+  )
+
+  return record?.valor ?? fallback
+}
+
+const getAccreditationDataFromRecords = (records) => {
+  const value = (key, fallback) => getRecordValue(records, key, fallback)
+
+  return {
+    accreditationHero: {
+      ...accreditationHero,
+      eyebrow: value('acreditacion_inicio_etiqueta', accreditationHero.eyebrow),
+      title: [
+        value('acreditacion_inicio_titulo_01', accreditationHero.title[0]),
+        value('acreditacion_inicio_titulo_02', accreditationHero.title[1]),
+        value('acreditacion_inicio_titulo_03', accreditationHero.title[2]),
+      ],
+      description: value('acreditacion_inicio_descripcion', accreditationHero.description),
+      imageUrl: value('acreditacion_inicio_imagen', accreditationHero.imageUrl),
+      chips: accreditationHero.chips.map((chip, index) => {
+        const number = String(index + 1).padStart(2, '0')
+        return {
+          ...chip,
+          symbol: value(`acreditacion_chip_${number}_simbolo`, chip.symbol),
+          label: value(`acreditacion_chip_${number}_etiqueta`, chip.label),
+          subtitle: value(`acreditacion_chip_${number}_subtitulo`, chip.subtitle),
+        }
+      }),
+    },
+    credentials: credentials.map((card, index) => {
+      const number = String(index + 1).padStart(2, '0')
+      return {
+        ...card,
+        title: value(`acreditacion_credencial_${number}_titulo`, card.title),
+        sub: value(`acreditacion_credencial_${number}_subtitulo`, card.sub),
+        org: value(`acreditacion_credencial_${number}_organizacion`, card.org),
+        desc: value(`acreditacion_credencial_${number}_descripcion`, card.desc),
+        cta: value(`acreditacion_credencial_${number}_cta`, card.cta),
+        stats: {
+          ...card.stats,
+          label: value(`acreditacion_credencial_${number}_estadistica`, card.stats.label),
+        },
+      }
+    }),
+    impactHighlights: {
+      ...impactHighlights,
+      title: [
+        value('acreditacion_impacto_titulo_01', impactHighlights.title[0]),
+        value('acreditacion_impacto_titulo_02', impactHighlights.title[1]),
+      ],
+      description: value('acreditacion_impacto_descripcion', impactHighlights.description),
+      statusTitle: value('acreditacion_impacto_estado_titulo', impactHighlights.statusTitle),
+      statusText: value('acreditacion_impacto_estado_texto', impactHighlights.statusText),
+      statusPill: value('acreditacion_impacto_estado_pildora', impactHighlights.statusPill),
+    },
+    impactCards: impactCards.map((item, index) => {
+      const number = String(index + 1).padStart(2, '0')
+      return {
+        ...item,
+        t: value(`acreditacion_impacto_card_${number}_titulo`, item.t),
+        d: value(`acreditacion_impacto_card_${number}_descripcion`, item.d),
+      }
+    }),
+    accreditationCta: {
+      ...accreditationCta,
+      title: value('acreditacion_cta_titulo', accreditationCta.title),
+      label: value('acreditacion_cta_etiqueta', accreditationCta.label),
+      links: accreditationCta.links.map((link, index) => {
+        const number = String(index + 1).padStart(2, '0')
+        return {
+          ...link,
+          href: value(`acreditacion_cta_enlace_${number}_url`, link.href),
+          label: value(`acreditacion_cta_enlace_${number}_texto`, link.label),
+        }
+      }),
+    },
+  }
+}
+
+export async function getAccreditationData() {
+  const records = await seccionPaginaApi.list(ACCREDITATION_PAGE_SLUG)
+  return records.length > 0
+    ? getAccreditationDataFromRecords(records)
+    : accreditationDataFallback
+}
+
+export async function saveAccreditationSection(section) {
+  return seccionPaginaApi.save({
+    ...section,
+    paginaSlug: ACCREDITATION_PAGE_SLUG,
+  })
 }
