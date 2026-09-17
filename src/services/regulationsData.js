@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   ScrollText,
 } from 'lucide-react'
+import { seccionPaginaApi } from './seccionPaginaService'
 
 export const regulationsHero = {
   eyebrow: 'Normativa Institucional',
@@ -161,4 +162,124 @@ export const regulationBenefits = [
 export const regulationsCta = {
   title: 'Referente Normativo',
   label: 'Repositorio Normativo Actualizado',
+}
+
+export const regulationsDataFallback = {
+  regulationsHero,
+  universityFramework,
+  internalRegulations,
+  resolutionHighlight,
+  regulationBenefits,
+  regulationsCta,
+  hasApiError: false,
+}
+
+const REGULATIONS_PAGE_SLUG = '/institucional/reglamentos'
+
+const getRecordValue = (records, key, fallback) => {
+  const record = records.find(
+    (item) => (item.claveCampo ?? item.clave_campo) === key,
+  )
+  return record?.valor ?? fallback
+}
+
+export async function getRegulationsData() {
+  const records = await seccionPaginaApi.list(REGULATIONS_PAGE_SLUG)
+
+  if (!records || records.length === 0) {
+    return regulationsDataFallback
+  }
+
+  const val = (key, fallback) => getRecordValue(records, key, fallback)
+
+  const dynamicHero = {
+    ...regulationsHero,
+    eyebrow: val('reglamentos_inicio_etiqueta', regulationsHero.eyebrow),
+    title: [
+      val('reglamentos_inicio_titulo_01', regulationsHero.title[0]),
+      val('reglamentos_inicio_titulo_02', regulationsHero.title[1]),
+      val('reglamentos_inicio_titulo_03', regulationsHero.title[2]),
+    ],
+    description: val('reglamentos_inicio_descripcion', regulationsHero.description),
+    imageUrl: val('reglamentos_inicio_imagen', regulationsHero.imageUrl),
+    chips: [
+      {
+        symbol: val('reglamentos_chip_01_simbolo', regulationsHero.chips[0].symbol),
+        label: val('reglamentos_chip_01_etiqueta', regulationsHero.chips[0].label),
+        subtitle: val('reglamentos_chip_01_subtitulo', regulationsHero.chips[0].subtitle),
+      },
+      {
+        symbol: val('reglamentos_chip_02_simbolo', regulationsHero.chips[1].symbol),
+        label: val('reglamentos_chip_02_etiqueta', regulationsHero.chips[1].label),
+        subtitle: val('reglamentos_chip_02_subtitulo', regulationsHero.chips[1].subtitle),
+      },
+    ],
+  }
+
+  const dynamicFramework = universityFramework.map((law, index) => {
+    const num = String(index + 1).padStart(2, '0')
+    return {
+      ...law,
+      art: val(`reglamentos_marco_${num}_articulo`, law.art),
+      title: val(`reglamentos_marco_${num}_titulo`, law.title),
+      sub: val(`reglamentos_marco_${num}_subtitulo`, law.sub),
+      desc: val(`reglamentos_marco_${num}_descripcion`, law.desc),
+    }
+  })
+
+  const dynamicInternal = internalRegulations.map((cat) => {
+    const catKey = cat.id
+    const label = val(`reglamentos_interno_${catKey}_etiqueta`, cat.label)
+    const items = cat.items.map((it, itemIndex) => {
+      const num = String(itemIndex + 1).padStart(2, '0')
+      return {
+        name: val(`reglamentos_interno_${catKey}_item_${num}_nombre`, it.name),
+        desc: val(`reglamentos_interno_${catKey}_item_${num}_descripcion`, it.desc),
+      }
+    })
+    return {
+      ...cat,
+      label,
+      items,
+    }
+  })
+
+  const dynamicResolution = {
+    ...resolutionHighlight,
+    eyebrow: val('reglamentos_resolucion_etiqueta', resolutionHighlight.eyebrow),
+    title: val('reglamentos_resolucion_titulo', resolutionHighlight.title),
+    description: val('reglamentos_resolucion_descripcion', resolutionHighlight.description),
+    imageUrl: val('reglamentos_resolucion_imagen', resolutionHighlight.imageUrl),
+  }
+
+  const dynamicBenefits = regulationBenefits.map((b, index) => {
+    const num = String(index + 1).padStart(2, '0')
+    return {
+      ...b,
+      title: val(`reglamentos_beneficio_${num}_titulo`, b.title),
+      description: val(`reglamentos_beneficio_${num}_descripcion`, b.description),
+    }
+  })
+
+  const dynamicCta = {
+    title: val('reglamentos_cta_titulo', regulationsCta.title),
+    label: val('reglamentos_cta_etiqueta', regulationsCta.label),
+  }
+
+  return {
+    regulationsHero: dynamicHero,
+    universityFramework: dynamicFramework,
+    internalRegulations: dynamicInternal,
+    resolutionHighlight: dynamicResolution,
+    regulationBenefits: dynamicBenefits,
+    regulationsCta: dynamicCta,
+    hasApiError: false,
+  }
+}
+
+export async function saveRegulationsSection(section) {
+  return seccionPaginaApi.save({
+    ...section,
+    paginaSlug: REGULATIONS_PAGE_SLUG,
+  })
 }

@@ -52,7 +52,8 @@ function StaffPage() {
     (activeTab === 'administrativos' && filteredAdmins.length === 0) ||
     (activeTab === 'auxiliares' && filteredAux.length === 0)
 
-  const getStaffImage = (image) => (image && image !== '/' ? image : staffHero.imageUrl)
+  const hero = staffData?.hero || staffHero
+  const getStaffImage = (image) => (image && image !== '/' ? image : hero.imageUrl)
 
   if (!staffData) {
     return (
@@ -83,17 +84,17 @@ function StaffPage() {
           <div className="relative z-10">
             <div className="mb-6 flex items-center gap-3">
               <div className="h-[2px] w-10 rounded-full bg-[#c2410c]" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{staffHero.eyebrow}</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{hero.eyebrow}</span>
             </div>
 
             <h2 className="mb-8 text-5xl font-black uppercase leading-[0.95] tracking-tighter text-[#002a52] md:text-7xl">
-              {staffHero.title[0]} <br />
-              <span className="font-serif italic lowercase tracking-tight text-slate-400">{staffHero.title[1]}</span>
+              {hero.title[0]} <br />
+              <span className="font-serif italic lowercase tracking-tight text-slate-400">{hero.title[1]}</span>
             </h2>
 
             <div className="max-w-lg">
               <p className="mb-10 rounded-r-2xl border-l-4 border-[#c2410c] bg-white/30 py-4 pl-6 text-sm font-medium leading-relaxed text-slate-500 shadow-sm md:text-base">
-                {staffHero.description}
+                {hero.description}
               </p>
 
               <div className="relative group">
@@ -112,11 +113,11 @@ function StaffPage() {
           <div className="relative">
             <div className="absolute -inset-10 rounded-full bg-blue-500/5 blur-[80px]" />
             <div className="relative overflow-hidden rounded-[3.5rem] border border-slate-200 bg-white p-4 shadow-2xl">
-              <img src={staffHero.imageUrl} className="h-[450px] w-full rounded-[3rem] object-cover grayscale-[0.8] brightness-90 contrast-[1.3]" alt="Personal UMSA" />
+              <img src={hero.imageUrl} className="h-[450px] w-full rounded-[3rem] object-cover grayscale-[0.8] brightness-90 contrast-[1.3]" alt="Personal UMSA" />
               <div className="absolute inset-4 rounded-[3rem] bg-[#00447e]/5" />
               <div className="absolute bottom-12 right-12 flex flex-col items-end text-white drop-shadow-2xl">
-                <span className="text-4xl font-black italic tracking-tighter">omega</span>
-                <p className="mt-1 border-t border-white/40 pt-1 text-[10px] font-bold uppercase tracking-[0.3em]">Talento Humano</p>
+                <span className="text-4xl font-black italic tracking-tighter">{hero.badgeSymbol || 'omega'}</span>
+                <p className="mt-1 border-t border-white/40 pt-1 text-[10px] font-bold uppercase tracking-[0.3em]">{hero.badgeText || 'Talento Humano'}</p>
               </div>
             </div>
           </div>

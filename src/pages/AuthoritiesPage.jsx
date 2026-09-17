@@ -5,10 +5,8 @@ import AuthoritiesHccSection from '../components/organisms/institutional/Authori
 import AuthoritiesHeroSection from '../components/organisms/institutional/AuthoritiesHeroSection'
 import AuthoritiesStructureSection from '../components/organisms/institutional/AuthoritiesStructureSection'
 import {
-  authoritiesHero,
+  authoritiesDataFallback,
   getAuthoritiesData,
-  hccMeta,
-  orgStructure,
 } from '../services/authoritiesData'
 
 function AuthoritiesPage() {
@@ -26,7 +24,7 @@ function AuthoritiesPage() {
       })
       .catch(() => {
         if (!isCurrent) return
-        setAuthorityData({ directionData: [], hccTeachers: [], hccStudents: [] })
+        setAuthorityData(authoritiesDataFallback)
         setApiError(true)
       })
 
@@ -49,13 +47,25 @@ function AuthoritiesPage() {
       <div className="relative z-10">
         {apiError && (
           <div className="border-b border-amber-200 bg-amber-50 px-6 py-3 text-center text-sm text-amber-900">
-            No se pudieron cargar las autoridades desde la API.
+            No se pudieron cargar completamente los datos de autoridades desde la API. Se muestran datos de respaldo.
           </div>
         )}
-        <div className="render-optimized"><AuthoritiesHeroSection hero={authoritiesHero} /></div>
-        <div className="render-optimized"><AuthoritiesDirectionSection directionData={authorityData.directionData} /></div>
-        <div className="render-optimized"><AuthoritiesHccSection meta={hccMeta} teachers={authorityData.hccTeachers} students={authorityData.hccStudents} /></div>
-        <div className="render-optimized"><AuthoritiesStructureSection structure={orgStructure} /></div>
+        <div className="render-optimized">
+          <AuthoritiesHeroSection hero={authorityData.authoritiesHero} />
+        </div>
+        <div className="render-optimized">
+          <AuthoritiesDirectionSection directionData={authorityData.directionData} />
+        </div>
+        <div className="render-optimized">
+          <AuthoritiesHccSection
+            meta={authorityData.hccMeta}
+            teachers={authorityData.hccTeachers}
+            students={authorityData.hccStudents}
+          />
+        </div>
+        <div className="render-optimized">
+          <AuthoritiesStructureSection structure={authorityData.orgStructure} />
+        </div>
       </div>
     </div>
   )

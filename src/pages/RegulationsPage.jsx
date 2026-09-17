@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   ArrowRight,
   Landmark,
@@ -10,17 +10,45 @@ import {
 import InstitutionalBackdrop from '../components/atoms/layout/InstitutionalBackdrop'
 import StatisticalSeal from '../components/atoms/data/StatisticalSeal'
 import {
-  regulationsHero,
-  universityFramework,
-  internalRegulations,
-  resolutionHighlight,
-  regulationBenefits,
-  regulationsCta,
+  getRegulationsData,
+  regulationsDataFallback,
 } from '../services/regulationsData'
 
 function RegulationsPage() {
   const [activeTab, setActiveTab] = useState('academica')
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [pageData, setPageData] = useState(regulationsDataFallback)
+  const [apiError, setApiError] = useState(false)
+
+  useEffect(() => {
+    let isCurrent = true
+
+    getRegulationsData()
+      .then((data) => {
+        if (!isCurrent) return
+        setPageData(data)
+        setApiError(data.hasApiError)
+      })
+      .catch(() => {
+        if (!isCurrent) return
+        setPageData(regulationsDataFallback)
+        setApiError(true)
+      })
+
+    return () => {
+      isCurrent = false
+    }
+  }, [])
+
+  const {
+    regulationsHero,
+    universityFramework,
+    internalRegulations,
+    resolutionHighlight,
+    regulationBenefits,
+    regulationsCta,
+  } = pageData
+
   const currentSector = internalRegulations.find((sector) => sector.id === activeTab) ?? internalRegulations[0]
 
   return (
@@ -28,6 +56,11 @@ function RegulationsPage() {
       <InstitutionalBackdrop />
 
       <div className="relative z-10">
+        {apiError && (
+          <div className="border-b border-amber-200 bg-amber-50 px-6 py-3 text-center text-sm text-amber-900">
+            No se pudieron cargar completamente los datos de reglamentos desde la API. Se muestran datos de respaldo.
+          </div>
+        )}
         <section className="relative overflow-hidden px-6 pb-16 pt-8 md:px-10 md:pb-24 md:pt-12">
           <StatisticalSeal symbol="§" label="MARCO" value="LEGAL" top="15%" right="5%" className="opacity-[0.12]" />
 

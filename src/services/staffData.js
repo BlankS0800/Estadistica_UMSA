@@ -1,4 +1,5 @@
 import { httpClient } from '../api/httpClient'
+import { seccionPaginaApi } from './seccionPaginaService'
 
 export const staffHero = {
   eyebrow: 'Plantel Institucional',
@@ -6,6 +7,8 @@ export const staffHero = {
   description:
     'Profesionales comprometidos con la excelencia académica y el soporte administrativo para la formación de científicos de datos.',
   imageUrl: '/images/institucional/personal_hero.jpeg',
+  badgeSymbol: 'omega',
+  badgeText: 'Talento Humano',
 }
 
 export const teachers = [
@@ -64,6 +67,24 @@ export const assistants = [
   { name: 'Alex Suxo Poma', role: 'Auxiliar de Interacción', course: 'Interacción', stats: 'Item 2481' },
 ]
 
+export const staffDataFallback = {
+  hero: staffHero,
+  teachers: teachers.map((t) => ({ ...t, photo: staffHero.imageUrl })),
+  admins: admins.map((a) => ({ ...a, photo: staffHero.imageUrl })),
+  assistants: assistants.map((aux) => ({ ...aux, photo: staffHero.imageUrl })),
+  hasApiError: false,
+}
+
+const STAFF_PAGE_SLUG = '/institucional/docentes'
+
+const getRecordValue = (records, key, fallback) => {
+  const record = records.find(
+    (item) => (item.claveCampo ?? item.clave_campo) === key,
+  )
+
+  return record?.valor ?? fallback
+}
+
 const getRecords = (response) => {
   if (Array.isArray(response)) return response
   if (Array.isArray(response?.content)) return response.content
@@ -111,11 +132,12 @@ const mapAdmin = (record) => ({
 const mapAssistant = (record) => {
   const type = readValue(record, 'tipo', 'tipo', 'academico')
   const isAcademic = type === 'academico'
-  const role = {
-    academico: 'Auxiliar de Docencia',
-    investigacion: 'Auxiliar de Investigación',
-    'interaccion social': 'Auxiliar de Interacción Social',
-  }[type] || 'Auxiliar'
+  const role =
+    {
+      academico: 'Auxiliar de Docencia',
+      investigacion: 'Auxiliar de Investigación',
+      'interaccion social': 'Auxiliar de Interacción Social',
+    }[type] || 'Auxiliar'
 
   return {
     id: record.id,
@@ -138,12 +160,51 @@ export async function getStaffData() {
     loadEndpoint('/plantel/docentes'),
     loadEndpoint('/plantel/administrativos'),
     loadEndpoint('/plantel/auxiliares'),
+    seccionPaginaApi.list(STAFF_PAGE_SLUG),
   ])
 
+  const [docentesResult, adminsResult, auxResult, sectionResult] = results
+
+  const sectionRecords =
+    sectionResult.status === 'fulfilled' && Array.isArray(sectionResult.value)
+      ? sectionResult.value
+      : []
+
+  const val = (key, fallback) => getRecordValue(sectionRecords, key, fallback)
+
+  const dynamicHero = {
+    ...staffHero,
+    eyebrow: val('plantel_inicio_etiqueta', staffHero.eyebrow),
+    title: [
+      val('plantel_inicio_titulo_01', staffHero.title[0]),
+      val('plantel_inicio_titulo_02', staffHero.title[1]),
+    ],
+    description: val('plantel_inicio_descripcion', staffHero.description),
+    imageUrl: val('plantel_inicio_imagen', staffHero.imageUrl),
+    badgeSymbol: val('plantel_inicio_badge_simbolo', staffHero.badgeSymbol),
+    badgeText: val('plantel_inicio_badge_texto', staffHero.badgeText),
+  }
+
+  const teachersData =
+    docentesResult.status === 'fulfilled' && docentesResult.value.length > 0
+      ? docentesResult.value.map(mapTeacher)
+      : teachers.map(normalizeFallbackTeacher)
+
+  const adminsData =
+    adminsResult.status === 'fulfilled' && adminsResult.value.length > 0
+      ? adminsResult.value.map(mapAdmin)
+      : admins
+
+  const assistantsData =
+    auxResult.status === 'fulfilled' && auxResult.value.length > 0
+      ? auxResult.value.map(mapAssistant)
+      : assistants
+
   return {
-    teachers: results[0].status === 'fulfilled' ? results[0].value.map(mapTeacher) : teachers.map(normalizeFallbackTeacher),
-    admins: results[1].status === 'fulfilled' ? results[1].value.map(mapAdmin) : admins,
-    assistants: results[2].status === 'fulfilled' ? results[2].value.map(mapAssistant) : assistants,
-    hasApiError: results.some((result) => result.status === 'rejected'),
+    hero: dynamicHero,
+    teachers: teachersData,
+    admins: adminsData,
+    assistants: assistantsData,
+    hasApiError: results.some((r) => r.status === 'rejected'),
   }
 }
