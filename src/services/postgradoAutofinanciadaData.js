@@ -32,6 +32,21 @@ import {
   LayoutGrid,
   ArrowUpRight,
 } from 'lucide-react'
+import { httpClient } from '../api/httpClient'
+import { seccionPaginaApi } from './seccionPaginaService'
+
+function buildSectionMap(sections) {
+  const map = {}
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo
+      if (key) map[key] = s.valor
+    }
+  }
+  return {
+    get: (key) => map[key],
+  }
+}
 
 export const autofinancedHero = {
   icon: BarChart3,
@@ -218,4 +233,90 @@ export const autofinancedCTA = {
   title: 'Domina el mundo de los datos',
   quote: 'La próxima cohorte está por iniciar. Asegura tu lugar en la maestría más competitiva de la región.',
   buttonLabel: 'Inscripción en Línea',
+}
+
+export async function loadPostgradoAutofinanciadaData() {
+  try {
+    const [sections, prog2] = await Promise.all([
+      seccionPaginaApi.list('/postgrado/maestria-autofinanciada').catch(() => []),
+      httpClient('/programa/2').catch(() => null),
+    ])
+
+    const secMap = buildSectionMap(sections)
+
+    const dynamicHero = {
+      ...autofinancedHero,
+      eyebrow: secMap.get('pos_autofin_hero_eyebrow') || autofinancedHero.eyebrow,
+      title: [
+        secMap.get('pos_autofin_hero_titulo_01') || (prog2 ? prog2.nombre.split(' en ')[0] : autofinancedHero.title[0]),
+        secMap.get('pos_autofin_hero_titulo_02') || (prog2 && prog2.nombre.includes(' en ') ? 'en ' + prog2.nombre.split(' en ')[1] : autofinancedHero.title[1]),
+      ],
+      description: secMap.get('pos_autofin_hero_descripcion') || autofinancedHero.description,
+    }
+
+    const dynamicProfile = {
+      ...autofinancedProfile,
+      tag: secMap.get('pos_autofin_perfil_tag') || autofinancedProfile.tag,
+      title: secMap.get('pos_autofin_perfil_titulo') || autofinancedProfile.title,
+      sub: secMap.get('pos_autofin_perfil_sub') || autofinancedProfile.sub,
+    }
+
+    const dynamicCurriculumMeta = {
+      ...autofinancedCurriculumMeta,
+      tag: secMap.get('pos_autofin_curriculum_tag') || autofinancedCurriculumMeta.tag,
+      title: secMap.get('pos_autofin_curriculum_titulo') || autofinancedCurriculumMeta.title,
+      sub: secMap.get('pos_autofin_curriculum_sub') || autofinancedCurriculumMeta.sub,
+      note: secMap.get('pos_autofin_curriculum_nota') || autofinancedCurriculumMeta.note,
+    }
+
+    const dynamicAdmission = {
+      ...autofinancedAdmissionRequirements,
+      tag: secMap.get('pos_autofin_admision_tag') || autofinancedAdmissionRequirements.tag,
+      title: secMap.get('pos_autofin_admision_titulo') || autofinancedAdmissionRequirements.title,
+      sub: secMap.get('pos_autofin_admision_sub') || autofinancedAdmissionRequirements.sub,
+    }
+
+    const dynamicCTA = {
+      ...autofinancedCTA,
+      title: secMap.get('pos_autofin_cta_titulo') || autofinancedCTA.title,
+      quote: secMap.get('pos_autofin_cta_sub') || autofinancedCTA.quote,
+    }
+
+    let dynamicModules = autofinancedModules
+    if (prog2 && Array.isArray(prog2.organiza) && prog2.organiza.length > 0) {
+      dynamicModules = prog2.organiza.map((org, index) => {
+        const mod = org.modulo || {}
+        const fallbackMod = autofinancedModules[index] || autofinancedModules[0]
+
+        return {
+          id: `mod${index + 1}`,
+          title: mod.numeroModulo || fallbackMod.title,
+          subtitle: mod.tituloModulo || fallbackMod.subtitle,
+          icon: fallbackMod.icon,
+          items: fallbackMod.items,
+        }
+      })
+    }
+
+    return {
+      hero: dynamicHero,
+      profile: dynamicProfile,
+      curriculumMeta: dynamicCurriculumMeta,
+      curriculumModules: dynamicModules,
+      admissionRequirements: dynamicAdmission,
+      opportunities: autofinancedOpportunities,
+      cta: dynamicCTA,
+    }
+  } catch (err) {
+    console.error('Error cargando datos dinámicos de postgrado autofinanciada:', err)
+    return {
+      hero: autofinancedHero,
+      profile: autofinancedProfile,
+      curriculumMeta: autofinancedCurriculumMeta,
+      curriculumModules: autofinancedModules,
+      admissionRequirements: autofinancedAdmissionRequirements,
+      opportunities: autofinancedOpportunities,
+      cta: autofinancedCTA,
+    }
+  }
 }

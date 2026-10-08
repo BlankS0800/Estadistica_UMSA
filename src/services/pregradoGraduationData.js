@@ -12,6 +12,8 @@ import {
   Target,
 } from 'lucide-react'
 
+import { seccionPaginaApi } from './seccionPaginaService'
+
 export const graduationHero = {
   icon: GraduationCap,
   eyebrow: 'Grado académico',
@@ -133,3 +135,58 @@ export const excellenceBanner = {
   icon: Star,
   accentIcon: GraduationCap,
 }
+
+function buildSectionMap(sections) {
+  const map = {}
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo
+      if (key) map[key] = s.valor
+    }
+  }
+  return {
+    get: (key) => map[key],
+  }
+}
+
+export async function loadGraduationPageData() {
+  try {
+    const sections = await seccionPaginaApi.list('/pregrado/modalidades-graduacion').catch(() => [])
+    const secMap = buildSectionMap(sections)
+
+    const hero = {
+      ...graduationHero,
+      eyebrow: secMap.get('graduacion_hero_badge') || graduationHero.eyebrow,
+      title: [
+        secMap.get('graduacion_hero_titulo_01') || graduationHero.title[0],
+        secMap.get('graduacion_hero_titulo_02') || graduationHero.title[1],
+        secMap.get('graduacion_hero_titulo_03') || '',
+      ],
+    }
+
+    const workshop = {
+      ...graduationWorkshop,
+      title: [
+        secMap.get('graduacion_taller_titulo') || graduationWorkshop.title[0],
+        graduationWorkshop.title[1],
+      ],
+      description: secMap.get('graduacion_taller_subtitulo') || graduationWorkshop.description,
+    }
+
+    const banner = {
+      ...excellenceBanner,
+      title: secMap.get('graduacion_excelencia_titulo') || excellenceBanner.title,
+      quote: secMap.get('graduacion_excelencia_desc') || excellenceBanner.quote,
+    }
+
+    return { hero, workshop, banner }
+  } catch (err) {
+    console.error('Error cargando datos dinámicos de graduación:', err)
+    return {
+      hero: graduationHero,
+      workshop: graduationWorkshop,
+      banner: excellenceBanner,
+    }
+  }
+}
+

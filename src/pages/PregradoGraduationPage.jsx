@@ -1,28 +1,47 @@
+import { useState, useEffect } from 'react'
 import InstitutionalBackdrop from '../components/atoms/layout/InstitutionalBackdrop'
 import GraduationExcellenceBannerSection from '../components/organisms/pregrado/GraduationExcellenceBannerSection'
 import GraduationHeroSection from '../components/organisms/pregrado/GraduationHeroSection'
 import GraduationModalitiesSection from '../components/organisms/pregrado/GraduationModalitiesSection'
 import GraduationWorkshopSection from '../components/organisms/pregrado/GraduationWorkshopSection'
 import {
-  excellenceBanner,
-  graduationHero,
+  excellenceBanner as defaultBanner,
+  graduationHero as defaultHero,
   graduationModalities,
   graduationModalitiesMeta,
-  graduationWorkshop,
+  graduationWorkshop as defaultWorkshop,
   processSteps,
+  loadGraduationPageData,
 } from '../services/pregradoGraduationData'
 
 function PregradoGraduationPage() {
+  const [hero, setHero] = useState(defaultHero)
+  const [workshop, setWorkshop] = useState(defaultWorkshop)
+  const [banner, setBanner] = useState(defaultBanner)
+
+  useEffect(() => {
+    let isMounted = true
+    loadGraduationPageData().then((data) => {
+      if (!isMounted) return
+      if (data.hero) setHero(data.hero)
+      if (data.workshop) setWorkshop(data.workshop)
+      if (data.banner) setBanner(data.banner)
+    })
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   return (
     <div className="pregrado-page bg-gradient-to-br from-white via-[#f8fbff] to-[#eef6ff] text-[#001d3d]">
       <InstitutionalBackdrop variant="light" topOffset="12rem" />
       <main className="relative z-10">
-        <GraduationHeroSection hero={graduationHero} />
+        <GraduationHeroSection hero={hero} />
 
         <div className="mx-auto flex max-w-[1500px] flex-col gap-28 px-4 py-20 sm:px-6 lg:px-8">
-          <GraduationWorkshopSection workshop={graduationWorkshop} processSteps={processSteps} />
+          <GraduationWorkshopSection workshop={workshop} processSteps={processSteps} />
           <GraduationModalitiesSection meta={graduationModalitiesMeta} modalities={graduationModalities} />
-          <GraduationExcellenceBannerSection banner={excellenceBanner} />
+          <GraduationExcellenceBannerSection banner={banner} />
         </div>
       </main>
     </div>

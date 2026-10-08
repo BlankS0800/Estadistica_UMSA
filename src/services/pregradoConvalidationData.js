@@ -9,7 +9,7 @@ import {
   History,
   Layers,
   ListFilter,
-  Map,
+  Map as MapIcon,
   PieChart,
   RefreshCcw,
   Sigma,
@@ -17,6 +17,22 @@ import {
   TrendingUp,
   Zap,
 } from 'lucide-react'
+
+import { httpClient } from '../api/httpClient'
+import { seccionPaginaApi } from './seccionPaginaService'
+
+function buildSectionMap(sections) {
+  const map = {}
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo
+      if (key) map[key] = s.valor
+    }
+  }
+  return {
+    get: (key) => map[key],
+  }
+}
 
 export const convalidationHero = {
   eyebrow: 'Migración de planes',
@@ -174,7 +190,7 @@ export const convalidation2012to2021Optativas = [
   },
   {
     title: 'Área Ing. Geográfica',
-    icon: Map,
+    icon: MapIcon,
     items: [
       { old: { id: 'IIM 384', n: 'Cartografía Digitalizada' }, new: { id: 'MAP 202', n: 'Cartografía' } },
     ],
@@ -243,3 +259,76 @@ export const convalidationVisuals = {
   headerIcon: FileText,
   processIcon: Target,
 }
+
+export async function loadConvalidationPageData() {
+  try {
+    const [sections, convalidaRows, materias] = await Promise.all([
+      seccionPaginaApi.list('/pregrado/convalidaciones').catch(() => []),
+      httpClient('/convalida').catch(() => []),
+      httpClient('/materia-pregrado').catch(() => []),
+    ])
+
+    const secMap = buildSectionMap(sections)
+
+    const hero = {
+      ...convalidationHero,
+      eyebrow: secMap.get('convalidacion_hero_eyebrow') || convalidationHero.eyebrow,
+      title: [
+        secMap.get('convalidacion_hero_titulo_01') || convalidationHero.title[0],
+        secMap.get('convalidacion_hero_titulo_02') || convalidationHero.title[1],
+      ],
+      highlights: [
+        secMap.get('convalidacion_hero_highlight_01') || convalidationHero.highlights[0],
+        secMap.get('convalidacion_hero_highlight_02') || convalidationHero.highlights[1],
+      ],
+    }
+
+    const intro = {
+      ...convalidationIntro,
+      title: secMap.get('convalidacion_intro_titulo') || convalidationIntro.title,
+      description: secMap.get('convalidacion_intro_descripcion') || convalidationIntro.description,
+    }
+
+    const procedure = {
+      ...convalidationProcedure,
+      title: [
+        secMap.get('convalidacion_procedimiento_titulo') || convalidationProcedure.title[0],
+        secMap.get('convalidacion_procedimiento_subtitulo') || convalidationProcedure.title[1],
+      ],
+    }
+
+    let dynamicTroncales = convalidation2012to2021Troncales
+    if (convalidaRows && convalidaRows.length > 0) {
+      const matMap = {}
+      if (Array.isArray(materias)) {
+        for (const m of materias) {
+          matMap[m.idMateriaAct] = m
+        }
+      }
+      dynamicTroncales = convalidaRows.map((c) => {
+        const mat = matMap[c.idMateriaAct]
+        return {
+          old: {
+            id: c.siglaMateriaAntigua,
+            n: c.nombreMateriaAntigua,
+          },
+          new: {
+            id: mat ? mat.siglaMateriaAct : `ACT-${c.idMateriaAct}`,
+            n: mat ? mat.nombreMateriaAct : 'Materia Actual',
+          },
+        }
+      })
+    }
+
+    return { hero, intro, procedure, troncales2021: dynamicTroncales }
+  } catch (err) {
+    console.error('Error cargando convalidaciones dinámicas:', err)
+    return {
+      hero: convalidationHero,
+      intro: convalidationIntro,
+      procedure: convalidationProcedure,
+      troncales2021: convalidation2012to2021Troncales,
+    }
+  }
+}
+

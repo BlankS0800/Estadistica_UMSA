@@ -30,6 +30,21 @@ import {
   Cpu,
   LayoutGrid,
 } from 'lucide-react'
+import { httpClient } from '../api/httpClient'
+import { seccionPaginaApi } from './seccionPaginaService'
+
+function buildSectionMap(sections) {
+  const map = {}
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo
+      if (key) map[key] = s.valor
+    }
+  }
+  return {
+    get: (key) => map[key],
+  }
+}
 
 export const postgradoHero = {
   icon: BarChart3,
@@ -240,4 +255,117 @@ export const postgradoFooter = {
   subtitle: 'Maestría Terminal en Ciencia de Datos',
   metrics: ['MAGISTER SCIENTIARUM', 'UMSA 2026'],
   icon: BarChart3,
+}
+
+export async function loadPostgradoTerminalData() {
+  try {
+    const [sections, prog1] = await Promise.all([
+      seccionPaginaApi.list('/postgrado/maestria-terminal').catch(() => []),
+      httpClient('/programa/1').catch(() => null),
+    ])
+
+    const secMap = buildSectionMap(sections)
+
+    const dynamicHero = {
+      ...postgradoHero,
+      eyebrow: secMap.get('pos_terminal_hero_eyebrow') || postgradoHero.eyebrow,
+      title: [
+        secMap.get('pos_terminal_hero_titulo_01') || (prog1 ? prog1.nombre.split(' en ')[0] : postgradoHero.title[0]),
+        secMap.get('pos_terminal_hero_titulo_02') || (prog1 && prog1.nombre.includes(' en ') ? 'en ' + prog1.nombre.split(' en ')[1] : postgradoHero.title[1]),
+      ],
+      description: secMap.get('pos_terminal_hero_descripcion') || postgradoHero.description,
+      highlights: [
+        secMap.get('pos_terminal_hero_highlight_01') || postgradoHero.highlights[0],
+        secMap.get('pos_terminal_hero_highlight_02') || postgradoHero.highlights[1],
+        secMap.get('pos_terminal_hero_highlight_03') || postgradoHero.highlights[2],
+      ],
+      ctaPrimary: {
+        ...postgradoHero.ctaPrimary,
+        label: secMap.get('pos_terminal_hero_cta_principal') || postgradoHero.ctaPrimary.label,
+      },
+      ctaSecondary: {
+        ...postgradoHero.ctaSecondary,
+        label: secMap.get('pos_terminal_hero_cta_secundario') || postgradoHero.ctaSecondary.label,
+      },
+    }
+
+    const dynamicProfile = {
+      ...postgradoProfile,
+      tag: secMap.get('pos_terminal_perfil_tag') || postgradoProfile.tag,
+      title: secMap.get('pos_terminal_perfil_titulo') || postgradoProfile.title,
+      sub: secMap.get('pos_terminal_perfil_sub') || postgradoProfile.sub,
+    }
+
+    const dynamicCurriculumMeta = {
+      ...curriculumMeta,
+      tag: secMap.get('pos_terminal_curriculum_tag') || curriculumMeta.tag,
+      title: secMap.get('pos_terminal_curriculum_titulo') || curriculumMeta.title,
+      sub: secMap.get('pos_terminal_curriculum_sub') || curriculumMeta.sub,
+      note: secMap.get('pos_terminal_curriculum_nota') || curriculumMeta.note,
+    }
+
+    const dynamicAdmission = {
+      ...admissionRequirements,
+      tag: secMap.get('pos_terminal_admision_tag') || admissionRequirements.tag,
+      title: secMap.get('pos_terminal_admision_titulo') || admissionRequirements.title,
+      sub: secMap.get('pos_terminal_admision_sub') || admissionRequirements.sub,
+    }
+
+    const dynamicFields = {
+      ...occupationalFields,
+      tag: secMap.get('pos_terminal_campo_tag') || occupationalFields.tag,
+      title: secMap.get('pos_terminal_campo_titulo') || occupationalFields.title,
+      sub: secMap.get('pos_terminal_campo_sub') || occupationalFields.sub,
+    }
+
+    let dynamicModules = curriculumModules
+    if (prog1 && Array.isArray(prog1.organiza) && prog1.organiza.length > 0) {
+      dynamicModules = prog1.organiza.map((org, index) => {
+        const mod = org.modulo || {}
+        const fallbackMod = curriculumModules[index] || curriculumModules[0]
+        const hpStr = mod.incluye?.horasPresencial || '240 hrs'
+        const hiStr = mod.incluye?.horasInvestigacion || '360 hrs'
+        const hpNum = parseInt(hpStr, 10) || 240
+        const hiNum = parseInt(hiStr, 10) || 360
+        const htNum = hpNum + hiNum
+
+        return {
+          id: `mod${index + 1}`,
+          title: mod.numeroModulo || fallbackMod.title,
+          subtitle: mod.tituloModulo || fallbackMod.subtitle,
+          icon: fallbackMod.icon,
+          items: fallbackMod.items,
+          totals: {
+            hp: hpNum,
+            hi: hiNum,
+            ht: htNum,
+            cr: fallbackMod.totals.cr,
+          },
+        }
+      })
+    }
+
+    return {
+      hero: dynamicHero,
+      profile: dynamicProfile,
+      curriculumMeta: dynamicCurriculumMeta,
+      curriculumModules: dynamicModules,
+      admissionRequirements: dynamicAdmission,
+      occupationalFields: dynamicFields,
+      electiveCatalog,
+      postgradoFooter,
+    }
+  } catch (err) {
+    console.error('Error cargando datos dinámicos de postgrado terminal:', err)
+    return {
+      hero: postgradoHero,
+      profile: postgradoProfile,
+      curriculumMeta,
+      curriculumModules,
+      admissionRequirements,
+      occupationalFields,
+      electiveCatalog,
+      postgradoFooter,
+    }
+  }
 }

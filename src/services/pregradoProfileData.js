@@ -15,6 +15,8 @@ import {
   Binary,
 } from 'lucide-react'
 
+import { seccionPaginaApi } from './seccionPaginaService'
+
 export const pregradoHero = {
   eyebrow: 'Carrera de Licenciatura · UMSA',
   title: ['Forjando los líderes', 'del análisis de datos', 'en Bolivia.'],
@@ -258,3 +260,133 @@ export const pregradoStats = [
   { icon: Briefcase, label: 'Sectores de impacto', value: '12+' },
   { icon: Database, label: 'Cursos cuantitativos', value: '40+' },
 ]
+
+function buildSectionMap(sections) {
+  const map = {}
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo
+      if (key) map[key] = s.valor
+    }
+  }
+  return {
+    get: (key) => map[key],
+  }
+}
+
+export async function loadProfilePageData() {
+  try {
+    const sections = await seccionPaginaApi.list('/pregrado/perfil-profesional').catch(() => [])
+    const secMap = buildSectionMap(sections)
+
+    const hero = {
+      ...pregradoHero,
+      eyebrow: secMap.get('perfil_hero_etiqueta') || pregradoHero.eyebrow,
+      title: [
+        secMap.get('perfil_hero_titulo_01') || pregradoHero.title[0],
+        secMap.get('perfil_hero_titulo_02') || pregradoHero.title[1],
+        secMap.get('perfil_hero_titulo_03') || pregradoHero.title[2],
+      ],
+      description: secMap.get('perfil_hero_descripcion') || pregradoHero.description,
+      imageUrl: secMap.get('perfil_hero_imagen') || pregradoHero.imageUrl,
+      primaryCta: {
+        ...pregradoHero.primaryCta,
+        label: secMap.get('perfil_hero_cta_principal') || pregradoHero.primaryCta.label,
+      },
+      secondaryCta: {
+        ...pregradoHero.secondaryCta,
+        label: secMap.get('perfil_hero_cta_secundario') || pregradoHero.secondaryCta.label,
+      },
+    }
+
+    const applicant = {
+      ...applicantProfile,
+      tag: secMap.get('perfil_aptitud_etiqueta') || applicantProfile.tag,
+      title: secMap.get('perfil_aptitud_titulo') || applicantProfile.title,
+      sub: secMap.get('perfil_aptitud_subtitulo') || applicantProfile.sub,
+      cards: applicantProfile.cards.map((card, idx) => {
+        const num = String(idx + 1).padStart(2, '0')
+        return {
+          ...card,
+          title: secMap.get(`perfil_aptitud_card_${num}_titulo`) || card.title,
+          description: secMap.get(`perfil_aptitud_card_${num}_desc`) || card.description,
+        }
+      }),
+    }
+
+    const competencies = {
+      ...graduateCompetencies,
+      tag: secMap.get('perfil_competencias_etiqueta') || graduateCompetencies.tag,
+      title: secMap.get('perfil_competencias_titulo') || graduateCompetencies.title,
+      sub: secMap.get('perfil_competencias_subtitulo') || graduateCompetencies.sub,
+      degree: {
+        ...graduateCompetencies.degree,
+        title: secMap.get('perfil_competencias_grado_titulo') || graduateCompetencies.degree.title,
+        subtitle: secMap.get('perfil_competencias_grado_subtitulo') || graduateCompetencies.degree.subtitle,
+      },
+    }
+
+    const career = {
+      ...careerOutcomes,
+      tag: secMap.get('perfil_salidas_etiqueta') || careerOutcomes.tag,
+      title: secMap.get('perfil_salidas_titulo') || careerOutcomes.title,
+      sub: secMap.get('perfil_salidas_subtitulo') || careerOutcomes.sub,
+      featured: {
+        ...careerOutcomes.featured,
+        badge: secMap.get('perfil_salidas_destacado_badge') || careerOutcomes.featured.badge,
+        title: secMap.get('perfil_salidas_destacado_titulo') || careerOutcomes.featured.title,
+        subtitle: secMap.get('perfil_salidas_destacado_subtitulo') || careerOutcomes.featured.subtitle,
+        description: secMap.get('perfil_salidas_destacado_desc') || careerOutcomes.featured.description,
+      },
+      cards: careerOutcomes.cards.map((c, idx) => {
+        const num = String(idx + 1).padStart(2, '0')
+        return {
+          ...c,
+          title: secMap.get(`perfil_salidas_card_${num}_titulo`) || c.title,
+          description: secMap.get(`perfil_salidas_card_${num}_desc`) || c.description,
+        }
+      }),
+    }
+
+    const field = {
+      ...occupationalField,
+      tag: secMap.get('perfil_campo_etiqueta') || occupationalField.tag,
+      title: secMap.get('perfil_campo_titulo') || occupationalField.title,
+      cta: {
+        ...occupationalField.cta,
+        title: secMap.get('perfil_campo_cta_titulo') || occupationalField.cta.title,
+        buttonLabel: secMap.get('perfil_campo_cta_boton') || occupationalField.cta.buttonLabel,
+      },
+    }
+
+    const stats = [
+      {
+        ...pregradoStats[0],
+        value: secMap.get('perfil_stats_01_valor') || pregradoStats[0].value,
+        label: secMap.get('perfil_stats_01_etiqueta') || pregradoStats[0].label,
+      },
+      {
+        ...pregradoStats[1],
+        value: secMap.get('perfil_stats_02_valor') || pregradoStats[1].value,
+        label: secMap.get('perfil_stats_02_etiqueta') || pregradoStats[1].label,
+      },
+      {
+        ...pregradoStats[2],
+        value: secMap.get('perfil_stats_03_valor') || pregradoStats[2].value,
+        label: secMap.get('perfil_stats_03_etiqueta') || pregradoStats[2].label,
+      },
+    ]
+
+    return { hero, applicant, competencies, career, field, stats }
+  } catch (err) {
+    console.error('Error cargando datos de perfil:', err)
+    return {
+      hero: pregradoHero,
+      applicant: applicantProfile,
+      competencies: graduateCompetencies,
+      career: careerOutcomes,
+      field: occupationalField,
+      stats: pregradoStats,
+    }
+  }
+}

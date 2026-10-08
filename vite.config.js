@@ -13,6 +13,10 @@ export default defineConfig(({ mode }) => {
           target: env.VITE_BACKEND_URL || 'http://localhost:3000',
           changeOrigin: true,
         },
+        '/uploads': {
+          target: env.VITE_BACKEND_URL || 'http://localhost:3000',
+          changeOrigin: true,
+        },
       },
     },
   }

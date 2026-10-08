@@ -15,7 +15,7 @@ import {
   Info,
   Layers,
   ListPlus,
-  Map,
+  Map as MapIcon,
   MousePointer2,
   PenTool,
   PieChart,
@@ -25,11 +25,88 @@ import {
   TrendingUp,
 } from 'lucide-react'
 
+import { httpClient } from '../api/httpClient'
+import { seccionPaginaApi } from './seccionPaginaService'
+
+function buildSectionMap(sections) {
+  const map = {}
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo
+      if (key) map[key] = s.valor
+    }
+  }
+  return {
+    get: (key) => map[key],
+  }
+}
+
 export const curriculumHero = {
   eyebrow: 'Resolución académica 2021',
   title: ['Plan de Estudios', 'y Malla Curricular'],
   highlights: ['9.600 Horas', '240 Créditos'],
 }
+
+const fallbackMaterias = [
+  { idMateriaAct: 1, siglaMateriaAct: 'INF-111', nombreMateriaAct: 'Programación I', horasMateria: 200, prerrequisitos: 'Ninguno', semestre: 1, incluye: [{ idPlanEstudio: 1 }, { idPlanEstudio: 2 }] },
+  { idMateriaAct: 2, siglaMateriaAct: 'LAB-111', nombreMateriaAct: 'Laboratorio de Programación I', horasMateria: 240, prerrequisitos: 'Ninguno', semestre: 1, incluye: [{ idPlanEstudio: 1 }, { idPlanEstudio: 2 }] },
+  { idMateriaAct: 3, siglaMateriaAct: 'MAT-130', nombreMateriaAct: 'Álgebra', horasMateria: 200, prerrequisitos: 'Ninguno', semestre: 1, incluye: [{ idPlanEstudio: 1 }, { idPlanEstudio: 2 }] },
+  { idMateriaAct: 4, siglaMateriaAct: 'MAT-132', nombreMateriaAct: 'Cálculo I', horasMateria: 200, prerrequisitos: 'Ninguno', semestre: 1, incluye: [{ idPlanEstudio: 1 }, { idPlanEstudio: 2 }] },
+  { idMateriaAct: 5, siglaMateriaAct: 'EST-113', nombreMateriaAct: 'Estadística Descriptiva', horasMateria: 240, prerrequisitos: 'Ninguno', semestre: 1, incluye: [{ idPlanEstudio: 2 }] },
+  { idMateriaAct: 6, siglaMateriaAct: 'LIN-116', nombreMateriaAct: 'Inglés I', horasMateria: 120, prerrequisitos: 'Ninguno', semestre: 1, incluye: [{ idPlanEstudio: 1 }, { idPlanEstudio: 2 }] },
+  { idMateriaAct: 8, siglaMateriaAct: 'EST-122', nombreMateriaAct: 'Computación Estadística I', horasMateria: 240, prerrequisitos: 'INF-111, LAB-111', semestre: 2, incluye: [{ idPlanEstudio: 2 }] },
+  { idMateriaAct: 9, siglaMateriaAct: 'EST-124', nombreMateriaAct: 'Diseño y Proc. Estadístico I', horasMateria: 240, prerrequisitos: 'EST-113', semestre: 2, incluye: [{ idPlanEstudio: 2 }] },
+  { idMateriaAct: 10, siglaMateriaAct: 'MAT-136', nombreMateriaAct: 'Álgebra Lineal', horasMateria: 200, prerrequisitos: 'MAT-130', semestre: 2, incluye: [{ idPlanEstudio: 1 }, { idPlanEstudio: 2 }] },
+  { idMateriaAct: 11, siglaMateriaAct: 'MAT-134', nombreMateriaAct: 'Cálculo II', horasMateria: 200, prerrequisitos: 'MAT-132', semestre: 2, incluye: [{ idPlanEstudio: 1 }, { idPlanEstudio: 2 }] },
+  { idMateriaAct: 12, siglaMateriaAct: 'EST-123', nombreMateriaAct: 'Probabilidad I', horasMateria: 200, prerrequisitos: 'MAT-132', semestre: 2, incluye: [{ idPlanEstudio: 2 }] },
+  { idMateriaAct: 13, siglaMateriaAct: 'LIN-117', nombreMateriaAct: 'Inglés II', horasMateria: 120, prerrequisitos: 'LIN-116', semestre: 2, incluye: [{ idPlanEstudio: 1 }, { idPlanEstudio: 2 }] },
+]
+
+export async function loadCurriculumPageData() {
+  try {
+    const [sections, plans, subjects] = await Promise.all([
+      seccionPaginaApi.list('/pregrado/malla-curricular').catch(() => []),
+      httpClient('/plan-estudios').catch(() => []),
+      httpClient('/materia-pregrado').catch(() => []),
+    ])
+
+    const secMap = buildSectionMap(sections)
+
+    const dynamicHero = {
+      eyebrow: secMap.get('malla_hero_eyebrow') || curriculumHero.eyebrow,
+      title: [
+        secMap.get('malla_hero_titulo_01') || curriculumHero.title[0],
+        secMap.get('malla_hero_titulo_02') || curriculumHero.title[1],
+      ],
+      highlights: [
+        secMap.get('malla_hero_horas') || curriculumHero.highlights[0],
+        secMap.get('malla_hero_creditos') || curriculumHero.highlights[1],
+      ],
+    }
+
+    const validMaterias = Array.isArray(subjects) && subjects.length > 0 ? subjects : fallbackMaterias
+
+    return {
+      hero: dynamicHero,
+      planes: Array.isArray(plans) && plans.length > 0 ? plans : [
+        { idPlanEstudio: 1, nombrePlan: 'Plan Antiguo' },
+        { idPlanEstudio: 2, nombrePlan: 'Plan Nuevo' },
+      ],
+      materias: validMaterias,
+    }
+  } catch (err) {
+    console.error('Error cargando datos dinámicos de malla:', err)
+    return {
+      hero: curriculumHero,
+      planes: [
+        { idPlanEstudio: 1, nombrePlan: 'Plan Antiguo' },
+        { idPlanEstudio: 2, nombrePlan: 'Plan Nuevo' },
+      ],
+      materias: fallbackMaterias,
+    }
+  }
+}
+
 
 export const curriculumData = [
   {
@@ -147,7 +224,7 @@ export const electivesAreas = [
   },
   {
     title: 'Ingeniería Geográfica',
-    icon: Map,
+    icon: MapIcon,
     items: [
       { id: 'MAP 202', n: 'Cartografía', pre: 'Computación Est. I', ht: 200, cr: 5 },
       { id: 'GEO 304', n: 'Geografía Regional', pre: 'Cartografía', ht: 200, cr: 5 },
@@ -289,3 +366,24 @@ export const curriculumUtilities = {
 }
 
 export const flatSubjects = curriculumData.flatMap((sem) => sem.subjects)
+
+export async function loadCalendarPageData() {
+  try {
+    const sections = await seccionPaginaApi.list('/pregrado/calendario-academico').catch(() => [])
+    const secMap = buildSectionMap(sections)
+
+    const calendarMeta = {
+      ...curriculumCalendarMeta,
+      tag: secMap.get('calendario_hero_badge') || curriculumCalendarMeta.tag,
+      title: secMap.get('calendario_hero_titulo') || curriculumCalendarMeta.title,
+      sub: secMap.get('calendario_hero_subtitulo') || curriculumCalendarMeta.sub,
+      noticeText: secMap.get('calendario_hero_descripcion') || curriculumCalendarMeta.noticeText,
+    }
+
+    return { calendarMeta }
+  } catch (err) {
+    console.error('Error cargando calendario dinámico:', err)
+    return { calendarMeta: curriculumCalendarMeta }
+  }
+}
+

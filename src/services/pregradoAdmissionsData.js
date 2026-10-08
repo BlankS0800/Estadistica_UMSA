@@ -9,12 +9,28 @@ import {
   Globe,
   Layers,
   ListOrdered,
-  Map,
+  Map as MapIcon,
   PieChart,
   Sigma,
   Target,
   TrendingUp,
 } from 'lucide-react'
+
+import { httpClient } from '../api/httpClient'
+import { seccionPaginaApi } from './seccionPaginaService'
+
+function buildSectionMap(sections) {
+  const map = {}
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo
+      if (key) map[key] = s.valor
+    }
+  }
+  return {
+    get: (key) => map[key],
+  }
+}
 
 export const admissionsHero = {
   badge: 'Convocatoria abierta 2026',
@@ -227,7 +243,90 @@ export const admissionsVisuals = {
   electivesPalette: [
     { label: 'Analítica aplicada', icon: PieChart },
     { label: 'Proyección económica', icon: TrendingUp },
-    { label: 'Rutas geográficas', icon: Map },
+    { label: 'Rutas geográficas', icon: MapIcon },
     { label: 'Entorno industrial', icon: Factory },
   ],
 }
+
+export async function loadAdmissionsPageData() {
+  try {
+    const [sections, convocatorias] = await Promise.all([
+      seccionPaginaApi.list('/pregrado/admisiones').catch(() => []),
+      httpClient('/convocatoria').catch(() => []),
+    ])
+
+    const secMap = buildSectionMap(sections)
+
+    const hero = {
+      ...admissionsHero,
+      badge: secMap.get('admisiones_hero_badge') || admissionsHero.badge,
+      title: [
+        secMap.get('admisiones_hero_titulo_01') || admissionsHero.title[0],
+        secMap.get('admisiones_hero_titulo_02') || admissionsHero.title[1],
+        secMap.get('admisiones_hero_titulo_03') || admissionsHero.title[2],
+      ],
+      description: secMap.get('admisiones_hero_descripcion') || admissionsHero.description,
+      stats: {
+        ...admissionsHero.stats,
+        value: secMap.get('admisiones_hero_cupos') || admissionsHero.stats.value,
+      },
+    }
+
+    const regular = {
+      ...regularAdmissions,
+      tag: secMap.get('admisiones_modalidades_tag') || regularAdmissions.tag,
+      title: secMap.get('admisiones_modalidades_titulo') || regularAdmissions.title,
+      sub: secMap.get('admisiones_modalidades_subtitulo') || regularAdmissions.sub,
+    }
+
+    const requirements = {
+      ...generalRequirements,
+      title: [
+        secMap.get('admisiones_requisitos_titulo')?.split(' ')[0] || generalRequirements.title[0],
+        secMap.get('admisiones_requisitos_titulo')?.split(' ').slice(1).join(' ') || generalRequirements.title[1],
+      ],
+      description: secMap.get('admisiones_requisitos_descripcion') || generalRequirements.description,
+    }
+
+    let timeline = admissionsTimeline
+    if (convocatorias && convocatorias.length > 0) {
+      timeline = {
+        ...admissionsTimeline,
+        periods: convocatorias.map((c, idx) => ({
+          id: `conv-${c.idConvocatoria}`,
+          badge: idx === 0 ? 'Primera convocatoria' : 'Segunda convocatoria',
+          title: c.periodoConvocatoria,
+          summary: c.descConvocatoria,
+          badgeStyle: idx % 2 === 0 ? 'orange' : 'blue',
+          rows: [
+            ['Inscripción Pre-U', c.insPreu],
+            ['Inscripción PSA', c.insPsa],
+            [
+              'Entrega de documentos',
+              c.fechaEntregaDocs
+                ? new Date(c.fechaEntregaDocs).toLocaleDateString('es-ES', {
+                    timeZone: 'UTC',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })
+                : 'Por definir',
+            ],
+            ['Matriculación Kárdex', c.matriculacionKardex],
+          ],
+        })),
+      }
+    }
+
+    return { hero, regular, requirements, timeline }
+  } catch (err) {
+    console.error('Error cargando admisiones dinámicas:', err)
+    return {
+      hero: admissionsHero,
+      regular: regularAdmissions,
+      requirements: generalRequirements,
+      timeline: admissionsTimeline,
+    }
+  }
+}
+

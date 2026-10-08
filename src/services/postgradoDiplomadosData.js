@@ -15,6 +15,21 @@ import {
   TrendingUp,
   ArrowUpRight,
 } from 'lucide-react'
+import { httpClient } from '../api/httpClient'
+import { seccionPaginaApi } from './seccionPaginaService'
+
+function buildSectionMap(sections) {
+  const map = {}
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo
+      if (key) map[key] = s.valor
+    }
+  }
+  return {
+    get: (key) => map[key],
+  }
+}
 
 export const diplomadosHero = {
   eyebrow: 'Programas de certificación corta',
@@ -137,4 +152,86 @@ export const diplomadosUi = {
   investmentIcon: CreditCard,
   emptyIcon: BookOpen,
   opportunitiesIcon: Briefcase,
+}
+
+export async function loadPostgradoDiplomadosData() {
+  try {
+    const [sections, programsList] = await Promise.all([
+      seccionPaginaApi.list('/postgrado/diplomados').catch(() => []),
+      httpClient('/programa?tipo=Diplomado').catch(() => []),
+    ])
+
+    const secMap = buildSectionMap(sections)
+
+    const dynamicHero = {
+      ...diplomadosHero,
+      eyebrow: secMap.get('pos_dip_hero_eyebrow') || diplomadosHero.eyebrow,
+      title: [
+        secMap.get('pos_dip_hero_titulo_01') || diplomadosHero.title[0],
+        secMap.get('pos_dip_hero_titulo_02') || diplomadosHero.title[1],
+      ],
+      description: secMap.get('pos_dip_hero_descripcion') || diplomadosHero.description,
+      highlights: [
+        secMap.get('pos_dip_hero_highlight_01') || diplomadosHero.highlights[0],
+        secMap.get('pos_dip_hero_highlight_02') || diplomadosHero.highlights[1],
+        secMap.get('pos_dip_hero_highlight_03') || diplomadosHero.highlights[2],
+      ],
+    }
+
+    const dynamicRequirements = {
+      ...diplomadosRequirements,
+      tag: secMap.get('pos_dip_requisitos_tag') || diplomadosRequirements.tag,
+      title: secMap.get('pos_dip_requisitos_titulo') || diplomadosRequirements.title,
+      sub: secMap.get('pos_dip_requisitos_sub') || diplomadosRequirements.sub,
+    }
+
+    let dynamicPrograms = diplomadosPrograms
+    if (Array.isArray(programsList) && programsList.length > 0) {
+      dynamicPrograms = programsList.map((p, index) => {
+        const fallback =
+          diplomadosPrograms.find((dp) => dp.title.toLowerCase().trim() === p.nombre.toLowerCase().trim()) ||
+          diplomadosPrograms[index] ||
+          diplomadosPrograms[0]
+
+        const modules =
+          Array.isArray(p.organiza) && p.organiza.length > 0
+            ? p.organiza.map((o) => ({
+                title: o.modulo?.numeroModulo || 'Módulo',
+                name: o.modulo?.tituloModulo || 'Contenido del módulo',
+              }))
+            : fallback.details.modules
+
+        return {
+          ...fallback,
+          id: `dip-${p.idPrograma}`,
+          title: p.nombre,
+          details: {
+            ...fallback.details,
+            modules,
+            investment: {
+              ...fallback.details?.investment,
+              total: p.costo || fallback.details?.investment?.total,
+            },
+          },
+        }
+      })
+    }
+
+    return {
+      hero: dynamicHero,
+      programs: dynamicPrograms,
+      requirements: dynamicRequirements,
+      filters: diplomadosFilters,
+      ui: diplomadosUi,
+    }
+  } catch (err) {
+    console.error('Error cargando datos dinámicos de postgrado diplomados:', err)
+    return {
+      hero: diplomadosHero,
+      programs: diplomadosPrograms,
+      requirements: diplomadosRequirements,
+      filters: diplomadosFilters,
+      ui: diplomadosUi,
+    }
+  }
 }
