@@ -183,6 +183,23 @@ export async function loadPostgradoDiplomadosData() {
       tag: secMap.get('pos_dip_requisitos_tag') || diplomadosRequirements.tag,
       title: secMap.get('pos_dip_requisitos_titulo') || diplomadosRequirements.title,
       sub: secMap.get('pos_dip_requisitos_sub') || diplomadosRequirements.sub,
+      profileTitle: secMap.get('pos_diplo_perfil_titulo') || diplomadosRequirements.profileTitle,
+      profileText: secMap.get('pos_diplo_perfil_desc') || diplomadosRequirements.profileText,
+      ctaLabel: secMap.get('pos_diplo_requisitos_cta_label') || diplomadosRequirements.ctaLabel,
+      ctaHref: secMap.get('pos_diplo_requisitos_cta_href') || diplomadosRequirements.ctaHref,
+      items: [
+        secMap.get('pos_diplo_req_item1'),
+        secMap.get('pos_diplo_req_item2'),
+        secMap.get('pos_diplo_req_item3'),
+        secMap.get('pos_diplo_req_item4'),
+      ].filter(Boolean).length > 0
+        ? [
+            secMap.get('pos_diplo_req_item1'),
+            secMap.get('pos_diplo_req_item2'),
+            secMap.get('pos_diplo_req_item3'),
+            secMap.get('pos_diplo_req_item4'),
+          ].filter(Boolean)
+        : diplomadosRequirements.items,
     }
 
     let dynamicPrograms = diplomadosPrograms

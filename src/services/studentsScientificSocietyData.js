@@ -18,6 +18,21 @@ import {
   ClipboardList,
   FileSearch,
 } from 'lucide-react'
+import { httpClient } from '../api/httpClient'
+import { seccionPaginaApi } from './seccionPaginaService'
+
+function buildSectionMap(sections) {
+  const map = {}
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo
+      if (key) map[key] = s.valor
+    }
+  }
+  return {
+    get: (key) => map[key],
+  }
+}
 
 export const studentsScientificHero = {
   eyebrow: 'Investigación y desarrollo',
@@ -177,16 +192,14 @@ export const societyTestimonials = [
     role: 'Investigadora estudiante',
     quote:
       'El grupo me dio disciplina, método y apoyo para convertir mi interés en un artículo real.',
-    avatar:
-      '/images/estudiantes/sofia_fernandez.jpg',
+    avatar: '/images/estudiantes/sofia_fernandez.jpg',
   },
   {
     name: 'Diego Huanca',
     role: 'Miembro de la SCEE',
     quote:
       'La Sociedad Científica me permitió trabajar con datos reales y aprender a comunicar resultados con rigor.',
-    avatar:
-      '/images/estudiantes/diego_huanca.jpg',
+    avatar: '/images/estudiantes/diego_huanca.jpg',
   },
 ]
 
@@ -199,4 +212,132 @@ export const societyMapNodes = [
 export const societyUi = {
   sectionIcon: FileSearch,
   downloadIcon: Layers,
+}
+
+export async function loadStudentsScientificSocietyData() {
+  try {
+    const [sectionsA, sectionsB, pubRes, matRes] = await Promise.all([
+      seccionPaginaApi.list('/estudiantes/sociedad-cientifica').catch(() => []),
+      seccionPaginaApi.list('/estudiantes/sociedades-cientificas').catch(() => []),
+      httpClient('/publicaciones-estudiantiles').catch(() => []),
+      httpClient('/matriz-cientifica').catch(() => []),
+    ])
+
+    const allSections = [...(Array.isArray(sectionsA) ? sectionsA : []), ...(Array.isArray(sectionsB) ? sectionsB : [])]
+    const secMap = buildSectionMap(allSections)
+
+    const rawPubs = Array.isArray(pubRes) ? pubRes : Array.isArray(pubRes?.data) ? pubRes.data : []
+    const rawMats = Array.isArray(matRes) ? matRes : Array.isArray(matRes?.data) ? matRes.data : []
+
+    // 1. Hero
+    const dynamicHero = {
+      ...studentsScientificHero,
+      eyebrow: secMap.get('est_sociedad_hero_eyebrow') || studentsScientificHero.eyebrow,
+      title: [
+        secMap.get('est_sociedad_hero_titulo_01') || studentsScientificHero.title[0],
+        secMap.get('est_sociedad_hero_titulo_02') || studentsScientificHero.title[1],
+      ],
+      description: secMap.get('est_sociedad_hero_descripcion') || studentsScientificHero.description,
+      ctaLabel: secMap.get('est_sociedad_hero_cta') || studentsScientificHero.ctaLabel,
+    }
+
+    // 2. Líneas de Investigación (Matriz Científica)
+    let dynamicLines = researchLines
+    if (rawMats.length > 0) {
+      const tones = ['blue', 'orange', 'teal', 'indigo']
+      const icons = [Database, Users, HeartPulse, Sigma]
+      dynamicLines = rawMats.map((m, idx) => ({
+        title: m.titulo || 'Línea de Investigación',
+        desc: m.descripcion || '',
+        icon: icons[idx % icons.length],
+        tone: tones[idx % tones.length],
+      }))
+    }
+
+    // 3. Publicaciones Estudiantiles
+    let dynamicPapers = papers
+    if (rawPubs.length > 0) {
+      dynamicPapers = rawPubs.map((p) => ({
+        id: `PUB-${String(p.id).padStart(3, '0')}`,
+        title: p.titulo,
+        author: p.autor,
+        year: String(p.anio),
+        tag: p.area,
+      }))
+    }
+
+    const dynamicNodes = studyNodes.map((n, idx) => {
+      const num = idx + 1
+      return {
+        ...n,
+        title: secMap.get(`est_sociedad_nodo_${num}_titulo`) || n.title,
+        tag: secMap.get(`est_sociedad_nodo_${num}_tag`) || n.tag,
+        desc: secMap.get(`est_sociedad_nodo_${num}_desc`) || n.desc,
+      }
+    })
+
+    const dynamicBenefits = benefits.map((b, idx) => {
+      const num = idx + 1
+      return {
+        ...b,
+        title: secMap.get(`est_sociedad_ben_${num}_titulo`) || b.title,
+        desc: secMap.get(`est_sociedad_ben_${num}_desc`) || b.desc,
+      }
+    })
+
+    const dynamicSteps = admissionSteps.map((s, idx) => {
+      const num = idx + 1
+      return {
+        ...s,
+        title: secMap.get(`est_sociedad_paso_${num}_titulo`) || s.title,
+        desc: secMap.get(`est_sociedad_paso_${num}_desc`) || s.desc,
+      }
+    })
+
+    const dynamicJournals = journals.map((j, idx) => {
+      const num = idx + 1
+      return {
+        ...j,
+        title: secMap.get(`est_sociedad_rev_${num}_titulo`) || j.title,
+        desc: secMap.get(`est_sociedad_rev_${num}_desc`) || j.desc,
+      }
+    })
+
+    const dynamicTestimonials = societyTestimonials.map((t, idx) => {
+      const num = idx + 1
+      return {
+        ...t,
+        name: secMap.get(`est_sociedad_test_${num}_nombre`) || t.name,
+        role: secMap.get(`est_sociedad_test_${num}_cargo`) || t.role,
+        quote: secMap.get(`est_sociedad_test_${num}_texto`) || t.quote,
+      }
+    })
+
+    return {
+      hero: dynamicHero,
+      researchLines: dynamicLines,
+      studyNodes: dynamicNodes,
+      benefits: dynamicBenefits,
+      admissionSteps: dynamicSteps,
+      papers: dynamicPapers,
+      journals: dynamicJournals,
+      societyTestimonials: dynamicTestimonials,
+      societyMapNodes,
+      societyUi,
+    }
+  } catch (err) {
+    console.error('Error cargando datos dinámicos de Sociedad Científica:', err)
+    return {
+      hero: studentsScientificHero,
+      researchLines,
+      studyNodes,
+      benefits,
+      admissionSteps,
+      papers,
+      journals,
+      societyTestimonials,
+      societyMapNodes,
+      societyUi,
+    }
+  }
 }

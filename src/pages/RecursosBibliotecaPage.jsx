@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
-import { AUTORES, LIBROS, ALPHABET } from '../services/recursosBibliotecaData';
+import { AUTORES, LIBROS, ALPHABET, loadBibliotecaPageData } from '../services/recursosBibliotecaData';
 
 import LibraryHeroSection from '../components/organisms/resources/LibraryHeroSection';
 import LibraryToggleSearch from '../components/molecules/resources/LibraryToggleSearch';
@@ -15,6 +15,10 @@ export default function RecursosBibliotecaPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
 
+  const [books, setBooks] = useState(LIBROS);
+  const [authors, setAuthors] = useState(AUTORES);
+  const [heroData, setHeroData] = useState(null);
+
   const [currentPageBooks, setCurrentPageBooks] = useState(1);
   const [currentPageAuthors, setCurrentPageAuthors] = useState(1);
   const itemsPerPage = 12;
@@ -25,6 +29,19 @@ export default function RecursosBibliotecaPage() {
   const [selectedBookDetail, setSelectedBookDetail] = useState(null);
   const [selectedAuthorDetail, setSelectedAuthorDetail] = useState(null);
   const exploreRef = useRef(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    loadBibliotecaPageData().then((data) => {
+      if (!isMounted) return;
+      if (data.libros) setBooks(data.libros);
+      if (data.autores) setAuthors(data.autores);
+      if (data.hero) setHeroData(data.hero);
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Efecto de Debounce para optimizar el rendimiento de la búsqueda
   useEffect(() => {
@@ -56,7 +73,7 @@ export default function RecursosBibliotecaPage() {
   };
 
   const filteredBooks = useMemo(() => {
-    let result = LIBROS;
+    let result = books;
     if (debouncedSearchQuery) {
       result = result.filter(l =>
         l.titulo.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
@@ -67,13 +84,13 @@ export default function RecursosBibliotecaPage() {
       result = result.filter(l => l.categoria === selectedCategory);
     }
     return result;
-  }, [debouncedSearchQuery, selectedCategory]);
+  }, [books, debouncedSearchQuery, selectedCategory]);
 
   const paginatedBooks = filteredBooks.slice((currentPageBooks - 1) * itemsPerPage, currentPageBooks * itemsPerPage);
   const totalBooksPages = Math.ceil(filteredBooks.length / itemsPerPage);
 
   const filteredAuthors = useMemo(() => {
-    let result = AUTORES;
+    let result = authors;
     if (selectedLetter) {
       result = result.filter(a => a.letra_inicial === selectedLetter);
     }
@@ -81,7 +98,7 @@ export default function RecursosBibliotecaPage() {
       result = result.filter(a => a.nombre_completo.toLowerCase().includes(debouncedSearchQuery.toLowerCase()));
     }
     return result.sort((a, b) => a.nombre_completo.localeCompare(b.nombre_completo));
-  }, [debouncedSearchQuery, selectedLetter]);
+  }, [authors, debouncedSearchQuery, selectedLetter]);
 
   const paginatedAuthors = filteredAuthors.slice((currentPageAuthors - 1) * itemsPerPage, currentPageAuthors * itemsPerPage);
   const totalAuthorsPages = Math.ceil(filteredAuthors.length / itemsPerPage);
@@ -89,7 +106,7 @@ export default function RecursosBibliotecaPage() {
   return (
     <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900 selection:bg-[#ea580c] selection:text-white relative">
 
-      <LibraryHeroSection scrollToExplore={scrollToExplore} />
+      <LibraryHeroSection scrollToExplore={scrollToExplore} hero={heroData} />
 
       <main ref={exploreRef} className="max-w-[1400px] mx-auto px-6 py-16 min-h-screen">
 
@@ -102,7 +119,7 @@ export default function RecursosBibliotecaPage() {
           selectedLetter={selectedLetter}
           setSelectedLetter={setSelectedLetter}
           setCurrentPageAuthors={setCurrentPageAuthors}
-          autores={AUTORES}
+          autores={authors}
           alphabet={ALPHABET}
         />
 
@@ -115,7 +132,7 @@ export default function RecursosBibliotecaPage() {
               selectedCategory={selectedCategory}
               setSelectedCategory={setSelectedCategory}
               searchQuery={searchQuery}
-              autores={AUTORES}
+              autores={authors}
               setSelectedBookDetail={setSelectedBookDetail}
               currentPageBooks={currentPageBooks}
               setCurrentPageBooks={setCurrentPageBooks}
@@ -126,7 +143,7 @@ export default function RecursosBibliotecaPage() {
               key="authors-grid-main"
               paginatedAuthors={paginatedAuthors}
               filteredAuthors={filteredAuthors}
-              libros={LIBROS}
+              libros={books}
               setSelectedAuthorDetail={setSelectedAuthorDetail}
               currentPageAuthors={currentPageAuthors}
               setCurrentPageAuthors={setCurrentPageAuthors}
@@ -152,7 +169,7 @@ export default function RecursosBibliotecaPage() {
             key="author-modal-view"
             selectedAuthorDetail={selectedAuthorDetail} 
             setSelectedAuthorDetail={setSelectedAuthorDetail}
-            libros={LIBROS}
+            libros={books}
           />
         )}
       </AnimatePresence>

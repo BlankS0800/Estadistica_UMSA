@@ -252,6 +252,19 @@ export async function loadPostgradoAutofinanciadaData() {
         secMap.get('pos_autofin_hero_titulo_02') || (prog2 && prog2.nombre.includes(' en ') ? 'en ' + prog2.nombre.split(' en ')[1] : autofinancedHero.title[1]),
       ],
       description: secMap.get('pos_autofin_hero_descripcion') || autofinancedHero.description,
+      highlights: [
+        secMap.get('pos_autofin_hero_highlight_01') || autofinancedHero.highlights[0],
+        secMap.get('pos_autofin_hero_highlight_02') || autofinancedHero.highlights[1],
+        secMap.get('pos_autofin_hero_highlight_03') || autofinancedHero.highlights[2],
+      ],
+      ctaPrimary: {
+        ...autofinancedHero.ctaPrimary,
+        label: secMap.get('pos_autofin_hero_cta_principal') || autofinancedHero.ctaPrimary.label,
+      },
+      ctaSecondary: {
+        ...autofinancedHero.ctaSecondary,
+        label: secMap.get('pos_autofin_hero_cta_secundario') || autofinancedHero.ctaSecondary.label,
+      },
     }
 
     const dynamicProfile = {
@@ -259,6 +272,14 @@ export async function loadPostgradoAutofinanciadaData() {
       tag: secMap.get('pos_autofin_perfil_tag') || autofinancedProfile.tag,
       title: secMap.get('pos_autofin_perfil_titulo') || autofinancedProfile.title,
       sub: secMap.get('pos_autofin_perfil_sub') || autofinancedProfile.sub,
+      cards: autofinancedProfile.cards.map((c, idx) => {
+        const num = idx + 1
+        return {
+          ...c,
+          title: secMap.get(`pos_autofin_profile_c${num}_title`) || c.title,
+          desc: secMap.get(`pos_autofin_profile_c${num}_desc`) || c.desc,
+        }
+      }),
     }
 
     const dynamicCurriculumMeta = {
@@ -269,17 +290,70 @@ export async function loadPostgradoAutofinanciadaData() {
       note: secMap.get('pos_autofin_curriculum_nota') || autofinancedCurriculumMeta.note,
     }
 
+    const nacItems = [
+      secMap.get('pos_autofin_admision_nacional_it1'),
+      secMap.get('pos_autofin_admision_nacional_it2'),
+      secMap.get('pos_autofin_admision_nacional_it3'),
+      secMap.get('pos_autofin_admision_nacional_it4'),
+      secMap.get('pos_autofin_admision_nacional_it5'),
+    ].filter(Boolean)
+
+    const extItems = [
+      secMap.get('pos_autofin_admision_ext_it1'),
+      secMap.get('pos_autofin_admision_ext_it2'),
+      secMap.get('pos_autofin_admision_ext_it3'),
+      secMap.get('pos_autofin_admision_ext_it4'),
+      secMap.get('pos_autofin_admision_ext_it5'),
+    ].filter(Boolean)
+
     const dynamicAdmission = {
       ...autofinancedAdmissionRequirements,
       tag: secMap.get('pos_autofin_admision_tag') || autofinancedAdmissionRequirements.tag,
       title: secMap.get('pos_autofin_admision_titulo') || autofinancedAdmissionRequirements.title,
       sub: secMap.get('pos_autofin_admision_sub') || autofinancedAdmissionRequirements.sub,
+      tabs: autofinancedAdmissionRequirements.tabs.map((tab) => {
+        if (tab.id === 'bolivia' && nacItems.length > 0) {
+          return { ...tab, items: nacItems }
+        }
+        if (tab.id === 'exterior' && extItems.length > 0) {
+          return { ...tab, items: extItems }
+        }
+        return tab
+      }),
+    }
+
+    const dynamicSectors = [
+      secMap.get('pos_autofin_campo_sec1'),
+      secMap.get('pos_autofin_campo_sec2'),
+      secMap.get('pos_autofin_campo_sec3'),
+      secMap.get('pos_autofin_campo_sec4'),
+      secMap.get('pos_autofin_campo_sec5'),
+      secMap.get('pos_autofin_campo_sec6'),
+      secMap.get('pos_autofin_campo_sec7'),
+      secMap.get('pos_autofin_campo_sec8'),
+    ].filter(Boolean)
+
+    const dynamicOpportunities = {
+      ...autofinancedOpportunities,
+      tag: secMap.get('pos_autofin_campo_tag') || autofinancedOpportunities.tag,
+      title: secMap.get('pos_autofin_campo_titulo') || autofinancedOpportunities.title,
+      sub: secMap.get('pos_autofin_campo_sub') || autofinancedOpportunities.sub,
+      sectors: dynamicSectors.length > 0 ? dynamicSectors : autofinancedOpportunities.sectors,
+      roles: autofinancedOpportunities.roles.map((r, idx) => {
+        const num = idx + 1
+        return {
+          ...r,
+          role: secMap.get(`pos_autofin_campo_r${num}_role`) || r.role,
+          desc: secMap.get(`pos_autofin_campo_r${num}_desc`) || r.desc,
+        }
+      }),
     }
 
     const dynamicCTA = {
       ...autofinancedCTA,
       title: secMap.get('pos_autofin_cta_titulo') || autofinancedCTA.title,
       quote: secMap.get('pos_autofin_cta_sub') || autofinancedCTA.quote,
+      buttonLabel: secMap.get('pos_autofin_cta_boton') || autofinancedCTA.buttonLabel,
     }
 
     let dynamicModules = autofinancedModules
@@ -304,7 +378,7 @@ export async function loadPostgradoAutofinanciadaData() {
       curriculumMeta: dynamicCurriculumMeta,
       curriculumModules: dynamicModules,
       admissionRequirements: dynamicAdmission,
-      opportunities: autofinancedOpportunities,
+      opportunities: dynamicOpportunities,
       cta: dynamicCTA,
     }
   } catch (err) {

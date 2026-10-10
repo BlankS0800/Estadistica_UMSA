@@ -17,6 +17,9 @@ import {
 function PregradoGraduationPage() {
   const [hero, setHero] = useState(defaultHero)
   const [workshop, setWorkshop] = useState(defaultWorkshop)
+  const [steps, setSteps] = useState(processSteps)
+  const [modalitiesMeta, setModalitiesMeta] = useState(graduationModalitiesMeta)
+  const [modalities, setModalities] = useState(graduationModalities)
   const [banner, setBanner] = useState(defaultBanner)
 
   useEffect(() => {
@@ -25,6 +28,9 @@ function PregradoGraduationPage() {
       if (!isMounted) return
       if (data.hero) setHero(data.hero)
       if (data.workshop) setWorkshop(data.workshop)
+      if (data.processSteps) setSteps(data.processSteps)
+      if (data.modalitiesMeta) setModalitiesMeta(data.modalitiesMeta)
+      if (data.modalities) setModalities(data.modalities)
       if (data.banner) setBanner(data.banner)
     })
     return () => {
@@ -39,8 +45,8 @@ function PregradoGraduationPage() {
         <GraduationHeroSection hero={hero} />
 
         <div className="mx-auto flex max-w-[1500px] flex-col gap-28 px-4 py-20 sm:px-6 lg:px-8">
-          <GraduationWorkshopSection workshop={workshop} processSteps={processSteps} />
-          <GraduationModalitiesSection meta={graduationModalitiesMeta} modalities={graduationModalities} />
+          <GraduationWorkshopSection workshop={workshop} processSteps={steps} />
+          <GraduationModalitiesSection meta={modalitiesMeta} modalities={modalities} />
           <GraduationExcellenceBannerSection banner={banner} />
         </div>
       </main>

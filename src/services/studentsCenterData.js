@@ -17,6 +17,21 @@ import {
   UserCircle,
   Users,
 } from 'lucide-react'
+import { httpClient } from '../api/httpClient'
+import { seccionPaginaApi } from './seccionPaginaService'
+
+function buildSectionMap(sections) {
+  const map = {}
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo
+      if (key) map[key] = s.valor
+    }
+  }
+  return {
+    get: (key) => map[key],
+  }
+}
 
 export const studentsCenterHero = {
   eyebrow: 'Órgano máximo de representación',
@@ -139,4 +154,115 @@ export const studentsCenterFooter = {
     { label: 'Facebook', href: '#', icon: Mail },
     { label: 'Instagram', href: '#', icon: Mail },
   ],
+}
+
+export async function loadStudentsCenterData() {
+  try {
+    const [sections, directivosRes] = await Promise.all([
+      seccionPaginaApi.list('/estudiantes/centro-estudiantes'),
+      httpClient('/directivo-estudiante').catch(() => []),
+    ])
+
+    const secMap = buildSectionMap(sections)
+    const directivos = Array.isArray(directivosRes)
+      ? directivosRes
+      : Array.isArray(directivosRes?.data)
+      ? directivosRes.data
+      : []
+
+    // 1. Hero
+    const dynamicHero = {
+      ...studentsCenterHero,
+      eyebrow: secMap.get('est_centro_hero_eyebrow') || studentsCenterHero.eyebrow,
+      title: [
+        secMap.get('est_centro_hero_titulo_01') || studentsCenterHero.title[0],
+        secMap.get('est_centro_hero_titulo_02') || studentsCenterHero.title[1],
+      ],
+      description: secMap.get('est_centro_hero_descripcion') || studentsCenterHero.description,
+      ctaLabel: secMap.get('est_centro_hero_cta') || studentsCenterHero.ctaLabel,
+    }
+
+    // 2. Stats
+    const dynamicStats = studentsCenterStats.map((item, idx) => {
+      const num = String(idx + 1).padStart(2, '0')
+      const lbl = secMap.get(`est_centro_stats_${num}_label`)
+      const val = secMap.get(`est_centro_stats_${num}_val`)
+      return {
+        ...item,
+        label: lbl || item.label,
+        value: val ? val.split(' ')[0] : item.value,
+        suffix: val && val.includes(' ') ? val.split(' ').slice(1).join(' ') : item.suffix,
+      }
+    })
+
+    // 3. Structure
+    const dynamicStructure = {
+      ...studentsCenterStructure,
+      tag: secMap.get('est_centro_estructura_tag') || studentsCenterStructure.tag,
+      title: secMap.get('est_centro_estructura_titulo') || studentsCenterStructure.title,
+      sub: secMap.get('est_centro_estructura_sub') || studentsCenterStructure.sub,
+    }
+
+    // 4. Channels
+    const dynamicChannels = studentsCenterChannels.map((ch, idx) => {
+      const num = String(idx + 1).padStart(2, '0')
+      const lbl = secMap.get(`est_centro_canal_${num}_label`)
+      const url = secMap.get(`est_centro_canal_${num}_url`)
+      return {
+        ...ch,
+        label: lbl || ch.label,
+        href: url || ch.href,
+      }
+    })
+
+    // 5. Directiva / Delegados
+    let dynamicCee = directivaCee
+    let dynamicHcf = delegadosHcf
+    let dynamicAca = delegadosAcademico
+
+    if (directivos.length > 0) {
+      const ceeList = directivos.filter(
+        (d) => d.area && (d.area.toLowerCase().includes('cee') || d.area.toLowerCase().includes('directiva')),
+      )
+      const hcfList = directivos.filter(
+        (d) => d.area && d.area.toLowerCase().includes('hcf'),
+      )
+      const acaList = directivos.filter(
+        (d) => d.area && (d.area.toLowerCase().includes('académico') || d.area.toLowerCase().includes('academico')),
+      )
+
+      if (ceeList.length > 0) {
+        dynamicCee = ceeList.map((d) => ({ name: d.nombre, role: d.cargo }))
+      }
+      if (hcfList.length > 0) {
+        dynamicHcf = hcfList.map((d) => ({ name: d.nombre, role: d.cargo }))
+      }
+      if (acaList.length > 0) {
+        dynamicAca = acaList.map((d) => ({ name: d.nombre, role: d.cargo }))
+      }
+    }
+
+    return {
+      hero: dynamicHero,
+      stats: dynamicStats,
+      structure: dynamicStructure,
+      channels: dynamicChannels,
+      services: studentsCenterServices,
+      directivaCee: dynamicCee,
+      delegadosHcf: dynamicHcf,
+      delegadosAcademico: dynamicAca,
+    }
+  } catch (err) {
+    console.error('Error cargando datos dinámicos de Centro de Estudiantes:', err)
+    return {
+      hero: studentsCenterHero,
+      stats: studentsCenterStats,
+      structure: studentsCenterStructure,
+      channels: studentsCenterChannels,
+      services: studentsCenterServices,
+      directivaCee,
+      delegadosHcf,
+      delegadosAcademico,
+    }
+  }
 }

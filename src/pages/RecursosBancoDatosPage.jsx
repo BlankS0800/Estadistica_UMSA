@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { SlidersHorizontal } from 'lucide-react';
-import { bancoDatosData } from '../services/recursosBancoDatosData';
+import { bancoDatosData, loadBancoDatosPageData } from '../services/recursosBancoDatosData';
 import BancoDatosHeroSection from '../components/organisms/resources/BancoDatosHeroSection';
 import BancoDatosFiltersSidebar from '../components/organisms/resources/BancoDatosFiltersSidebar';
 import BancoDatosSearchBar from '../components/organisms/resources/BancoDatosSearchBar';
@@ -8,6 +8,7 @@ import BancoDatosDatasetGrid from '../components/organisms/resources/BancoDatosD
 import BancoDatosDatasetModal from '../components/organisms/resources/BancoDatosDatasetModal';
 
 export default function RecursosBancoDatosPage() {
+  const [data, setData] = useState(bancoDatosData);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTipos, setSelectedTipos] = useState([]);
   const [selectedFormatos, setSelectedFormatos] = useState([]);
@@ -17,8 +18,21 @@ export default function RecursosBancoDatosPage() {
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [selectedDataset, setSelectedDataset] = useState(null);
 
+  useEffect(() => {
+    let isMounted = true;
+    loadBancoDatosPageData().then((res) => {
+      if (isMounted && res) {
+        setData(res);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const filteredDatasets = useMemo(() => {
-    return bancoDatosData.datasets.filter((item) => {
+    const list = data.datasets || [];
+    return list.filter((item) => {
       const matchSearch =
         searchQuery === '' ||
         item.titulo.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -34,7 +48,7 @@ export default function RecursosBancoDatosPage() {
 
       return matchSearch && matchTipo && matchDecada && matchFormato && matchYearFrom && matchYearTo;
     });
-  }, [searchQuery, selectedTipos, selectedFormatos, selectedDecadas, yearFrom, yearTo]);
+  }, [data.datasets, searchQuery, selectedTipos, selectedFormatos, selectedDecadas, yearFrom, yearTo]);
 
   const clearFilters = () => {
     setSelectedTipos([]);
@@ -47,7 +61,7 @@ export default function RecursosBancoDatosPage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900 selection:bg-[#ea580c] selection:text-white">
-      <BancoDatosHeroSection hero={bancoDatosData.hero} />
+      <BancoDatosHeroSection hero={data.hero} />
 
       <main className="max-w-[1500px] mx-auto px-6 py-12 flex flex-col lg:flex-row items-start gap-8 min-h-screen">
         <button
@@ -58,7 +72,7 @@ export default function RecursosBancoDatosPage() {
         </button>
 
         <BancoDatosFiltersSidebar
-          filtros={bancoDatosData.filtros}
+          filtros={data.filtros || bancoDatosData.filtros}
           selectedTipos={selectedTipos}
           selectedFormatos={selectedFormatos}
           selectedDecadas={selectedDecadas}

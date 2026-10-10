@@ -1,3 +1,6 @@
+import { httpClient } from '../api/httpClient';
+import { seccionPaginaApi } from './seccionPaginaService';
+
 export const bancoDatosData = {
   hero: {
     eyebrow: 'ACCESO ABIERTO (OPEN DATA)',
@@ -362,3 +365,97 @@ export const bancoDatosData = {
     decadas: ['2020s', '2010s', 'Históricos'],
   },
 };
+
+function buildSectionMap(sections) {
+  const map = {};
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo;
+      if (key) map[key] = s.valor;
+    }
+  }
+  return {
+    get: (key) => map[key],
+  };
+}
+
+export async function loadBancoDatosPageData() {
+  try {
+    const [sections, dbBancos, dbArchivos] = await Promise.all([
+      seccionPaginaApi.list({ paginaSlug: '/recursos/banco-datos' }).catch(() => []),
+      httpClient.get('/banco-datos').catch(() => []),
+      httpClient.get('/datos-archivo').catch(() => []),
+    ]);
+
+    const secMap = buildSectionMap(sections);
+
+    const hero = {
+      eyebrow: secMap.get('rec_banco_hero_eyebrow') || bancoDatosData.hero.eyebrow,
+      title: [
+        secMap.get('rec_banco_hero_titulo_01') || bancoDatosData.hero.title[0],
+        secMap.get('rec_banco_hero_titulo_02') || bancoDatosData.hero.title[1],
+      ],
+      highlight: secMap.get('rec_banco_hero_highlight') || bancoDatosData.hero.highlight,
+      description: secMap.get('rec_banco_hero_descripcion') || bancoDatosData.hero.description,
+      stats: [
+        {
+          value: secMap.get('rec_banco_stats_c1_val') || bancoDatosData.hero.stats[0]?.value || '19+',
+          label: secMap.get('rec_banco_stats_c1_lbl') || bancoDatosData.hero.stats[0]?.label || 'PROYECTOS Y CENSOS',
+          icon: 'database',
+        },
+        {
+          value: secMap.get('rec_banco_stats_c2_val') || bancoDatosData.hero.stats[1]?.value || '80+',
+          label: secMap.get('rec_banco_stats_c2_lbl') || bancoDatosData.hero.stats[1]?.label || 'MICRODATOS DISPONIBLES',
+          icon: 'library',
+        },
+      ],
+    };
+
+    let mappedDatasets = bancoDatosData.datasets;
+    if (Array.isArray(dbBancos) && dbBancos.length > 0) {
+      const archivosList = Array.isArray(dbArchivos) ? dbArchivos : [];
+
+      const dbAdapted = dbBancos.map((b) => {
+        // Find associated archivos (either from nested relation or matched by id_banco_datos)
+        const myArchivos = b.datos_archivo && b.datos_archivo.length > 0
+          ? b.datos_archivo
+          : archivosList.filter((a) => a.id_banco_datos === b.id);
+
+        const formatos = Array.from(new Set(myArchivos.map((a) => a.formato || 'CSV')));
+        if (formatos.length === 0) formatos.push('CSV');
+
+        const decada = b.anio >= 2020 ? '2020s' : b.anio >= 2010 ? '2010s' : 'Históricos';
+
+        return {
+          id: b.id ? `ds-db-${b.id}` : `ds-${Math.random()}`,
+          titulo: b.titulo,
+          categoria: b.tipo || 'Censos',
+          ano: b.anio || 2026,
+          decada,
+          formatos,
+          fuente: b.fuente || 'INE',
+          tamano: myArchivos[0]?.peso || 'Variable',
+          descripcion: b.resumen || '',
+          archivos: myArchivos.map((a) => ({
+            nombre: a.titulo,
+            formato: a.formato || 'CSV',
+            tamano: a.peso || 'N/A',
+            url: a.link_descarga || '#',
+          })),
+        };
+      });
+
+      mappedDatasets = [...dbAdapted, ...bancoDatosData.datasets];
+    }
+
+    return {
+      hero,
+      datasets: mappedDatasets,
+      filtros: bancoDatosData.filtros,
+    };
+  } catch (err) {
+    console.error('Error cargando datos dinámicos de Banco de Datos:', err);
+    return bancoDatosData;
+  }
+}
+

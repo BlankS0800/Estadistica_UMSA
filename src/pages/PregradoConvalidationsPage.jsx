@@ -22,6 +22,7 @@ function PregradoConvalidationsPage() {
   const [activeType, setActiveType] = useState('troncales')
   const [hero, setHero] = useState(defaultHero)
   const [intro, setIntro] = useState(defaultIntro)
+  const [mappingMeta, setMappingMeta] = useState(convalidationMappingMeta)
   const [procedure, setProcedure] = useState(defaultProcedure)
   const [troncales2021, setTroncales2021] = useState(defaultTroncales2021)
 
@@ -31,6 +32,7 @@ function PregradoConvalidationsPage() {
       if (!isMounted) return
       if (data.hero) setHero(data.hero)
       if (data.intro) setIntro(data.intro)
+      if (data.mappingMeta) setMappingMeta(data.mappingMeta)
       if (data.procedure) setProcedure(data.procedure)
       if (data.troncales2021 && data.troncales2021.length > 0) {
         setTroncales2021(data.troncales2021)
@@ -89,7 +91,7 @@ function PregradoConvalidationsPage() {
         <div className="mx-auto w-full max-w-[1536px] px-4 md:px-12">
           <div className="render-optimized">
             <ConvalidationMappingsSection
-              meta={convalidationMappingMeta}
+              meta={mappingMeta}
               activePlan={activePlan}
               activeType={activeType}
               onActivePlanChange={setActivePlan}

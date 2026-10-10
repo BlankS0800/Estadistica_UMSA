@@ -17,6 +17,21 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react'
+import { httpClient } from '../api/httpClient'
+import { seccionPaginaApi } from './seccionPaginaService'
+
+function buildSectionMap(sections) {
+  const map = {}
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo
+      if (key) map[key] = s.valor
+    }
+  }
+  return {
+    get: (key) => map[key],
+  }
+}
 
 export const studentsCallsHero = {
   eyebrow: 'Portal de auxiliares',
@@ -172,4 +187,97 @@ export const studentsCallsUi = {
   cardStatusIcon: AlertCircle,
   requirementCheckIcon: CheckCircle2,
   supportIcon: Users,
+}
+
+export async function loadStudentsCallsData() {
+  try {
+    const [sections, callsRes] = await Promise.all([
+      seccionPaginaApi.list('/estudiantes/convocatorias-auxiliaturas'),
+      httpClient('/convocatoria-auxiliatura').catch(() => []),
+    ])
+
+    const secMap = buildSectionMap(sections)
+    const rawCalls = Array.isArray(callsRes)
+      ? callsRes
+      : Array.isArray(callsRes?.data)
+      ? callsRes.data
+      : []
+
+    // 1. Hero
+    const dynamicHero = {
+      ...studentsCallsHero,
+      eyebrow: secMap.get('est_aux_hero_eyebrow') || studentsCallsHero.eyebrow,
+      title: [
+        secMap.get('est_aux_hero_titulo_01') || studentsCallsHero.title[0],
+        secMap.get('est_aux_hero_titulo_02') || studentsCallsHero.title[1],
+      ],
+      description: secMap.get('est_aux_hero_descripcion') || studentsCallsHero.description,
+    }
+
+    // 2. Convocatorias
+    let dynamicCalls = studentsCalls
+    if (rawCalls.length > 0) {
+      dynamicCalls = rawCalls.map((c, idx) => {
+        const fallback = studentsCalls[idx] || studentsCalls[0]
+        const pDate = c.fechaPublicacion ? c.fechaPublicacion.split('T')[0] : fallback.pubDate
+        const cDate = c.fechaCierre ? c.fechaCierre.split('T')[0] : fallback.closeDate
+        const icon =
+          c.tipo && c.tipo.toLowerCase().includes('lab')
+            ? Monitor
+            : c.estado === 'Concluida'
+            ? History
+            : GraduationCap
+
+        return {
+          id: String(c.id),
+          title: c.materia || fallback.title,
+          desc: c.descripcion || fallback.desc,
+          pubDate: pDate,
+          closeDate: cDate,
+          status: c.estado || fallback.status,
+          icon,
+          plazas: c.plazas || fallback.plazas,
+          requirements: fallback.requirements,
+          steps: fallback.steps,
+        }
+      })
+    }
+
+    const dynamicSteps = studentsCallsSteps.map((s, idx) => {
+      const num = idx + 1
+      return {
+        ...s,
+        title: secMap.get(`est_aux_paso_${num}_titulo`) || s.title,
+        desc: secMap.get(`est_aux_paso_${num}_desc`) || s.desc,
+      }
+    })
+
+    const dynamicRequirements = studentsCallsRequirements.map((r, idx) => {
+      const num = idx + 1
+      return {
+        ...r,
+        title: secMap.get(`est_aux_req_${num}_titulo`) || r.title,
+        desc: secMap.get(`est_aux_req_${num}_desc`) || r.desc,
+      }
+    })
+
+    return {
+      hero: dynamicHero,
+      calls: dynamicCalls,
+      steps: dynamicSteps,
+      requirements: dynamicRequirements,
+      ui: studentsCallsUi,
+      filters: studentsCallsFilters,
+    }
+  } catch (err) {
+    console.error('Error cargando datos dinámicos de auxiliaturas:', err)
+    return {
+      hero: studentsCallsHero,
+      calls: studentsCalls,
+      steps: studentsCallsSteps,
+      requirements: studentsCallsRequirements,
+      ui: studentsCallsUi,
+      filters: studentsCallsFilters,
+    }
+  }
 }

@@ -21,6 +21,8 @@ function PregradoAdmissionsPage() {
   const [regular, setRegular] = useState(defaultRegular)
   const [requirements, setRequirements] = useState(defaultRequirements)
   const [timeline, setTimeline] = useState(defaultTimeline)
+  const [modalities, setModalities] = useState(specialModalities)
+  const [meta, setMeta] = useState(specialMeta)
 
   useEffect(() => {
     let isMounted = true
@@ -30,6 +32,8 @@ function PregradoAdmissionsPage() {
       if (data.regular) setRegular(data.regular)
       if (data.requirements) setRequirements(data.requirements)
       if (data.timeline) setTimeline(data.timeline)
+      if (data.specialModalities) setModalities(data.specialModalities)
+      if (data.specialMeta) setMeta(data.specialMeta)
     })
     return () => {
       isMounted = false
@@ -45,7 +49,7 @@ function PregradoAdmissionsPage() {
         <div className="render-optimized"><RegularAdmissionsSection section={regular} visuals={admissionsVisuals.decorativeIcons} /></div>
         <div className="render-optimized"><GeneralRequirementsSection section={requirements} visuals={admissionsVisuals.decorativeIcons} /></div>
         <div className="render-optimized"><AdmissionsTimelineSection section={timeline} visuals={admissionsVisuals.decorativeIcons} /></div>
-        <div className="render-optimized"><SpecialAdmissionsSection modalities={specialModalities} meta={specialMeta} /></div>
+        <div className="render-optimized"><SpecialAdmissionsSection modalities={modalities} meta={meta} /></div>
       </div>
     </div>
   )

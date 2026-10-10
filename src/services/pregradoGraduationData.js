@@ -166,25 +166,131 @@ export async function loadGraduationPageData() {
 
     const workshop = {
       ...graduationWorkshop,
+      badge: secMap.get('graduacion_taller_badge') || graduationWorkshop.badge,
       title: [
         secMap.get('graduacion_taller_titulo') || graduationWorkshop.title[0],
         graduationWorkshop.title[1],
       ],
       description: secMap.get('graduacion_taller_subtitulo') || graduationWorkshop.description,
+      ctaLabel: secMap.get('graduacion_taller_cta_label') || graduationWorkshop.ctaLabel,
+      ctaHref: secMap.get('graduacion_taller_cta_href') || graduationWorkshop.ctaHref,
     }
+
+    const dynSteps = [
+      {
+        ...processSteps[0],
+        title: secMap.get('graduacion_paso1_title') || processSteps[0].title,
+        desc: secMap.get('graduacion_paso1_desc') || processSteps[0].desc,
+      },
+      {
+        ...processSteps[1],
+        title: secMap.get('graduacion_paso2_title') || processSteps[1].title,
+        desc: secMap.get('graduacion_paso2_desc') || processSteps[1].desc,
+      },
+      {
+        ...processSteps[2],
+        title: secMap.get('graduacion_paso3_title') || processSteps[2].title,
+        desc: secMap.get('graduacion_paso3_desc') || processSteps[2].desc,
+      },
+      {
+        ...processSteps[3],
+        title: secMap.get('graduacion_paso4_title') || processSteps[3].title,
+        desc: secMap.get('graduacion_paso4_desc') || processSteps[3].desc,
+      },
+    ]
+
+    const dynModalitiesMeta = {
+      ...graduationModalitiesMeta,
+      tag: secMap.get('graduacion_modalidades_tag') || graduationModalitiesMeta.tag,
+      title: secMap.get('graduacion_modalidades_title') || graduationModalitiesMeta.title,
+      sub: secMap.get('graduacion_modalidades_sub') || graduationModalitiesMeta.sub,
+      ctaLabel: secMap.get('graduacion_modalidades_cta_label') || graduationModalitiesMeta.ctaLabel,
+    }
+
+    const dynModalities = graduationModalities.map((m) => {
+      if (m.id === 'tesis') {
+        const points = [
+          secMap.get('graduacion_mod_tesis_p1'),
+          secMap.get('graduacion_mod_tesis_p2'),
+          secMap.get('graduacion_mod_tesis_p3'),
+        ].filter(Boolean)
+        return {
+          ...m,
+          title: secMap.get('graduacion_mod_tesis_title') || m.title,
+          tag: secMap.get('graduacion_mod_tesis_tag') || m.tag,
+          desc: secMap.get('graduacion_mod_tesis_desc') || m.desc,
+          points: points.length > 0 ? points : m.points,
+        }
+      }
+      if (m.id === 'trabajo_dirigido') {
+        const points = [
+          secMap.get('graduacion_mod_tdir_p1'),
+          secMap.get('graduacion_mod_tdir_p2'),
+          secMap.get('graduacion_mod_tdir_p3'),
+        ].filter(Boolean)
+        return {
+          ...m,
+          title: secMap.get('graduacion_mod_tdir_title') || m.title,
+          tag: secMap.get('graduacion_mod_tdir_tag') || m.tag,
+          desc: secMap.get('graduacion_mod_tdir_desc') || m.desc,
+          points: points.length > 0 ? points : m.points,
+        }
+      }
+      if (m.id === 'proyecto') {
+        const points = [
+          secMap.get('graduacion_mod_proy_p1'),
+          secMap.get('graduacion_mod_proy_p2'),
+          secMap.get('graduacion_mod_proy_p3'),
+        ].filter(Boolean)
+        return {
+          ...m,
+          title: secMap.get('graduacion_mod_proy_title') || m.title,
+          tag: secMap.get('graduacion_mod_proy_tag') || m.tag,
+          desc: secMap.get('graduacion_mod_proy_desc') || m.desc,
+          points: points.length > 0 ? points : m.points,
+        }
+      }
+      if (m.id === 'excelencia') {
+        const points = [
+          secMap.get('graduacion_mod_exce_p1'),
+          secMap.get('graduacion_mod_exce_p2'),
+          secMap.get('graduacion_mod_exce_p3'),
+        ].filter(Boolean)
+        return {
+          ...m,
+          title: secMap.get('graduacion_mod_exce_title') || m.title,
+          tag: secMap.get('graduacion_mod_exce_tag') || m.tag,
+          desc: secMap.get('graduacion_mod_exce_desc') || m.desc,
+          points: points.length > 0 ? points : m.points,
+        }
+      }
+      return m
+    })
 
     const banner = {
       ...excellenceBanner,
+      eyebrow: secMap.get('graduacion_excelencia_eyebrow') || excellenceBanner.eyebrow,
       title: secMap.get('graduacion_excelencia_titulo') || excellenceBanner.title,
       quote: secMap.get('graduacion_excelencia_desc') || excellenceBanner.quote,
+      ctaLabel: secMap.get('graduacion_excelencia_cta') || excellenceBanner.ctaLabel,
     }
 
-    return { hero, workshop, banner }
+    return {
+      hero,
+      workshop,
+      processSteps: dynSteps,
+      modalitiesMeta: dynModalitiesMeta,
+      modalities: dynModalities,
+      banner,
+    }
   } catch (err) {
     console.error('Error cargando datos dinámicos de graduación:', err)
     return {
       hero: graduationHero,
       workshop: graduationWorkshop,
+      processSteps,
+      modalitiesMeta: graduationModalitiesMeta,
+      modalities: graduationModalities,
       banner: excellenceBanner,
     }
   }

@@ -12,6 +12,20 @@ import {
   Binary,
   Stamp,
 } from 'lucide-react'
+import { seccionPaginaApi } from './seccionPaginaService'
+
+function buildSectionMap(sections) {
+  const map = {}
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo
+      if (key) map[key] = s.valor
+    }
+  }
+  return {
+    get: (key) => map[key],
+  }
+}
 
 export const studentsHero = {
   eyebrow: 'Gestión administrativa transparente',
@@ -181,4 +195,76 @@ export const studentsUi = {
   externalLinkIcon: ExternalLink,
   modeFlowIcon: ListOrdered,
   modeRequirementsIcon: ClipboardList,
+}
+
+export async function loadStudentsProceduresData() {
+  try {
+    const [sectionsA, sectionsB] = await Promise.all([
+      seccionPaginaApi.list('/estudiantes/tramites').catch(() => []),
+      seccionPaginaApi.list('/estudiantes/guia-seguimiento-tramites').catch(() => []),
+    ])
+
+    const allSections = [...(Array.isArray(sectionsA) ? sectionsA : []), ...(Array.isArray(sectionsB) ? sectionsB : [])]
+    const secMap = buildSectionMap(allSections)
+
+    // 1. Hero
+    const dynamicHero = {
+      ...studentsHero,
+      eyebrow: secMap.get('est_tramites_hero_eyebrow') || studentsHero.eyebrow,
+      title: [
+        secMap.get('est_tramites_hero_titulo_01') || studentsHero.title[0],
+        secMap.get('est_tramites_hero_titulo_02') || studentsHero.title[1],
+      ],
+      description: secMap.get('est_tramites_hero_descripcion') || studentsHero.description,
+      placeholder: secMap.get('est_tramites_hero_placeholder') || studentsHero.placeholder,
+    }
+
+    // 2. Systems
+    const dynamicSystems = studentsSystems.map((sys, idx) => {
+      const num = String(idx + 1).padStart(2, '0')
+      const tag = secMap.get(`est_tramites_sistema_${num}_tag`)
+      const title = secMap.get(`est_tramites_sistema_${num}_titulo`)
+      const caption = secMap.get(`est_tramites_sistema_${num}_caption`)
+      const url = secMap.get(`est_tramites_sistema_${num}_url`)
+      return {
+        ...sys,
+        tag: tag || sys.tag,
+        title: title || sys.title,
+        caption: caption || sys.caption,
+        href: url || sys.href,
+      }
+    })
+
+    const dynamicProcedures = studentsProcedures.map((proc, idx) => {
+      const num = idx + 1
+      const title = secMap.get(`est_tramites_item_${num}_title`)
+      const tag = secMap.get(`est_tramites_item_${num}_tag`)
+      const desc = secMap.get(`est_tramites_item_${num}_desc`)
+      const reqsRaw = secMap.get(`est_tramites_item_${num}_reqs`)
+      return {
+        ...proc,
+        title: title || proc.title,
+        tag: tag || proc.tag,
+        desc: desc || proc.desc,
+        requirements: reqsRaw
+          ? reqsRaw.split('\n').map((r) => r.trim()).filter(Boolean)
+          : proc.requirements,
+      }
+    })
+
+    return {
+      hero: dynamicHero,
+      systems: dynamicSystems,
+      procedures: dynamicProcedures,
+      ui: studentsUi,
+    }
+  } catch (err) {
+    console.error('Error cargando datos dinámicos de trámites:', err)
+    return {
+      hero: studentsHero,
+      systems: studentsSystems,
+      procedures: studentsProcedures,
+      ui: studentsUi,
+    }
+  }
 }

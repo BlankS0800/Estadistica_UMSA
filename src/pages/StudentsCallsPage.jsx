@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import InstitutionalBackdrop from '../components/atoms/layout/InstitutionalBackdrop'
 import StudentsCallsAlertSection from '../components/organisms/students/StudentsCallsAlertSection'
 import StudentsCallsGuideSection from '../components/organisms/students/StudentsCallsGuideSection'
@@ -6,23 +6,44 @@ import StudentsCallsHeroSection from '../components/organisms/students/StudentsC
 import StudentsCallsListSection from '../components/organisms/students/StudentsCallsListSection'
 import StudentsCallsRequirementsSection from '../components/organisms/students/StudentsCallsRequirementsSection'
 import {
-  studentsCalls,
-  studentsCallsFilters,
-  studentsCallsHero,
-  studentsCallsRequirements,
-  studentsCallsSteps,
-  studentsCallsUi,
+  studentsCalls as defaultStudentsCalls,
+  studentsCallsFilters as defaultStudentsCallsFilters,
+  studentsCallsHero as defaultStudentsCallsHero,
+  studentsCallsRequirements as defaultStudentsCallsRequirements,
+  studentsCallsSteps as defaultStudentsCallsSteps,
+  studentsCallsUi as defaultStudentsCallsUi,
+  loadStudentsCallsData,
 } from '../services/studentsCallsData'
 
 function StudentsCallsPage() {
   const [activeFilter, setActiveFilter] = useState('Todas')
+  const [data, setData] = useState({
+    hero: defaultStudentsCallsHero,
+    calls: defaultStudentsCalls,
+    steps: defaultStudentsCallsSteps,
+    requirements: defaultStudentsCallsRequirements,
+    ui: defaultStudentsCallsUi,
+    filters: defaultStudentsCallsFilters,
+  })
+
+  useEffect(() => {
+    let isMounted = true
+    loadStudentsCallsData().then((res) => {
+      if (isMounted && res) {
+        setData(res)
+      }
+    })
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const filteredCalls = useMemo(() => {
-    if (activeFilter === 'Todas') return studentsCalls
-    return studentsCalls.filter((call) => call.status === activeFilter)
-  }, [activeFilter])
+    if (activeFilter === 'Todas') return data.calls
+    return data.calls.filter((call) => call.status === activeFilter)
+  }, [activeFilter, data.calls])
 
-  const activeCount = studentsCalls.filter((call) => call.status === 'Abierta').length
+  const activeCount = data.calls.filter((call) => call.status === 'Abierta').length
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[#f1f5f9] text-slate-900 selection:bg-[#00447e] selection:text-white">
@@ -30,26 +51,26 @@ function StudentsCallsPage() {
 
       <div className="relative z-10">
         <StudentsCallsHeroSection
-          hero={studentsCallsHero}
+          hero={data.hero}
           activeCount={activeCount}
-          filters={studentsCallsFilters}
+          filters={data.filters}
           activeFilter={activeFilter}
           onFilterChange={setActiveFilter}
-          filterIcon={studentsCallsUi.filterIcon}
+          filterIcon={data.ui.filterIcon}
         />
         <StudentsCallsListSection
           calls={filteredCalls}
-          viewIcon={studentsCallsUi.cardViewIcon}
-          downloadIcon={studentsCallsUi.cardDownloadIcon}
+          viewIcon={data.ui.cardViewIcon}
+          downloadIcon={data.ui.cardDownloadIcon}
         />
-        <StudentsCallsGuideSection steps={studentsCallsSteps} />
+        <StudentsCallsGuideSection steps={data.steps} />
         <StudentsCallsRequirementsSection
-          requirements={studentsCallsRequirements}
-          requirementCheckIcon={studentsCallsUi.requirementCheckIcon}
+          requirements={data.requirements}
+          requirementCheckIcon={data.ui.requirementCheckIcon}
         />
         <StudentsCallsAlertSection
-          alertIcon={studentsCallsUi.alertIcon}
-          supportIcon={studentsCallsUi.supportIcon}
+          alertIcon={data.ui.alertIcon}
+          supportIcon={data.ui.supportIcon}
         />
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { SlidersHorizontal } from 'lucide-react';
-import { tesisData } from '../services/recursosTesisData';
+import { tesisData, loadTesisPageData } from '../services/recursosTesisData';
 import TesisHeroSection from '../components/organisms/resources/TesisHeroSection';
 import TesisTabs from '../components/organisms/resources/TesisTabs';
 import TesisFiltersSidebar from '../components/organisms/resources/TesisFiltersSidebar';
@@ -13,6 +13,7 @@ import TesisDetailModal from '../components/organisms/resources/TesisDetailModal
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 export default function RecursosTesisPage() {
+  const [data, setData] = useState(tesisData);
   const [activeTab, setActiveTab] = useState('general');
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [selectedTesis, setSelectedTesis] = useState(null);
@@ -24,6 +25,18 @@ export default function RecursosTesisPage() {
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+    loadTesisPageData().then((res) => {
+      if (isMounted && res) {
+        setData(res);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
     setSearchQuery('');
     setSelectedAnios([]);
     setSelectedModalidades([]);
@@ -33,13 +46,14 @@ export default function RecursosTesisPage() {
   }, [activeTab]);
 
   const indices = useMemo(() => {
-    const anios = [...new Set(tesisData.investigaciones.map((item) => item.anoDefensa))].sort(
+    const list = data.investigaciones || [];
+    const anios = [...new Set(list.map((item) => item.anoDefensa))].sort(
       (a, b) => b - a
     );
 
     const extractCounts = (key) => {
       const counts = {};
-      tesisData.investigaciones.forEach((item) => {
+      list.forEach((item) => {
         const value = item[key];
         if (Array.isArray(value)) {
           value.forEach((v) => {
@@ -59,7 +73,7 @@ export default function RecursosTesisPage() {
     const tutores = extractCounts('tutor');
 
     const temasCounts = {};
-    tesisData.investigaciones.forEach((item) =>
+    list.forEach((item) =>
       item.palabrasClave.forEach((keyword) => {
         temasCounts[keyword] = (temasCounts[keyword] || 0) + 1;
       })
@@ -69,7 +83,7 @@ export default function RecursosTesisPage() {
       .map((name) => ({ name, count: temasCounts[name] }));
 
     return { anios, materias, autores, tutores, temas };
-  }, []);
+  }, [data.investigaciones]);
 
   const filteredEntities = useMemo(() => {
     let rawList = [];
@@ -78,12 +92,14 @@ export default function RecursosTesisPage() {
     if (activeTab === 'autores') rawList = indices.autores;
     if (activeTab === 'tutores') rawList = indices.tutores;
 
+    const list = data.investigaciones || [];
+
     return rawList.filter((entity) => {
       const matchSearch = !searchQuery || entity.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchLetter = !selectedLetter || entity.name.toUpperCase().startsWith(selectedLetter);
       const matchYear =
         selectedAnios.length === 0 ||
-        tesisData.investigaciones.some((item) => {
+        list.some((item) => {
           const belongs =
             (activeTab === 'materias' && item.materia.includes(entity.name)) ||
             (activeTab === 'autores' && item.autor === entity.name) ||
@@ -93,10 +109,11 @@ export default function RecursosTesisPage() {
         });
       return matchSearch && matchLetter && matchYear;
     });
-  }, [activeTab, indices, searchQuery, selectedLetter, selectedAnios]);
+  }, [activeTab, indices, searchQuery, selectedLetter, selectedAnios, data.investigaciones]);
 
   const filteredTheses = useMemo(() => {
-    return tesisData.investigaciones
+    const list = data.investigaciones || [];
+    return list
       .filter((item) => {
         if (activeTab === 'general') {
           const matchModalidad =
@@ -125,11 +142,12 @@ export default function RecursosTesisPage() {
         return false;
       })
       .sort((a, b) => b.anoDefensa - a.anoDefensa);
-  }, [activeTab, selectedEntity, selectedModalidades, selectedAnios, searchQuery]);
+  }, [activeTab, selectedEntity, selectedModalidades, selectedAnios, searchQuery, data.investigaciones]);
 
   const availableLetters = useMemo(() => {
+    const list = data.investigaciones || [];
     return ALPHABET.filter((letter) =>
-      tesisData.investigaciones.some((item) => {
+      list.some((item) => {
         if (activeTab === 'autores') return item.autor.toUpperCase().startsWith(letter);
         if (activeTab === 'tutores') return item.tutor.toUpperCase().startsWith(letter);
         if (activeTab === 'materias') return item.materia.some((mat) => mat.toUpperCase().startsWith(letter));
@@ -137,12 +155,12 @@ export default function RecursosTesisPage() {
         return false;
       })
     );
-  }, [activeTab]);
+  }, [activeTab, data.investigaciones]);
 
   return (
     <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900 selection:bg-[#ea580c] selection:text-white">
-      <TesisHeroSection hero={tesisData.hero} />
-      <TesisTabs tabs={tesisData.tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <TesisHeroSection hero={data.hero} />
+      <TesisTabs tabs={data.tabs || tesisData.tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <main className="max-w-[1500px] mx-auto px-6 py-12 flex flex-col lg:flex-row items-start gap-8 min-h-screen relative z-20">
         <button

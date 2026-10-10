@@ -287,14 +287,37 @@ export async function loadConvalidationPageData() {
       ...convalidationIntro,
       title: secMap.get('convalidacion_intro_titulo') || convalidationIntro.title,
       description: secMap.get('convalidacion_intro_descripcion') || convalidationIntro.description,
+      searchPlaceholder: secMap.get('convalidacion_intro_placeholder') || convalidationIntro.searchPlaceholder,
     }
+
+    const mappingMeta = {
+      ...convalidationMappingMeta,
+      tag: secMap.get('convalidacion_mapeo_tag') || convalidationMappingMeta.tag,
+      title: secMap.get('convalidacion_mapeo_titulo') || convalidationMappingMeta.title,
+      sub: secMap.get('convalidacion_mapeo_subtitulo') || convalidationMappingMeta.sub,
+      warningTitle: secMap.get('convalidacion_aviso_titulo') || convalidationMappingMeta.warningTitle,
+      warningText: secMap.get('convalidacion_aviso_texto') || convalidationMappingMeta.warningText,
+    }
+
+    const pasos = [
+      secMap.get('convalidacion_paso_1'),
+      secMap.get('convalidacion_paso_2'),
+      secMap.get('convalidacion_paso_3'),
+      secMap.get('convalidacion_paso_4'),
+      secMap.get('convalidacion_paso_5'),
+      secMap.get('convalidacion_paso_6'),
+    ].filter(Boolean)
 
     const procedure = {
       ...convalidationProcedure,
+      tag: secMap.get('convalidacion_procedimiento_tag') || convalidationProcedure.tag,
       title: [
         secMap.get('convalidacion_procedimiento_titulo') || convalidationProcedure.title[0],
         secMap.get('convalidacion_procedimiento_subtitulo') || convalidationProcedure.title[1],
       ],
+      description: secMap.get('convalidacion_procedimiento_descripcion') || convalidationProcedure.description,
+      requirements: pasos.length > 0 ? pasos : convalidationProcedure.requirements,
+      ctaLabel: secMap.get('convalidacion_cta_label') || convalidationProcedure.ctaLabel,
     }
 
     let dynamicTroncales = convalidation2012to2021Troncales
@@ -320,12 +343,13 @@ export async function loadConvalidationPageData() {
       })
     }
 
-    return { hero, intro, procedure, troncales2021: dynamicTroncales }
+    return { hero, intro, mappingMeta, procedure, troncales2021: dynamicTroncales }
   } catch (err) {
     console.error('Error cargando convalidaciones dinámicas:', err)
     return {
       hero: convalidationHero,
       intro: convalidationIntro,
+      mappingMeta: convalidationMappingMeta,
       procedure: convalidationProcedure,
       troncales2021: convalidation2012to2021Troncales,
     }

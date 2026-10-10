@@ -294,6 +294,14 @@ export async function loadPostgradoTerminalData() {
       tag: secMap.get('pos_terminal_perfil_tag') || postgradoProfile.tag,
       title: secMap.get('pos_terminal_perfil_titulo') || postgradoProfile.title,
       sub: secMap.get('pos_terminal_perfil_sub') || postgradoProfile.sub,
+      cards: postgradoProfile.cards.map((c, idx) => {
+        const num = idx + 1
+        return {
+          ...c,
+          title: secMap.get(`pos_terminal_profile_c${num}_title`) || c.title,
+          desc: secMap.get(`pos_terminal_profile_c${num}_desc`) || c.desc,
+        }
+      }),
     }
 
     const dynamicCurriculumMeta = {
@@ -309,13 +317,60 @@ export async function loadPostgradoTerminalData() {
       tag: secMap.get('pos_terminal_admision_tag') || admissionRequirements.tag,
       title: secMap.get('pos_terminal_admision_titulo') || admissionRequirements.title,
       sub: secMap.get('pos_terminal_admision_sub') || admissionRequirements.sub,
+      items: admissionRequirements.items.map((it, idx) => {
+        const num = idx + 1
+        return {
+          ...it,
+          title: secMap.get(`pos_terminal_admision_it${num}_title`) || it.title,
+          desc: secMap.get(`pos_terminal_admision_it${num}_desc`) || it.desc,
+        }
+      }),
     }
+
+    const dynamicSectors = [
+      secMap.get('pos_terminal_campo_sec1'),
+      secMap.get('pos_terminal_campo_sec2'),
+      secMap.get('pos_terminal_campo_sec3'),
+      secMap.get('pos_terminal_campo_sec4'),
+      secMap.get('pos_terminal_campo_sec5'),
+      secMap.get('pos_terminal_campo_sec6'),
+    ].filter(Boolean)
 
     const dynamicFields = {
       ...occupationalFields,
       tag: secMap.get('pos_terminal_campo_tag') || occupationalFields.tag,
       title: secMap.get('pos_terminal_campo_titulo') || occupationalFields.title,
       sub: secMap.get('pos_terminal_campo_sub') || occupationalFields.sub,
+      sectors: dynamicSectors.length > 0 ? dynamicSectors : occupationalFields.sectors,
+      roles: occupationalFields.roles.map((r, idx) => {
+        const num = idx + 1
+        return {
+          ...r,
+          role: secMap.get(`pos_terminal_campo_r${num}_role`) || r.role,
+          desc: secMap.get(`pos_terminal_campo_r${num}_desc`) || r.desc,
+        }
+      }),
+    }
+
+    const dynamicElectiveCatalog = {
+      ...electiveCatalog,
+      tag: secMap.get('pos_terminal_electiva_tag') || electiveCatalog.tag,
+      title: secMap.get('pos_terminal_electiva_titulo') || electiveCatalog.title,
+      sub: secMap.get('pos_terminal_electiva_sub') || electiveCatalog.sub,
+    }
+
+    const dynamicFooter = {
+      ...postgradoFooter,
+      title: secMap.get('pos_terminal_cta_title') || postgradoFooter.title,
+      description: secMap.get('pos_terminal_cta_desc') || postgradoFooter.description,
+      ctaPrimary: {
+        ...postgradoFooter.ctaPrimary,
+        label: secMap.get('pos_terminal_cta_btn_primary') || postgradoFooter.ctaPrimary.label,
+      },
+      ctaSecondary: {
+        ...postgradoFooter.ctaSecondary,
+        label: secMap.get('pos_terminal_cta_btn_sec') || postgradoFooter.ctaSecondary.label,
+      },
     }
 
     let dynamicModules = curriculumModules
@@ -352,8 +407,8 @@ export async function loadPostgradoTerminalData() {
       curriculumModules: dynamicModules,
       admissionRequirements: dynamicAdmission,
       occupationalFields: dynamicFields,
-      electiveCatalog,
-      postgradoFooter,
+      electiveCatalog: dynamicElectiveCatalog,
+      postgradoFooter: dynamicFooter,
     }
   } catch (err) {
     console.error('Error cargando datos dinámicos de postgrado terminal:', err)

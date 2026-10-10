@@ -1,35 +1,49 @@
-import React, { useMemo, useState } from 'react';
-import { revistasData } from '../services/recursosRevistasData';
+import React, { useEffect, useMemo, useState } from 'react';
+import { revistasData, loadRevistasPageData } from '../services/recursosRevistasData';
 import RevistasHeroSection from '../components/organisms/resources/RevistasHeroSection';
 import RevistasFilterBar from '../components/organisms/resources/RevistasFilterBar';
 import RevistasPublicationsGrid from '../components/organisms/resources/RevistasPublicationsGrid';
 
 export default function RecursosRevistasPage() {
+  const [data, setData] = useState(revistasData);
   const [activeFilter, setActiveFilter] = useState('Todas');
 
+  useEffect(() => {
+    let isMounted = true;
+    loadRevistasPageData().then((res) => {
+      if (isMounted && res) {
+        setData(res);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const filteredPublications = useMemo(() => {
-    if (activeFilter === 'Todas') return revistasData.publicaciones;
+    const list = data.publicaciones || [];
+    if (activeFilter === 'Todas') return list;
     if (activeFilter === 'Internacionales') {
-      return revistasData.publicaciones.filter((pub) => pub.alcance === 'Internacional');
+      return list.filter((pub) => pub.alcance === 'Internacional');
     }
     if (activeFilter === 'Nacionales') {
-      return revistasData.publicaciones.filter(
+      return list.filter(
         (pub) => pub.alcance === 'Nacional' || pub.alcance === 'Institucional'
       );
     }
     if (activeFilter === 'Boletines') {
-      return revistasData.publicaciones.filter((pub) => pub.categoria === 'Boletin Informativo');
+      return list.filter((pub) => pub.categoria === 'Boletin Informativo');
     }
-    return revistasData.publicaciones;
-  }, [activeFilter]);
+    return list;
+  }, [activeFilter, data.publicaciones]);
 
   return (
     <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900 selection:bg-[#ea580c] selection:text-white">
-      <RevistasHeroSection hero={revistasData.hero} />
+      <RevistasHeroSection hero={data.hero} />
 
       <main className="max-w-[1400px] mx-auto px-6 py-16 min-h-screen">
         <RevistasFilterBar
-          filters={revistasData.filters}
+          filters={data.filters || revistasData.filters}
           activeFilter={activeFilter}
           setActiveFilter={setActiveFilter}
         />
@@ -39,3 +53,4 @@ export default function RecursosRevistasPage() {
     </div>
   );
 }
+

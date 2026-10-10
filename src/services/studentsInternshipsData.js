@@ -16,6 +16,21 @@ import {
   Sigma,
   Target,
 } from 'lucide-react'
+import { httpClient } from '../api/httpClient'
+import { seccionPaginaApi } from './seccionPaginaService'
+
+function buildSectionMap(sections) {
+  const map = {}
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo
+      if (key) map[key] = s.valor
+    }
+  }
+  return {
+    get: (key) => map[key],
+  }
+}
 
 export const studentsInternshipsHero = {
   eyebrow: 'Vinculación laboral y titulación',
@@ -147,16 +162,14 @@ export const studentsInternshipTestimonials = [
     role: 'Analista Junior - INE Bolivia',
     quote:
       'La pasantía me permitió aplicar modelos de regresión y muestreo complejo en proyectos nacionales.',
-    avatar:
-      '/images/estudiantes/carlos_mendoza.jpg',
+    avatar: '/images/estudiantes/carlos_mendoza.jpg',
   },
   {
     name: 'Lucía Vargas',
     role: 'Data Scientist - Banca Privada',
     quote:
       'El trabajo dirigido fue decisivo para mi inserción laboral y consolidación profesional.',
-    avatar:
-      '/images/estudiantes/lucia_vargas.jpg',
+    avatar: '/images/estudiantes/lucia_vargas.jpg',
   },
 ]
 
@@ -173,4 +186,120 @@ export const studentsInternshipUi = {
   postulateIcon: Send,
   viewIcon: Eye,
   formatIcon: FileSearch,
+}
+
+export async function loadStudentsInternshipsData() {
+  try {
+    const [sectionsA, sectionsB, rawPasantias] = await Promise.all([
+      seccionPaginaApi.list('/estudiantes/pasantias').catch(() => []),
+      seccionPaginaApi.list('/estudiantes/pasantias-bolsa-trabajo').catch(() => []),
+      httpClient('/pasantia').catch(() => []),
+    ])
+
+    const allSections = [...(Array.isArray(sectionsA) ? sectionsA : []), ...(Array.isArray(sectionsB) ? sectionsB : [])]
+    const secMap = buildSectionMap(allSections)
+    const pasantias = Array.isArray(rawPasantias)
+      ? rawPasantias
+      : Array.isArray(rawPasantias?.data)
+      ? rawPasantias.data
+      : []
+
+    // 1. Hero
+    const dynamicHero = {
+      ...studentsInternshipsHero,
+      eyebrow: secMap.get('est_pasantias_hero_eyebrow') || studentsInternshipsHero.eyebrow,
+      title: [
+        secMap.get('est_pasantias_hero_titulo_01') || studentsInternshipsHero.title[0],
+        secMap.get('est_pasantias_hero_titulo_02') || studentsInternshipsHero.title[1],
+      ],
+      description: secMap.get('est_pasantias_hero_descripcion') || studentsInternshipsHero.description,
+    }
+
+    // 2. Offers
+    let dynamicOffers = studentsInternshipOffers
+    if (pasantias.length > 0) {
+      dynamicOffers = pasantias.map((p) => {
+        const cie = p.fechaCierre ? `Hasta el ${p.fechaCierre.split('T')[0]}` : 'Convocatoria abierta'
+        return {
+          id: String(p.id),
+          company: p.empresa || 'Organización',
+          role: p.titulo || 'Pasante',
+          area: p.area || 'Especialidad',
+          reqs: p.requisitos || 'Revisar requisitos en secretaría',
+          type: p.tipo || 'Pasantía',
+          date: cie,
+        }
+      })
+    }
+
+    const dynamicModalities = studentsInternshipModalities.map((m, idx) => {
+      const num = idx + 1
+      return {
+        ...m,
+        title: secMap.get(`est_pasantias_mod_${num}_titulo`) || m.title,
+        tag: secMap.get(`est_pasantias_mod_${num}_tag`) || m.tag,
+        desc: secMap.get(`est_pasantias_mod_${num}_desc`) || m.desc,
+      }
+    })
+
+    const dynamicProcess = studentsInternshipProcess.map((p, idx) => {
+      const num = idx + 1
+      return {
+        ...p,
+        title: secMap.get(`est_pasantias_paso_${num}_titulo`) || p.title,
+        desc: secMap.get(`est_pasantias_paso_${num}_desc`) || p.desc,
+      }
+    })
+
+    const dynamicReqs = [
+      secMap.get('est_pasantias_req_1'),
+      secMap.get('est_pasantias_req_2'),
+      secMap.get('est_pasantias_req_3'),
+      secMap.get('est_pasantias_req_4'),
+    ].filter(Boolean)
+
+    const dynamicDocs = studentsInternshipDocuments.map((d, idx) => {
+      const num = idx + 1
+      return {
+        ...d,
+        title: secMap.get(`est_pasantias_doc_${num}_titulo`) || d.title,
+        desc: secMap.get(`est_pasantias_doc_${num}_desc`) || d.desc,
+      }
+    })
+
+    const dynamicTestimonials = studentsInternshipTestimonials.map((t, idx) => {
+      const num = idx + 1
+      return {
+        ...t,
+        name: secMap.get(`est_pasantias_test_${num}_nombre`) || t.name,
+        role: secMap.get(`est_pasantias_test_${num}_cargo`) || t.role,
+        quote: secMap.get(`est_pasantias_test_${num}_texto`) || t.quote,
+      }
+    })
+
+    return {
+      hero: dynamicHero,
+      modalities: dynamicModalities,
+      process: dynamicProcess,
+      offers: dynamicOffers,
+      requirements: dynamicReqs.length > 0 ? dynamicReqs : studentsInternshipRequirements,
+      documents: dynamicDocs,
+      testimonials: dynamicTestimonials,
+      mapNodes: studentsInternshipMapNodes,
+      ui: studentsInternshipUi,
+    }
+  } catch (err) {
+    console.error('Error cargando datos dinámicos de pasantías:', err)
+    return {
+      hero: studentsInternshipsHero,
+      modalities: studentsInternshipModalities,
+      process: studentsInternshipProcess,
+      offers: studentsInternshipOffers,
+      requirements: studentsInternshipRequirements,
+      documents: studentsInternshipDocuments,
+      testimonials: studentsInternshipTestimonials,
+      mapNodes: studentsInternshipMapNodes,
+      ui: studentsInternshipUi,
+    }
+  }
 }

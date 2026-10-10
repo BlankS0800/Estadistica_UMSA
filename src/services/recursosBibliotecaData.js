@@ -1,3 +1,6 @@
+import { httpClient } from '../api/httpClient';
+import { seccionPaginaApi } from './seccionPaginaService';
+
 export const AUTORES = [
   { id: "aut-001", tipo: "persona", nombre_completo: "Wackerly, Dennis D.", letra_inicial: "W", especialidad: "Estadística Matemática", afiliacion: "Universidad de Florida" },
   { id: "aut-002", tipo: "persona", nombre_completo: "Walpole, Ronald E.", letra_inicial: "W", especialidad: "Probabilidad e Inferencia", afiliacion: "Roanoke College" },
@@ -17840,3 +17843,88 @@ export const buildLibraryUrl = (titulo) => {
   let baseUrl = "https://bibliotecas.umsa.bo/cgi-bin/koha/opac-search.pl?q=";
   return baseUrl + encodeURIComponent(`ti:${titulo}`);
 };
+
+function buildSectionMap(sections) {
+  const map = {};
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo;
+      if (key) map[key] = s.valor;
+    }
+  }
+  return {
+    get: (key) => map[key],
+  };
+}
+
+export async function loadBibliotecaPageData() {
+  try {
+    const [sections, dbLibros, dbAutores] = await Promise.all([
+      seccionPaginaApi.list({ paginaSlug: '/recursos/biblioteca' }).catch(() => []),
+      httpClient.get('/libro').catch(() => []),
+      httpClient.get('/autor').catch(() => []),
+    ]);
+
+    const secMap = buildSectionMap(sections);
+
+    const hero = {
+      badge: secMap.get('rec_biblio_hero_badge') || 'Catálogo en Línea Activo',
+      titulo01: secMap.get('rec_biblio_hero_titulo_01') || 'Repositorio',
+      titulo02: secMap.get('rec_biblio_hero_titulo_02') || 'Académico',
+      descripcion: secMap.get('rec_biblio_hero_descripcion') || 'Colección de textos guía, referencias bibliográficas, reportes de datos y el directorio completo de investigadores de la Carrera de Estadística.',
+      btnLibros: secMap.get('rec_biblio_hero_btn_libros') || 'Explorar Libros',
+      btnAutores: secMap.get('rec_biblio_hero_btn_autores') || 'Directorio de Autores',
+      imagen: secMap.get('rec_biblio_hero_imagen') || '/hero_revista.png',
+    };
+
+    let mappedAutores = AUTORES;
+    if (Array.isArray(dbAutores) && dbAutores.length > 0) {
+      mappedAutores = dbAutores.map((a) => ({
+        id: a.id ? `aut-db-${a.id}` : `aut-${Math.random()}`,
+        tipo: a.tipo || 'persona',
+        nombre_completo: a.nombre,
+        letra_inicial: a.nombre ? a.nombre.trim().charAt(0).toUpperCase() : 'A',
+        especialidad: a.area || 'Estadística',
+        afiliacion: a.ubicacion || 'Carrera de Estadística UMSA',
+      }));
+    }
+
+    let mappedLibros = LIBROS;
+    if (Array.isArray(dbLibros) && dbLibros.length > 0) {
+      const dbAdapted = dbLibros.map((l) => ({
+        id: l.id ? `lib-db-${l.id}` : `lib-${Math.random()}`,
+        titulo: l.titulo,
+        autor: l.autor ? l.autor.nombre : (l.id_autor ? `Autor #${l.id_autor}` : 'Carrera de Estadística'),
+        categoria: l.temas ? l.temas.split(',')[0].trim() : 'Estadística',
+        tipo_material: l.descripcion_fisica || 'Texto impreso',
+        editor: l.editor || 'Editorial Universitaria',
+        fecha: '',
+        codigo: l.calificacion_dewey || l.codigo_isbn || '',
+        portada: '/hero_revista.png',
+        link: l.link || '',
+      }));
+      mappedLibros = [...dbAdapted, ...LIBROS];
+    }
+
+    return {
+      hero,
+      libros: mappedLibros,
+      autores: mappedAutores,
+    };
+  } catch (err) {
+    console.error('Error cargando datos de biblioteca:', err);
+    return {
+      hero: {
+        badge: 'Catálogo en Línea Activo',
+        titulo01: 'Repositorio',
+        titulo02: 'Académico',
+        descripcion: 'Colección de textos guía, referencias bibliográficas, reportes de datos y el directorio completo de investigadores de la Carrera de Estadística.',
+        btnLibros: 'Explorar Libros',
+        btnAutores: 'Directorio de Autores',
+      },
+      libros: LIBROS,
+      autores: AUTORES,
+    };
+  }
+}
+

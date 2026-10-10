@@ -11,13 +11,23 @@ import {
 } from '../services/pregradoCurriculumData'
 
 function PregradoAcademicCalendarPage() {
-  const [calendarMeta, setCalendarMeta] = useState(defaultCalendarMeta)
+  const [calendarData, setCalendarData] = useState({
+    calendarMeta: defaultCalendarMeta,
+    examSessionData: examSessionData,
+    regularCourseData: regularCourseData,
+    specialEnrollmentNote: specialEnrollmentNote,
+  })
 
   useEffect(() => {
     let isMounted = true
     loadCalendarPageData().then((data) => {
       if (!isMounted) return
-      if (data.calendarMeta) setCalendarMeta(data.calendarMeta)
+      setCalendarData({
+        calendarMeta: data.calendarMeta || defaultCalendarMeta,
+        examSessionData: data.examSessionData || examSessionData,
+        regularCourseData: data.regularCourseData || regularCourseData,
+        specialEnrollmentNote: data.specialEnrollmentNote || specialEnrollmentNote,
+      })
     })
     return () => {
       isMounted = false
@@ -30,11 +40,11 @@ function PregradoAcademicCalendarPage() {
 
       <div className="relative z-10 space-y-16 pb-24 pt-16">
         <AcademicCalendarSection
-          calendarMeta={calendarMeta}
-          examSessionData={examSessionData}
-          regularCourseData={regularCourseData}
+          calendarMeta={calendarData.calendarMeta}
+          examSessionData={calendarData.examSessionData}
+          regularCourseData={calendarData.regularCourseData}
           eventTypes={eventTypeStyles}
-          specialNote={specialEnrollmentNote}
+          specialNote={calendarData.specialEnrollmentNote}
         />
       </div>
     </div>

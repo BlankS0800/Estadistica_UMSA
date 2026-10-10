@@ -277,7 +277,53 @@ export async function loadAdmissionsPageData() {
       tag: secMap.get('admisiones_modalidades_tag') || regularAdmissions.tag,
       title: secMap.get('admisiones_modalidades_titulo') || regularAdmissions.title,
       sub: secMap.get('admisiones_modalidades_subtitulo') || regularAdmissions.sub,
+      cards: regularAdmissions.cards.map((c, idx) => {
+        if (idx === 0) {
+          return {
+            ...c,
+            badge: secMap.get('admision_psa_badge') || c.badge,
+            title: secMap.get('admision_psa_title') || c.title,
+            description: secMap.get('admision_psa_desc') || c.description,
+            topics: [
+              secMap.get('admision_psa_topic1') || c.topics[0],
+              secMap.get('admision_psa_topic2') || c.topics[1],
+              secMap.get('admision_psa_topic3') || c.topics[2],
+              secMap.get('admision_psa_topic4') || c.topics[3],
+            ],
+            cta: {
+              label: secMap.get('admision_psa_cta_label') || c.cta.label,
+              href: secMap.get('admision_psa_cta_href') || c.cta.href,
+            },
+          }
+        }
+        if (idx === 1) {
+          return {
+            ...c,
+            badge: secMap.get('admision_preu_badge') || c.badge,
+            title: secMap.get('admision_preu_title') || c.title,
+            description: secMap.get('admision_preu_desc') || c.description,
+            highlights: [
+              secMap.get('admision_preu_hl1') || c.highlights[0],
+              secMap.get('admision_preu_hl2') || c.highlights[1],
+            ],
+            cta: {
+              label: secMap.get('admision_preu_cta_label') || c.cta.label,
+              href: secMap.get('admision_preu_cta_href') || c.cta.href,
+            },
+          }
+        }
+        return c
+      }),
     }
+
+    const reqItems = [
+      secMap.get('admision_req_item1'),
+      secMap.get('admision_req_item2'),
+      secMap.get('admision_req_item3'),
+      secMap.get('admision_req_item4'),
+      secMap.get('admision_req_item5'),
+      secMap.get('admision_req_item6'),
+    ].filter(Boolean)
 
     const requirements = {
       ...generalRequirements,
@@ -286,7 +332,68 @@ export async function loadAdmissionsPageData() {
         secMap.get('admisiones_requisitos_titulo')?.split(' ').slice(1).join(' ') || generalRequirements.title[1],
       ],
       description: secMap.get('admisiones_requisitos_descripcion') || generalRequirements.description,
+      items: reqItems.length > 0 ? reqItems : generalRequirements.items,
     }
+
+    const dynSpecialMeta = {
+      ...specialMeta,
+      title: secMap.get('admision_esp_title')
+        ? secMap.get('admision_esp_title').split(' ')
+        : specialMeta.title,
+      entity: secMap.get('admision_esp_sub') || specialMeta.entity,
+    }
+
+    const dynSpecialModalities = specialModalities.map((item) => {
+      if (item.id === 'paralelas') {
+        const reqs = [
+          secMap.get('admision_esp_paralelas_req1'),
+          secMap.get('admision_esp_paralelas_req2'),
+          secMap.get('admision_esp_paralelas_req3'),
+          secMap.get('admision_esp_paralelas_req4'),
+        ].filter(Boolean)
+        return {
+          ...item,
+          title: secMap.get('admision_esp_paralelas_title') || item.title,
+          desc: secMap.get('admision_esp_paralelas_desc') || item.desc,
+          folder: secMap.get('admision_esp_paralelas_folder') || item.folder,
+          horario: secMap.get('admision_esp_paralelas_horario') || item.horario,
+          reqs: reqs.length > 0 ? reqs : item.reqs,
+        }
+      }
+      if (item.id === 'profesionales') {
+        const reqs = [
+          secMap.get('admision_esp_profesional_req1'),
+          secMap.get('admision_esp_profesional_req2'),
+          secMap.get('admision_esp_profesional_req3'),
+          secMap.get('admision_esp_profesional_req4'),
+        ].filter(Boolean)
+        return {
+          ...item,
+          title: secMap.get('admision_esp_profesional_title') || item.title,
+          desc: secMap.get('admision_esp_profesional_desc') || item.desc,
+          folder: secMap.get('admision_esp_profesional_folder') || item.folder,
+          horario: secMap.get('admision_esp_profesional_horario') || item.horario,
+          reqs: reqs.length > 0 ? reqs : item.reqs,
+        }
+      }
+      if (item.id === 'traspasos_ext') {
+        const reqs = [
+          secMap.get('admision_esp_traspaso_req1'),
+          secMap.get('admision_esp_traspaso_req2'),
+          secMap.get('admision_esp_traspaso_req3'),
+          secMap.get('admision_esp_traspaso_req4'),
+        ].filter(Boolean)
+        return {
+          ...item,
+          title: secMap.get('admision_esp_traspaso_title') || item.title,
+          desc: secMap.get('admision_esp_traspaso_desc') || item.desc,
+          folder: secMap.get('admision_esp_traspaso_folder') || item.folder,
+          horario: secMap.get('admision_esp_traspaso_horario') || item.horario,
+          reqs: reqs.length > 0 ? reqs : item.reqs,
+        }
+      }
+      return item
+    })
 
     let timeline = admissionsTimeline
     if (convocatorias && convocatorias.length > 0) {
@@ -318,7 +425,7 @@ export async function loadAdmissionsPageData() {
       }
     }
 
-    return { hero, regular, requirements, timeline }
+    return { hero, regular, requirements, timeline, specialModalities: dynSpecialModalities, specialMeta: dynSpecialMeta }
   } catch (err) {
     console.error('Error cargando admisiones dinámicas:', err)
     return {
@@ -326,6 +433,8 @@ export async function loadAdmissionsPageData() {
       regular: regularAdmissions,
       requirements: generalRequirements,
       timeline: admissionsTimeline,
+      specialModalities,
+      specialMeta,
     }
   }
 }

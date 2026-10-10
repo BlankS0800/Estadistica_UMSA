@@ -1,3 +1,6 @@
+import { httpClient } from '../api/httpClient';
+import { seccionPaginaApi } from './seccionPaginaService';
+
 export const revistasData = {
   hero: {
     eyebrow: 'RED DE PUBLICACIONES',
@@ -89,3 +92,70 @@ export const revistasData = {
     },
   ],
 };
+
+function buildSectionMap(sections) {
+  const map = {};
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo;
+      if (key) map[key] = s.valor;
+    }
+  }
+  return {
+    get: (key) => map[key],
+  };
+}
+
+export async function loadRevistasPageData() {
+  try {
+    const [sections, dbRevistas] = await Promise.all([
+      seccionPaginaApi.list({ paginaSlug: '/recursos/revistas' }).catch(() => []),
+      httpClient.get('/revista').catch(() => []),
+    ]);
+
+    const secMap = buildSectionMap(sections);
+
+    const hero = {
+      eyebrow: secMap.get('rec_revistas_hero_eyebrow') || revistasData.hero.eyebrow,
+      title: [
+        secMap.get('rec_revistas_hero_titulo_01') || revistasData.hero.title[0],
+        secMap.get('rec_revistas_hero_titulo_02') || revistasData.hero.title[1],
+      ],
+      description: secMap.get('rec_revistas_hero_descripcion') || revistasData.hero.description,
+      imageUrl: secMap.get('rec_revistas_hero_imagen') || revistasData.hero.imageUrl,
+    };
+
+    let mappedPublicaciones = revistasData.publicaciones;
+    if (Array.isArray(dbRevistas) && dbRevistas.length > 0) {
+      const dbAdapted = dbRevistas.map((r) => {
+        const alcance = r.tipo?.toLowerCase().includes('nacional')
+          ? 'Nacional'
+          : r.tipo?.toLowerCase().includes('bolet')
+          ? 'Boletin Informativo'
+          : 'Internacional';
+        return {
+          id: r.id ? `pub-db-${r.id}` : `pub-${Math.random()}`,
+          titulo: r.titulo,
+          editor: r.autor || r.publicacion || 'IETA - UMSA',
+          categoria: r.tipo || 'Revista Científica',
+          alcance,
+          descripcion: r.descripcion || '',
+          imagenPortada: '/images/recursos/revistas/revista_varianza.jpg',
+          urlDestino: r.link || 'https://ojs.umsa.bo/ojs/index.php/varianza',
+          esExterno: r.link ? r.link.startsWith('http') && !r.link.includes('umsa.bo') : false,
+        };
+      });
+      mappedPublicaciones = [...dbAdapted, ...revistasData.publicaciones];
+    }
+
+    return {
+      hero,
+      filters: revistasData.filters,
+      publicaciones: mappedPublicaciones,
+    };
+  } catch (err) {
+    console.error('Error cargando datos dinámicos de Revistas:', err);
+    return revistasData;
+  }
+}
+

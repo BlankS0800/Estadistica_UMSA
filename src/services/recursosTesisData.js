@@ -1,3 +1,6 @@
+import { httpClient } from '../api/httpClient';
+import { seccionPaginaApi } from './seccionPaginaService';
+
 export const tesisData = {
   hero: {
     eyebrow: 'INVESTIGACIÓN CIENTÍFICA VALIDADA',
@@ -171,3 +174,65 @@ export const tesisData = {
     }
   ]
 };
+
+function buildSectionMap(sections) {
+  const map = {};
+  if (Array.isArray(sections)) {
+    for (const s of sections) {
+      const key = s.claveCampo || s.clave_campo;
+      if (key) map[key] = s.valor;
+    }
+  }
+  return {
+    get: (key) => map[key],
+  };
+}
+
+export async function loadTesisPageData() {
+  try {
+    const [sections, dbTesis] = await Promise.all([
+      seccionPaginaApi.list({ paginaSlug: '/recursos/tesis' }).catch(() => []),
+      httpClient.get('/tesis').catch(() => []),
+    ]);
+
+    const secMap = buildSectionMap(sections);
+
+    const hero = {
+      eyebrow: secMap.get('rec_tesis_hero_eyebrow') || tesisData.hero.eyebrow,
+      title: [
+        secMap.get('rec_tesis_hero_titulo_01') || tesisData.hero.title[0],
+        secMap.get('rec_tesis_hero_titulo_02') || tesisData.hero.title[1],
+      ],
+      description: secMap.get('rec_tesis_hero_descripcion') || tesisData.hero.description,
+    };
+
+    let mappedTesis = tesisData.investigaciones;
+    if (Array.isArray(dbTesis) && dbTesis.length > 0) {
+      const dbAdapted = dbTesis.map((t) => ({
+        id: t.id ? `tesis-db-${t.id}` : `tesis-${Math.random()}`,
+        titulo: t.titulo,
+        autor: t.investigador || 'Investigador UMSA',
+        tutor: t.tutor || 'No especificado',
+        materia: t.area ? t.area.split(',').map((s) => s.trim()) : ['Estadística'],
+        modalidad: t.tipo || 'Tesis',
+        anoDefensa: 2026,
+        palabrasClave: t.area ? t.area.split(',').map((s) => s.trim()) : ['Estadística'],
+        resumen: t.resumen || '',
+        portada: '/hero_revista.png',
+        enlaceRepositorio: t.link || 'https://repositorio.umsa.bo',
+      }));
+      mappedTesis = [...dbAdapted, ...tesisData.investigaciones];
+    }
+
+    return {
+      hero,
+      tabs: tesisData.tabs,
+      modalidades: tesisData.modalidades,
+      investigaciones: mappedTesis,
+    };
+  } catch (err) {
+    console.error('Error cargando datos dinámicos de Tesis:', err);
+    return tesisData;
+  }
+}
+

@@ -377,13 +377,64 @@ export async function loadCalendarPageData() {
       tag: secMap.get('calendario_hero_badge') || curriculumCalendarMeta.tag,
       title: secMap.get('calendario_hero_titulo') || curriculumCalendarMeta.title,
       sub: secMap.get('calendario_hero_subtitulo') || curriculumCalendarMeta.sub,
-      noticeText: secMap.get('calendario_hero_descripcion') || curriculumCalendarMeta.noticeText,
+      noticeText: secMap.get('calendario_comunicado_texto') || secMap.get('calendario_hero_descripcion') || curriculumCalendarMeta.noticeText,
+      noticeTitle: secMap.get('calendario_comunicado_titulo') || curriculumCalendarMeta.noticeTitle,
+      resolution: secMap.get('calendario_hero_resolucion') || curriculumCalendarMeta.resolution,
+      term: secMap.get('calendario_hero_gestion') || curriculumCalendarMeta.term,
+      downloadCard: {
+        ...curriculumCalendarMeta.downloadCard,
+        title: secMap.get('calendario_descarga_titulo') || curriculumCalendarMeta.downloadCard.title,
+        caption: secMap.get('calendario_descarga_subtitulo') || curriculumCalendarMeta.downloadCard.caption,
+        ctaLabel: secMap.get('calendario_descarga_cta_texto') || curriculumCalendarMeta.downloadCard.ctaLabel,
+      },
+      examSession: {
+        ...curriculumCalendarMeta.examSession,
+        title: secMap.get('calendario_mesa_titulo') || curriculumCalendarMeta.examSession.title,
+      },
     }
 
-    return { calendarMeta }
+    const dynamicExamSessions = examSessionData.map((item, idx) => {
+      const num = String(idx + 1).padStart(2, '0')
+      const ev = secMap.get(`calendario_mesa_${num}_evento`)
+      const fe = secMap.get(`calendario_mesa_${num}_fecha`)
+      return {
+        ...item,
+        event: ev || item.event,
+        date: fe || item.date,
+      }
+    })
+
+    const dynamicRegularCourses = regularCourseData.map((item, idx) => {
+      const num = String(idx + 1).padStart(2, '0')
+      const ev = secMap.get(`calendario_regular_${num}_evento`)
+      const fe = secMap.get(`calendario_regular_${num}_fecha`)
+      return {
+        ...item,
+        event: ev || item.event,
+        date: fe || item.date,
+      }
+    })
+
+    const dynamicSpecialNote = {
+      ...specialEnrollmentNote,
+      title: secMap.get('calendario_nota_titulo') || specialEnrollmentNote.title,
+      description: secMap.get('calendario_nota_descripcion') || specialEnrollmentNote.description,
+    }
+
+    return {
+      calendarMeta,
+      examSessionData: dynamicExamSessions,
+      regularCourseData: dynamicRegularCourses,
+      specialEnrollmentNote: dynamicSpecialNote,
+    }
   } catch (err) {
     console.error('Error cargando calendario dinámico:', err)
-    return { calendarMeta: curriculumCalendarMeta }
+    return {
+      calendarMeta: curriculumCalendarMeta,
+      examSessionData,
+      regularCourseData,
+      specialEnrollmentNote,
+    }
   }
 }
 
