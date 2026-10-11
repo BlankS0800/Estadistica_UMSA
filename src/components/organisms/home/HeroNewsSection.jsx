@@ -59,7 +59,7 @@ export const HeroNewsSection = ({ slides = [], news = [] }) => {
   return (
     <section
       className="relative w-full bg-[#0a1628] overflow-hidden"
-      style={{ height: 'clamp(460px, 74vh, 760px)' }}
+      style={{ height: 'clamp(600px, 78vh, 760px)' }}
     >
       <div className="absolute inset-0">
         {slides.map((s, i) => (
@@ -169,37 +169,42 @@ export const HeroNewsSection = ({ slides = [], news = [] }) => {
           </div>
         </div>
       </div>
-
-      <div
-        className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-full"
-        style={{
-          background: 'rgba(10,22,40,0.65)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255,255,255,0.15)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-        }}
-      >
-        {slides.map((item, i) => (
-          <button
-            key={`${item.title}-${i}`}
-            onClick={() => go(i)}
-            className="group relative transition-all"
-            aria-label={`Ir a slide ${i + 1}`}
-          >
+      <div className="absolute bottom-5 sm:bottom-6 inset-x-0 z-30 px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 pointer-events-none">
+        <div className="w-full max-w-[1360px] mx-auto grid grid-cols-1 lg:grid-cols-[1.05fr_430px] xl:grid-cols-[1fr_520px] gap-8 xl:gap-10">
+          <div className="flex justify-center">
             <div
-              className="rounded-full transition-all duration-300"
+              className="pointer-events-auto flex items-center gap-2.5 px-3.5 py-2 rounded-full"
               style={{
-                width: i === current ? '42px' : '12px',
-                height: '12px',
-                background:
-                  i === current
-                    ? 'linear-gradient(135deg, #ea580c 0%, #fb923c 100%)'
-                    : 'rgba(255,255,255,0.35)',
-                boxShadow: i === current ? '0 4px 12px rgba(234,88,12,0.5)' : 'none',
+                background: 'rgba(10,22,40,0.65)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
               }}
-            />
-          </button>
-        ))}
+            >
+              {slides.map((item, i) => (
+                <button
+                  key={`${item.title}-${i}`}
+                  onClick={() => go(i)}
+                  className="group relative transition-all"
+                  aria-label={`Ir a slide ${i + 1}`}
+                >
+                  <div
+                    className="rounded-full transition-all duration-300"
+                    style={{
+                      width: i === current ? '28px' : '8px',
+                      height: '8px',
+                      background:
+                        i === current
+                          ? 'linear-gradient(135deg, #ea580c 0%, #fb923c 100%)'
+                          : 'rgba(255,255,255,0.35)',
+                      boxShadow: i === current ? '0 4px 12px rgba(234,88,12,0.5)' : 'none',
+                    }}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div

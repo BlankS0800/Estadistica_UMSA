@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { HeroNewsSection, HomeTopNewsSection } from '../components/organisms/home/HeroNewsSection'
 import { QuickAccess } from '../components/organisms/home/QuickAccess'
 import { StatsSection } from '../components/organisms/shared/StatsSection'
@@ -8,19 +8,48 @@ import { IETASection } from '../components/organisms/institutional/IETASection'
 import { PartnersCarousel } from '../components/organisms/institutional/PartnersCarousel'
 import { PortalServicesGrid } from '../components/organisms/home/PortalServicesGrid'
 import {
-  inicioSlides,
-  inicioQuickLinks,
-  inicioStats,
   inicioNews,
   inicioEvents,
-  inicioGraduateProfile,
-  inicioGraduateRoles,
-  inicioIETAContent,
-  inicioPartners,
-  inicioPortalServices,
+  inicioDataFallback,
+  getInicioNoticiasEventos,
+  getInicioData,
 } from '../services/inicioData'
 
 function LandingPage() {
+  const [newsSource, setNewsSource] = useState(inicioNews)
+  const [eventsSource, setEventsSource] = useState(inicioEvents)
+  const [inicioData, setInicioData] = useState(inicioDataFallback)
+
+  useEffect(() => {
+    let isCurrent = true
+
+    getInicioNoticiasEventos()
+      .then(({ news, events }) => {
+        if (!isCurrent) return
+        setNewsSource(news)
+        setEventsSource(events)
+      })
+      .catch(() => {})
+
+    return () => {
+      isCurrent = false
+    }
+  }, [])
+
+  useEffect(() => {
+    let isCurrent = true
+
+    getInicioData()
+      .then((data) => {
+        if (isCurrent) setInicioData(data)
+      })
+      .catch(() => {})
+
+    return () => {
+      isCurrent = false
+    }
+  }, [])
+
   // Función para formatear fechas YYYY-MM-DD a "DD Mes YYYY" en español
   const formatSpanishDate = (dateStr) => {
     if (!dateStr) return ''
@@ -37,7 +66,7 @@ function LandingPage() {
   // 1. Filtrar y ordenar noticias por fecha descendente (las más recientes primero)
   // Obtenemos la fecha actual del sistema local en formato YYYY-MM-DD
   const todayStr = new Date().toLocaleDateString('sv-SE') // Formato estándar: YYYY-MM-DD
-  const publishedNews = [...inicioNews]
+  const publishedNews = [...newsSource]
     .filter((n) => {
       // Filtrar si el estado no es publicado
       if (n.status !== 'published') return false
@@ -56,7 +85,7 @@ function LandingPage() {
 
   // 2. Filtrar y ordenar eventos por fecha ascendente (próximos eventos primero)
   const monthsSpanish = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
-  const processedEvents = [...inicioEvents]
+  const processedEvents = [...eventsSource]
     .filter((e) => e.status === 'published')
     .sort((a, b) => new Date(a.date) - new Date(b.date))
     .map((e) => {
@@ -70,27 +99,27 @@ function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[#f1f5f9]">
-      <HeroNewsSection slides={inicioSlides} news={heroNews} />
-      <div className="relative -mt-[50px] sm:-mt-14 md:-mt-16 lg:-mt-[68px] z-40">
-        <QuickAccess links={inicioQuickLinks} />
+      <HeroNewsSection slides={inicioData.slides} news={heroNews} />
+      <div className="relative mt-14 z-40">
+        <QuickAccess links={inicioData.quickLinks} />
       </div>
       <div className="h-6 md:h-7 lg:h-8 bg-transparent" />
       <HomeTopNewsSection news={heroNews} />
-      <StatsSection stats={inicioStats} />
+      <StatsSection stats={inicioData.stats} />
       
       {/* Sección del perfil de egreso e IETA */}
-      <GraduateProfile profile={inicioGraduateProfile} roles={inicioGraduateRoles} />
-      <IETASection content={inicioIETAContent} />
+      <GraduateProfile profile={inicioData.graduateProfile} roles={inicioData.graduateRoles} />
+      <IETASection content={inicioData.ietaContent} />
 
       {/* Servicios del Portal - Reemplaza los testimonios falsos */}
-      <PortalServicesGrid items={inicioPortalServices} />
+      <PortalServicesGrid items={inicioData.portalServices} />
 
       {/* Agenda y Noticias de manera bien ordenada */}
       <div id="news-section-full">
         <SplitPanel news={publishedNews} events={processedEvents} />
       </div>
       
-      <PartnersCarousel partners={inicioPartners} />
+      <PartnersCarousel partners={inicioData.partners} />
     </div>
   )
 }

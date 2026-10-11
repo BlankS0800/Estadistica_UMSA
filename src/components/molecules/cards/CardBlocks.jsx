@@ -135,17 +135,17 @@ export const AgendaEventCard = ({ event, variant }) => {
 
   return (
     <div className="relative rounded-[12px] overflow-hidden cursor-pointer transition-all hover:-translate-x-1 hover:shadow-md" style={{ backgroundImage: variant.bgGradient, border: `1px solid ${variant.border}`, boxShadow: '0px 1px 3px rgba(0,0,0,0.1), 0px 1px 2px -1px rgba(0,0,0,0.1)' }}>
-      <div className="relative min-h-[116px] w-full flex items-center">
+      <div className="relative min-h-[116px] w-full flex items-center gap-5 py-4 pl-[16px] pr-5">
         <DateIndicator
           day={event.day}
           month={event.month}
-          className="absolute left-[16px] top-1/2 -translate-y-1/2 size-[76px] z-10"
+          className="relative size-[76px] shrink-0 z-10"
           dayClassName="text-[26px]"
           monthClassName="text-[12px]"
           style={{ background: `linear-gradient(180deg, ${variant.badgeFrom} 0%, ${variant.badgeTo} 100%)`, boxShadow: '0px 4px 6px 0px rgba(0,0,0,0.1)' }}
         />
 
-        <div className="absolute left-[112px] top-4 right-5 bottom-4 z-10 flex flex-col justify-center">
+        <div className="relative z-10 flex min-w-0 flex-1 flex-col justify-center">
           <p className="font-semibold text-lg text-[#1e293b] leading-snug mb-1 line-clamp-2">{event.title}</p>
           <p className="text-sm font-semibold text-[#475569] mb-1">{event.time}</p>
           <p className="text-sm font-medium line-clamp-2 leading-snug" style={{ color: event.color ?? variant.accent }}>📍 {event.location}</p>
@@ -154,7 +154,6 @@ export const AgendaEventCard = ({ event, variant }) => {
     </div>
   );
 };
-
 CardSectionHeader.propTypes = {
   title: PropTypes.string,
 };

@@ -1,4 +1,6 @@
 import { BarChart3, Database, Users, Trophy, GraduationCap, Mail, TrendingUp, FlaskConical, BookOpen } from 'lucide-react'
+import { httpClient } from '../api/httpClient'
+import { seccionPaginaApi } from './seccionPaginaService'
 
 export const inicioSlides = [
   {
@@ -42,8 +44,8 @@ export const inicioSlides = [
 export const inicioQuickLinks = [
   { title: 'Seguimiento de Egresados', description: 'Portal de empleabilidad', href: '/estudiantes/pasantias-bolsa-trabajo', icon: Users, color: '#00447e', stat: 'Activo' },
   { title: 'Olimpiadas de Estadística', description: 'Competencia académica', href: '#', icon: Trophy, color: '#ea580c', stat: '2026' },
-  { title: 'Correo Institucional', description: 'Webmail UMSA', href: 'https://correo.umsa.bo/', icon: Mail, color: '#00447e', stat: 'Office 365' },
-  { title: 'Biblioteca Especializada', description: 'Catálogo Koha UMSA', href: 'https://koha.umsa.bo/catalog?collection=estadistica', icon: BookOpen, color: '#ea580c', stat: 'Koha' }
+  { title: 'Instituto de Investigación', description: 'IETA · Investigación y consultoría', href: '/investigacion/acerca-ieta', icon: FlaskConical, color: '#00447e', stat: 'IETA' },
+  { title: 'Posgrado', description: 'Maestrías y diplomados', href: '/postgrado', icon: GraduationCap, color: '#ea580c', stat: 'Posgrado' }
 ];
 
 export const inicioStats = [
@@ -357,3 +359,206 @@ export const inicioPortalServices = [
     tag: 'Investigación',
   },
 ];
+
+// ---------------------------------------------------------------
+// Noticias y Agenda desde la API (con respaldo en los datos estáticos)
+// ---------------------------------------------------------------
+const API_BASE_URL = (import.meta.env.VITE_API_URL ?? '/api').replace(/\/$/, '')
+
+const toDay = (value) => (value ? String(value).slice(0, 10) : '')
+
+const resolveNewsImage = (url) => {
+  if (!url || typeof url !== 'string') return ''
+  const trimmed = url.trim()
+  return trimmed.startsWith('/uploads/') ? `${API_BASE_URL}${trimmed}` : trimmed
+}
+
+const mapNoticia = (row) => {
+  const item = {
+    id: row.id,
+    category: row.categoria,
+    accent: row.color,
+    date: toDay(row.fecha),
+    title: row.titulo,
+    excerpt: row.extracto,
+    readTime: row.tiempoLectura,
+    href: row.enlace,
+    status: row.estado,
+  }
+  const imageUrl = resolveNewsImage(row.imagenUrl)
+  if (imageUrl) item.imageUrl = imageUrl
+  const expiryDate = toDay(row.fechaExpiracion)
+  if (expiryDate) item.expiryDate = expiryDate
+  return item
+}
+
+const mapEvento = (row) => ({
+  date: toDay(row.fecha),
+  color: row.color,
+  category: row.categoria,
+  title: row.titulo,
+  time: row.hora,
+  location: row.ubicacion,
+  status: row.estado,
+})
+
+export async function getInicioNoticiasEventos() {
+  const [noticiasResult, eventosResult] = await Promise.allSettled([
+    httpClient('/noticia'),
+    httpClient('/evento'),
+  ])
+
+  const noticias =
+    noticiasResult.status === 'fulfilled' && Array.isArray(noticiasResult.value)
+      ? noticiasResult.value.map(mapNoticia)
+      : []
+
+  const eventos =
+    eventosResult.status === 'fulfilled' && Array.isArray(eventosResult.value)
+      ? eventosResult.value.map(mapEvento)
+      : []
+
+  return {
+    news: noticias.length > 0 ? noticias : inicioNews,
+    events: eventos.length > 0 ? eventos : inicioEvents,
+  }
+}
+
+// ---------------------------------------------------------------
+// Textos editables de Inicio (seccion_pagina, slug '/')
+// ---------------------------------------------------------------
+const INICIO_PAGE_SLUG = '/'
+
+export const inicioDataFallback = {
+  slides: inicioSlides,
+  quickLinks: inicioQuickLinks,
+  stats: inicioStats,
+  graduateProfile: inicioGraduateProfile,
+  graduateRoles: inicioGraduateRoles,
+  ietaContent: inicioIETAContent,
+  partners: inicioPartners,
+  portalServices: inicioPortalServices,
+}
+
+const getInicioRecordValue = (records, key, fallback) => {
+  const record = records.find(
+    (item) => (item.claveCampo ?? item.clave_campo) === key,
+  )
+
+  return record?.valor ?? fallback
+}
+
+const getInicioDataFromRecords = (records) => {
+  const value = (key, fallback) => getInicioRecordValue(records, key, fallback)
+  const nn = (index) => String(index + 1).padStart(2, '0')
+
+  return {
+    slides: inicioSlides.map((slide, index) => {
+      const p = `inicio_slide_${nn(index)}_`
+      return {
+        ...slide,
+        subtitle: value(`${p}subtitulo`, slide.subtitle),
+        title: value(`${p}titulo`, slide.title),
+        description: value(`${p}descripcion`, slide.description),
+        buttonText: value(`${p}boton`, slide.buttonText),
+        tag: value(`${p}etiqueta`, slide.tag),
+        imageUrl: value(`${p}imagen`, slide.imageUrl),
+        to: value(`${p}enlace_principal`, slide.to),
+        secondaryTo: value(`${p}enlace_secundario`, slide.secondaryTo),
+        stats: slide.stats.map((stat, j) => value(`${p}stat_${nn(j)}`, stat)),
+      }
+    }),
+
+    quickLinks: inicioQuickLinks.map((link, index) => {
+      const p = `inicio_acceso_${nn(index)}_`
+      return {
+        ...link,
+        title: value(`${p}titulo`, link.title),
+        description: value(`${p}descripcion`, link.description),
+        href: value(`${p}enlace`, link.href),
+        stat: value(`${p}stat`, link.stat),
+      }
+    }),
+
+    stats: inicioStats.map((stat, index) => {
+      const p = `inicio_stat_${nn(index)}_`
+      return {
+        ...stat,
+        value: value(`${p}valor`, stat.value),
+        suffix: value(`${p}sufijo`, stat.suffix),
+        title: value(`${p}titulo`, stat.title),
+        description: value(`${p}descripcion`, stat.description),
+      }
+    }),
+
+    graduateProfile: {
+      ...inicioGraduateProfile,
+      badgeValue: value('inicio_perfil_badge_valor', inicioGraduateProfile.badgeValue),
+      badgeSuffix: value('inicio_perfil_badge_sufijo', inicioGraduateProfile.badgeSuffix),
+      badgeLabel: value('inicio_perfil_etiqueta', inicioGraduateProfile.badgeLabel),
+      titleLines: [
+        value('inicio_perfil_titulo_01', inicioGraduateProfile.titleLines[0]),
+        value('inicio_perfil_titulo_02', inicioGraduateProfile.titleLines[1]),
+      ],
+      description: value('inicio_perfil_descripcion', inicioGraduateProfile.description),
+    },
+
+    graduateRoles: inicioGraduateRoles.map((role, index) => {
+      const p = `inicio_rol_${nn(index)}_`
+      return {
+        ...role,
+        title: value(`${p}titulo`, role.title),
+        subtitle: value(`${p}subtitulo`, role.subtitle),
+      }
+    }),
+
+    ietaContent: {
+      ...inicioIETAContent,
+      eyebrow: value('inicio_ieta_eyebrow', inicioIETAContent.eyebrow),
+      title: inicioIETAContent.title.map((line, index) =>
+        value(`inicio_ieta_titulo_${nn(index)}`, line),
+      ),
+      description: value('inicio_ieta_descripcion', inicioIETAContent.description),
+      imageUrl: value('inicio_ieta_imagen', inicioIETAContent.imageUrl),
+      badge: {
+        ...inicioIETAContent.badge,
+        label: value('inicio_ieta_badge_etiqueta', inicioIETAContent.badge.label),
+        value: value('inicio_ieta_badge_valor', inicioIETAContent.badge.value),
+        subtitle: value('inicio_ieta_badge_subtitulo', inicioIETAContent.badge.subtitle),
+      },
+      projects: inicioIETAContent.projects.map((project, index) => ({
+        ...project,
+        title: value(`inicio_ieta_proyecto_${nn(index)}_titulo`, project.title),
+        description: value(`inicio_ieta_proyecto_${nn(index)}_descripcion`, project.description),
+      })),
+      ctaLabel: value('inicio_ieta_boton_texto', inicioIETAContent.ctaLabel),
+      ctaHref: value('inicio_ieta_boton_enlace', inicioIETAContent.ctaHref),
+    },
+
+    partners: inicioPartners.map((partner, index) => {
+      const p = `inicio_aliado_${nn(index)}_`
+      return {
+        ...partner,
+        name: value(`${p}nombre`, partner.name),
+        abbr: value(`${p}sigla`, partner.abbr),
+      }
+    }),
+
+    portalServices: inicioPortalServices.map((service, index) => {
+      const p = `inicio_servicio_${nn(index)}_`
+      return {
+        ...service,
+        title: value(`${p}titulo`, service.title),
+        description: value(`${p}descripcion`, service.description),
+        href: value(`${p}enlace`, service.href),
+      }
+    }),
+  }
+}
+
+export async function getInicioData() {
+  const records = await seccionPaginaApi.list(INICIO_PAGE_SLUG)
+  return records.length > 0
+    ? getInicioDataFromRecords(records)
+    : inicioDataFallback
+}

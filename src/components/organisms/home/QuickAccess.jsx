@@ -15,7 +15,14 @@ export const QuickAccess = ({ links = [] }) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-[1360px] mx-auto">
       {links.map((link) => {
         const Icon = link.icon;
-        const isExternal = link.href.startsWith('http');
+        const rawHref = (link.href || '').trim();
+        const isInternal = rawHref === '' || rawHref.startsWith('/') || rawHref.startsWith('#');
+        const href = isInternal
+          ? rawHref || '#'
+          : /^(https?:|mailto:|tel:)/i.test(rawHref)
+            ? rawHref
+            : `https://${rawHref}`;
+        const isExternal = !isInternal;
         
         const content = (
           <>
@@ -56,7 +63,7 @@ export const QuickAccess = ({ links = [] }) => (
           return (
             <a 
               key={link.title} 
-              href={link.href} 
+              href={href}
               target="_blank" 
               rel="noopener noreferrer" 
               className={cardClassName}
@@ -70,7 +77,7 @@ export const QuickAccess = ({ links = [] }) => (
         return (
           <Link 
             key={link.title} 
-            to={link.href} 
+            to={href} 
             className={cardClassName}
             style={cardStyle}
           >

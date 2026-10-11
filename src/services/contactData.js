@@ -1,3 +1,4 @@
+import { seccionPaginaApi } from './seccionPaginaService'
 import {
   Binary,
   Building,
@@ -161,4 +162,162 @@ export const contactGallery = {
   ],
 }
 
+// ---------------------------------------------------------------
+// Textos editables de Contacto (seccion_pagina, slug '/contacto')
+// ---------------------------------------------------------------
+const CONTACTO_PAGE_SLUG = '/contacto'
 
+export const contactoDataFallback = {
+  hero: contactHero,
+  faqs: contactFaqs,
+  formConfig: contactFormConfig,
+  directoryPhones: contactDirectoryPhones,
+  directoryEmails: contactDirectoryEmails,
+  directoryUi: contactDirectoryUi,
+  locationsSection: contactLocationsSection,
+  locations: contactLocations,
+  gallery: contactGallery,
+}
+
+const getContactoRecordValue = (records, key, fallback) => {
+  const record = records.find(
+    (item) => (item.claveCampo ?? item.clave_campo) === key,
+  )
+
+  return record?.valor ?? fallback
+}
+
+export const getContactoDataFromRecords = (records) => {
+  const value = (key, fallback) => getContactoRecordValue(records, key, fallback)
+  const nn = (index) => String(index + 1).padStart(2, '0')
+
+  return {
+    hero: {
+      ...contactHero,
+      eyebrow: value('contacto_hero_eyebrow', contactHero.eyebrow),
+      title: [
+        value('contacto_hero_titulo_01', contactHero.title[0]),
+        value('contacto_hero_titulo_02', contactHero.title[1]),
+      ],
+      description: value('contacto_hero_descripcion', contactHero.description),
+      ctaLabel: value('contacto_hero_boton', contactHero.ctaLabel),
+    },
+
+    faqs: contactFaqs.map((faq, index) => ({
+      ...faq,
+      question: value(`contacto_faq_${nn(index)}_pregunta`, faq.question),
+      answer: value(`contacto_faq_${nn(index)}_respuesta`, faq.answer),
+    })),
+
+    formConfig: {
+      ...contactFormConfig,
+      title: [
+        value('contacto_form_titulo_01', contactFormConfig.title[0]),
+        value('contacto_form_titulo_02', contactFormConfig.title[1]),
+      ],
+      subtitle: value('contacto_form_subtitulo', contactFormConfig.subtitle),
+      submitLabel: value('contacto_form_boton', contactFormConfig.submitLabel),
+      studentToggleLabel: value(
+        'contacto_form_interruptor_estudiante',
+        contactFormConfig.studentToggleLabel,
+      ),
+      categories: contactFormConfig.categories.map((category, index) => ({
+        ...category,
+        label: value(`contacto_form_categoria_${nn(index)}_etiqueta`, category.label),
+      })),
+      fields: {
+        fullName: value('contacto_form_campo_nombre', contactFormConfig.fields.fullName),
+        email: value('contacto_form_campo_correo', contactFormConfig.fields.email),
+        category: value('contacto_form_campo_categoria', contactFormConfig.fields.category),
+        studentCode: value('contacto_form_campo_ru', contactFormConfig.fields.studentCode),
+        message: value('contacto_form_campo_mensaje', contactFormConfig.fields.message),
+      },
+      placeholders: {
+        fullName: value('contacto_form_placeholder_nombre', contactFormConfig.placeholders.fullName),
+        email: value('contacto_form_placeholder_correo', contactFormConfig.placeholders.email),
+        category: value('contacto_form_placeholder_categoria', contactFormConfig.placeholders.category),
+        studentCode: value('contacto_form_placeholder_ru', contactFormConfig.placeholders.studentCode),
+        message: value('contacto_form_placeholder_mensaje', contactFormConfig.placeholders.message),
+      },
+      successMessage: value('contacto_form_mensaje_exito', contactFormConfig.successMessage),
+    },
+
+    directoryPhones: contactDirectoryPhones.map((phone, index) => {
+      const p = `contacto_tel_${nn(index)}_`
+      const item = {
+        ...phone,
+        unit: value(`${p}unidad`, phone.unit),
+        role: value(`${p}rol`, phone.role),
+        number: value(`${p}numero`, phone.number),
+        ext: value(`${p}extension`, phone.ext),
+      }
+      const altNumber = value(`${p}numero_alterno`, phone.altNumber)
+      if (altNumber) item.altNumber = altNumber
+      else delete item.altNumber
+      return item
+    }),
+
+    directoryEmails: contactDirectoryEmails.map((mail, index) => {
+      const p = `contacto_correo_${nn(index)}_`
+      return {
+        ...mail,
+        unit: value(`${p}unidad`, mail.unit),
+        email: value(`${p}correo`, mail.email),
+        desc: value(`${p}descripcion`, mail.desc),
+      }
+    }),
+
+    directoryUi: {
+      ...contactDirectoryUi,
+      phonesTitle: value('contacto_tel_titulo', contactDirectoryUi.phonesTitle),
+      emailsTitle: value('contacto_correo_titulo', contactDirectoryUi.emailsTitle),
+    },
+
+    locationsSection: {
+      ...contactLocationsSection,
+      tag: value('contacto_sedes_etiqueta', contactLocationsSection.tag),
+      title: value('contacto_sedes_titulo', contactLocationsSection.title),
+      subtitle: value('contacto_sedes_subtitulo', contactLocationsSection.subtitle),
+    },
+
+    locations: contactLocations.map((location, index) => {
+      const p = `contacto_sede_${nn(index)}_`
+      return {
+        ...location,
+        label: value(`${p}etiqueta`, location.label),
+        title: value(`${p}titulo`, location.title),
+        mapTitle: value(`${p}mapa_titulo`, location.mapTitle),
+        mapEmbedUrl: value(`${p}mapa_url`, location.mapEmbedUrl),
+        details: location.details.map((detail, j) => ({
+          ...detail,
+          text: value(`${p}detalle_${nn(j)}`, detail.text),
+        })),
+      }
+    }),
+
+    gallery: {
+      ...contactGallery,
+      title: [
+        value('contacto_galeria_titulo_01', contactGallery.title[0]),
+        value('contacto_galeria_titulo_02', contactGallery.title[1]),
+      ],
+      subtitle: value('contacto_galeria_subtitulo', contactGallery.subtitle),
+      items: contactGallery.items.map((item, index) => {
+        const p = `contacto_galeria_item_${nn(index)}_`
+        return {
+          ...item,
+          title: value(`${p}titulo`, item.title),
+          sub: value(`${p}subtitulo`, item.sub),
+          img: value(`${p}imagen`, item.img),
+        }
+      }),
+    },
+  }
+}
+
+export async function getContactoData() {
+  const records = await seccionPaginaApi.list(CONTACTO_PAGE_SLUG)
+  return records.length > 0
+    ? getContactoDataFromRecords(records)
+    : contactoDataFallback
+}

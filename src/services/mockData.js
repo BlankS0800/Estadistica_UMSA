@@ -75,17 +75,6 @@ export const mockNavItems = [
     ],
   },
   {
-    label: 'Postgrado',
-    href: '/postgrado/maestria-terminal',
-    accent: '#00447e',
-    align: 'center',
-    children: [
-      { label: 'Maestría Terminal', href: '/postgrado/maestria-terminal' },
-      { label: 'Maestría Autofinanciada', href: '/postgrado/maestria-autofinanciada' },
-      { label: 'Diplomados y Especialidades', href: '/postgrado/diplomados-especialidades' },
-    ],
-  },
-  {
     label: 'Estudiantes',
     href: '#estudiantes',
     accent: '#ea580c',
@@ -96,21 +85,6 @@ export const mockNavItems = [
       { label: 'Convocatorias (Auxiliaturas)', href: '/estudiantes/convocatorias-auxiliaturas' },
       { label: 'Pasantías y Bolsa de Trabajo', href: '/estudiantes/pasantias-bolsa-trabajo' },
       { label: 'Sociedades Científicas', href: '/estudiantes/sociedad-cientifica' },
-    ],
-  },
-  {
-    label: 'Investigación',
-    href: '#investigacion',
-    accent: '#00447e',
-    align: 'right',
-    children: [
-      { label: 'Acerca del IETA', href: '/investigacion/acerca-ieta' },
-      { label: 'Personal', href: '/investigacion/personal' },
-      { label: 'Investigación y Proyectos', href: '/investigacion/proyectos' },
-      { label: 'Revista Varianza', href: '/investigacion/revista-varianza' },
-      { label: 'Autores Varianza', href: '/investigacion/autores-varianza' },
-      { label: 'Servicios y Capacitación', href: '/investigacion/servicios' },
-      { label: 'Contacto IETA', href: '/investigacion/contacto' },
     ],
   },
   {
@@ -221,4 +195,4 @@ export const mockPostgradoCTA = {
 
 export const mockInvestigacionCTA = {
   buttonLabel: 'Solicitar Cotización / Presupuesto',
-};
+};
