@@ -1,4 +1,5 @@
 import { StatisticalGrid } from '../../atoms/data/StatisticalCharts'
+import ImageCarousel from '../../molecules/media/ImageCarousel'
 
 const AuthoritiesHeroSection = ({ hero }) => (
   <section className="relative overflow-hidden border-b-8 border-[#ea580c] bg-[linear-gradient(160deg,#001d3d_0%,#003666_55%,#00447e_100%)] px-6 pb-16 pt-8 md:px-10 md:pb-24 md:pt-12">
@@ -32,37 +33,21 @@ const AuthoritiesHeroSection = ({ hero }) => (
         </h2>
 
         <div className="max-w-lg">
-          <p className="mb-10 rounded-r-2xl border-l-4 border-[#ea580c] bg-white/10 py-4 pl-6 text-base font-medium leading-relaxed text-slate-200 shadow-sm md:text-base">
+          <p className="rounded-r-2xl border-l-4 border-[#ea580c] bg-white/10 py-4 pl-6 text-base font-medium leading-relaxed text-slate-200 shadow-sm md:text-base">
             {hero.description}
           </p>
-          <div className="flex flex-wrap gap-4">
-            {hero.chips.map((chip) => (
-              <div key={chip.symbol} className="flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-5 py-2.5 shadow-sm">
-                <span className="font-serif text-2xl italic leading-none text-[#9ad6ff]">{chip.symbol}</span>
-                <span className="text-[9px] font-black uppercase leading-tight tracking-widest text-slate-200">
-                  {chip.label} <br />
-                  {chip.subtitle}
-                </span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
       <div className="relative">
         <div className="absolute -inset-10 rounded-full bg-blue-500/5 blur-[80px]" />
-        <div className="relative overflow-hidden rounded-[3.5rem] border border-slate-200 bg-white p-4 shadow-2xl">
-          <img 
-            src={hero.imageUrl} 
-            onError={(e) => { e.target.style.display = 'none'; }} 
-            className="h-[400px] w-full rounded-[3rem] object-cover grayscale-[0.8] brightness-90 contrast-[1.3] md:h-[500px]" 
-            alt="Consejo" 
+        <div className="relative rounded-[2.5rem] shadow-2x1">
+          <ImageCarousel 
+          images={hero.images} 
+          alt="Autoridades de la carrera" 
+          aspect="aspect-[4/3]"
           />
-          <div className="absolute inset-4 rounded-[3rem] bg-[#00447e]/5" />
-          <div className="absolute bottom-12 left-12 flex flex-col items-start text-white drop-shadow-2xl">
-            <span className="text-4xl font-black italic tracking-tighter">lambda</span>
-            <p className="mt-1 border-t border-white/40 pt-1 text-base sm:text-base md:text-lg font-bold uppercase tracking-[0.3em]">Transparencia Publica</p>
-          </div>
+          
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowRight, Briefcase, GraduationCap, Mail, SearchIcon, ShieldAlert, Sigma, Users } from 'lucide-react'
 import InstitutionalBackdrop from '../components/atoms/layout/InstitutionalBackdrop'
 import StatisticalSeal from '../components/atoms/data/StatisticalSeal'
@@ -7,11 +7,28 @@ import {
   staffHero,
 } from '../services/staffData'
 
+// Quita tildes, puntos y mayúsculas: "lopez" encuentra "López" y "msc" encuentra "M.Sc.".
+const normalizeText = (value) =>
+  String(value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\./g, '')
+    .toLowerCase()
+
+// Todas las palabras escritas deben aparecer (en cualquier orden) en alguno de los campos.
+const matchesSearch = (term, ...fields) => {
+  const tokens = normalizeText(term).split(/\s+/).filter(Boolean)
+  if (tokens.length === 0) return true
+  const haystack = normalizeText(fields.join(' '))
+  return tokens.every((token) => haystack.includes(token))
+}
+
 function StaffPage() {
   const [activeTab, setActiveTab] = useState('docentes')
   const [searchTerm, setSearchTerm] = useState('')
   const [staffData, setStaffData] = useState(null)
   const [apiError, setApiError] = useState(false)
+  const resultsRef = useRef(null)
 
   useEffect(() => {
     let isCurrent = true
@@ -35,17 +52,43 @@ function StaffPage() {
   }, [])
 
   const filteredTeachers = useMemo(
-    () => (staffData?.teachers ?? []).filter((t) => `${t.name} ${t.summary}`.toLowerCase().includes(searchTerm.toLowerCase())),
+    () =>
+      (staffData?.teachers ?? []).filter((t) =>
+        matchesSearch(searchTerm, t.degree, t.name, t.role, t.summary, t.email),
+      ),
     [searchTerm, staffData?.teachers],
   )
   const filteredAdmins = useMemo(
-    () => (staffData?.admins ?? []).filter((a) => `${a.name} ${a.role}`.toLowerCase().includes(searchTerm.toLowerCase())),
+    () =>
+      (staffData?.admins ?? []).filter((a) =>
+        matchesSearch(searchTerm, a.name, a.role, a.email),
+      ),
     [searchTerm, staffData?.admins],
   )
   const filteredAux = useMemo(
-    () => (staffData?.assistants ?? []).filter((x) => `${x.name} ${x.course || ''} ${x.role}`.toLowerCase().includes(searchTerm.toLowerCase())),
+    () =>
+      (staffData?.assistants ?? []).filter((x) =>
+        matchesSearch(searchTerm, x.name, x.role, x.course),
+      ),
     [searchTerm, staffData?.assistants],
   )
+
+  const tabs = [
+    { id: 'docentes', label: 'Docentes', icon: Users, count: filteredTeachers.length },
+    { id: 'administrativos', label: 'Administrativos', icon: Briefcase, count: filteredAdmins.length },
+    { id: 'auxiliares', label: 'Auxiliares', icon: GraduationCap, count: filteredAux.length },
+  ]
+  const isSearching = searchTerm.trim().length > 0
+
+  // Enter: lleva a los resultados y cambia a la pestaña que tenga coincidencias.
+  const goToResults = () => {
+    const current = tabs.find((tab) => tab.id === activeTab)
+    if (current?.count === 0) {
+      const next = tabs.find((tab) => tab.count > 0)
+      if (next) setActiveTab(next.id)
+    }
+    resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   const emptyState =
     (activeTab === 'docentes' && filteredTeachers.length === 0) ||
@@ -103,34 +146,38 @@ function StaffPage() {
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && goToResults()}
                   placeholder="Buscar por nombre o especialidad..."
+                  aria-label="Buscar en el plantel"
                   className="w-full rounded-full border border-slate-200 bg-white py-4 pl-12 pr-6 text-xs font-bold uppercase tracking-widest outline-none transition-all focus:ring-2 focus:ring-[#00447e] shadow-xl"
                 />
               </div>
+
+              {isSearching && (
+                <p className="mt-4 pl-6 text-[10px] font-black uppercase tracking-widest text-slate-500" role="status" aria-live="polite">
+                  Docentes: {filteredTeachers.length} · Administrativos: {filteredAdmins.length} · Auxiliares: {filteredAux.length}
+                  <span className="mt-1 block font-bold normal-case tracking-normal text-slate-400">
+                    Presiona Enter para ver los resultados.
+                  </span>
+                </p>
+              )}
             </div>
           </div>
 
-          <div className="relative">
-            <div className="absolute -inset-10 rounded-full bg-blue-500/5 blur-[80px]" />
-            <div className="relative overflow-hidden rounded-[3.5rem] border border-slate-200 bg-white p-4 shadow-2xl">
-              <img src={hero.imageUrl} className="h-[450px] w-full rounded-[3rem] object-cover grayscale-[0.8] brightness-90 contrast-[1.3]" alt="Personal UMSA" />
-              <div className="absolute inset-4 rounded-[3rem] bg-[#00447e]/5" />
-              <div className="absolute bottom-12 right-12 flex flex-col items-end text-white drop-shadow-2xl">
-                <span className="text-4xl font-black italic tracking-tighter">{hero.badgeSymbol || 'omega'}</span>
-                <p className="mt-1 border-t border-white/40 pt-1 text-[10px] font-bold uppercase tracking-[0.3em]">{hero.badgeText || 'Talento Humano'}</p>
-              </div>
+          <div className="relative overflow-hidden rounded-[2.5rem] shadow-2xl">
+            <img src={hero.imageUrl} className="h-[450px] w-full object-cover" alt="Personal UMSA" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black/60 to-transparent" />
+            <div className="absolute bottom-10 right-10 flex flex-col items-end text-white drop-shadow-2xl">
+              <span className="text-4xl font-black italic tracking-tighter">{hero.badgeSymbol || 'omega'}</span>
+              <p className="mt-1 border-t border-white/40 pt-1 text-[10px] font-bold uppercase tracking-[0.3em]">{hero.badgeText || 'Talento Humano'}</p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="mb-12 px-6 md:px-10">
-        <div className="mx-auto flex max-w-[1440px] justify-center gap-4 md:justify-start">
-          {[
-            { id: 'docentes', label: 'Docentes', icon: Users },
-            { id: 'administrativos', label: 'Administrativos', icon: Briefcase },
-            { id: 'auxiliares', label: 'Auxiliares', icon: GraduationCap },
-          ].map((tab) => (
+      <section ref={resultsRef} className="mb-12 scroll-mt-28 px-6 md:px-10">
+        <div className="mx-auto flex max-w-[1440px] flex-wrap justify-center gap-4 md:justify-start">
+          {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -142,6 +189,7 @@ function StaffPage() {
             >
               <tab.icon size={16} />
               {tab.label}
+              {isSearching && <span className="opacity-70">({tab.count})</span>}
             </button>
           ))}
         </div>

@@ -13,15 +13,11 @@ const ValueCard = ({ value, index }) => {
 
   return (
     <article className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-[#f8fafc] p-6 transition-[background-color,box-shadow,border-color,transform] duration-300 motion-reduce:transition-none hover:bg-white hover:shadow-lg md:p-7">
-      <StatisticalOverlay sigma="1.05" r2="0.94" n="380" />
       <Chart color={value.color} opacity={0.1} />
       <div className="relative z-10">
         <div className="mb-5 flex items-start justify-between">
           <div className="flex size-12 items-center justify-center rounded-xl shadow-sm transition-transform duration-300 motion-reduce:transition-none group-hover:scale-105" style={{ background: `${value.color}15` }}>
             <value.icon className="size-6" style={{ color: value.color }} />
-          </div>
-          <div className="rounded-full px-3 py-1.5 font-mono text-[9px] font-bold" style={{ background: `${value.color}10`, color: value.color }}>
-            {value.stat}
           </div>
         </div>
         <h3 className="mb-2 text-xl font-bold tracking-tight" style={{ color: value.color }}>{value.title}</h3>

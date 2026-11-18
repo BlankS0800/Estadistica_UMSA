@@ -7,7 +7,7 @@ const ObjectiveCard = ({ objective }) => (
     <h5 className="relative z-10 mb-3 text-lg font-bold tracking-tight text-[#002a52] md:text-xl">{objective.t}</h5>
     <p className="relative z-10 text-sm leading-relaxed text-slate-600 md:text-base">{objective.d}</p>
 
-    <StatisticalOverlay sigma="1.05" r2="0.94" n="380" />
+    
   </article>
 )
 

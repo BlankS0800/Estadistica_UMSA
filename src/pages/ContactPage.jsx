@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import InstitutionalBackdrop from '../components/atoms/layout/InstitutionalBackdrop'
-import ContactFaqSection from '../components/organisms/contact/ContactFaqSection'
 import ContactFormDirectorySection from '../components/organisms/contact/ContactFormDirectorySection'
 import ContactGallerySection from '../components/organisms/contact/ContactGallerySection'
 import ContactHeroSection from '../components/organisms/contact/ContactHeroSection'
@@ -30,7 +29,6 @@ function ContactPage() {
 
       <div className="relative z-10">
         <ContactHeroSection hero={contactoData.hero} />
-        <ContactFaqSection faqs={contactoData.faqs} />
         <ContactFormDirectorySection
           formConfig={contactoData.formConfig}
           phones={contactoData.directoryPhones}

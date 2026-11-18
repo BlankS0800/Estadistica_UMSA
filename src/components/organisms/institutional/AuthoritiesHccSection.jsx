@@ -1,7 +1,7 @@
 import HccMemberCard from '../../molecules/cards/HccMemberCard'
 
 const AuthoritiesHccSection = ({ meta, teachers, students }) => (
-  <section className="relative bg-[#f1f5f9] px-6 py-24 md:px-10 md:py-40">
+  <section className="relative bg-[#f1f5f9] px-6 pb-24 pt-14 md:px-10 md:pb-40 md:pt-20">
     <svg className="pointer-events-none absolute left-0 top-10 h-[300px] w-[560px] opacity-[0.08]" viewBox="0 0 560 300" fill="none" aria-hidden="true">
       <path d="M0 170 Q140 90 280 170 T560 170" stroke="#00447e" strokeWidth="2" />
       <path d="M0 196 Q140 116 280 196 T560 196" stroke="#00447e" strokeWidth="1.5" opacity="0.6" />

@@ -1,4 +1,4 @@
-import { Binary, Target } from 'lucide-react'
+import { Target } from 'lucide-react'
 
 const AboutMissionVisionSection = ({ missionVision }) => (
   <section className="relative z-30 mx-4 overflow-hidden border-y-4 border-[#c2410c] bg-[#001d3d] py-12 text-white shadow-xl md:py-16">
@@ -19,7 +19,6 @@ const AboutMissionVisionSection = ({ missionVision }) => (
       </article>
 
       <article className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#00447e] p-7 shadow-lg md:p-9">
-        <Binary className="absolute -right-10 -top-10 opacity-10" size={180} />
 
         <div className="mb-5 flex items-center gap-3">
           <div className="flex size-12 items-center justify-center rounded-full bg-white text-[#00447e] shadow-lg">

@@ -1,19 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import InstitutionalBackdrop from '../components/atoms/layout/InstitutionalBackdrop'
+import StudentsInternshipsConveniosSection from '../components/organisms/students/StudentsInternshipsConveniosSection'
 import StudentsInternshipsHeroSection from '../components/organisms/students/StudentsInternshipsHeroSection'
-import StudentsInternshipsImpactSection from '../components/organisms/students/StudentsInternshipsImpactSection'
 import StudentsInternshipsModalitiesSection from '../components/organisms/students/StudentsInternshipsModalitiesSection'
 import StudentsInternshipsOffersSection from '../components/organisms/students/StudentsInternshipsOffersSection'
-import StudentsInternshipsProcessSection from '../components/organisms/students/StudentsInternshipsProcessSection'
-import StudentsInternshipsResourcesSection from '../components/organisms/students/StudentsInternshipsResourcesSection'
 import {
-  studentsInternshipDocuments as defaultStudentsInternshipDocuments,
-  studentsInternshipMapNodes as defaultStudentsInternshipMapNodes,
+  studentsInternshipConvenios as defaultStudentsInternshipConvenios,
   studentsInternshipModalities as defaultStudentsInternshipModalities,
   studentsInternshipOffers as defaultStudentsInternshipOffers,
-  studentsInternshipProcess as defaultStudentsInternshipProcess,
-  studentsInternshipRequirements as defaultStudentsInternshipRequirements,
-  studentsInternshipTestimonials as defaultStudentsInternshipTestimonials,
   studentsInternshipsHero as defaultStudentsInternshipsHero,
   studentsInternshipUi as defaultStudentsInternshipUi,
   loadStudentsInternshipsData,
@@ -23,13 +17,9 @@ function StudentsInternshipsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [data, setData] = useState({
     hero: defaultStudentsInternshipsHero,
+    convenios: defaultStudentsInternshipConvenios,
     modalities: defaultStudentsInternshipModalities,
-    process: defaultStudentsInternshipProcess,
     offers: defaultStudentsInternshipOffers,
-    requirements: defaultStudentsInternshipRequirements,
-    documents: defaultStudentsInternshipDocuments,
-    testimonials: defaultStudentsInternshipTestimonials,
-    mapNodes: defaultStudentsInternshipMapNodes,
     ui: defaultStudentsInternshipUi,
   })
 
@@ -65,7 +55,6 @@ function StudentsInternshipsPage() {
       <div className="relative z-10">
         <StudentsInternshipsHeroSection hero={data.hero} />
         <StudentsInternshipsModalitiesSection modalities={data.modalities} />
-        <StudentsInternshipsProcessSection steps={data.process} />
         <StudentsInternshipsOffersSection
           offers={filteredOffers}
           searchTerm={searchTerm}
@@ -73,15 +62,7 @@ function StudentsInternshipsPage() {
           searchIcon={data.ui.searchIcon}
           postulateIcon={data.ui.postulateIcon}
         />
-        <StudentsInternshipsResourcesSection
-          requirements={data.requirements}
-          documents={data.documents}
-          reqCheckIcon={data.ui.reqCheckIcon}
-          downloadIcon={data.ui.downloadIcon}
-        />
-        <StudentsInternshipsImpactSection
-          nodes={data.mapNodes}
-        />
+        <StudentsInternshipsConveniosSection section={data.convenios ?? defaultStudentsInternshipConvenios} />
       </div>
     </div>
   )

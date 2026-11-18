@@ -1,15 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import InstitutionalBackdrop from '../components/atoms/layout/InstitutionalBackdrop'
-import StudentsCallsAlertSection from '../components/organisms/students/StudentsCallsAlertSection'
 import StudentsCallsGuideSection from '../components/organisms/students/StudentsCallsGuideSection'
 import StudentsCallsHeroSection from '../components/organisms/students/StudentsCallsHeroSection'
 import StudentsCallsListSection from '../components/organisms/students/StudentsCallsListSection'
-import StudentsCallsRequirementsSection from '../components/organisms/students/StudentsCallsRequirementsSection'
 import {
   studentsCalls as defaultStudentsCalls,
   studentsCallsFilters as defaultStudentsCallsFilters,
   studentsCallsHero as defaultStudentsCallsHero,
-  studentsCallsRequirements as defaultStudentsCallsRequirements,
   studentsCallsSteps as defaultStudentsCallsSteps,
   studentsCallsUi as defaultStudentsCallsUi,
   loadStudentsCallsData,
@@ -21,7 +18,6 @@ function StudentsCallsPage() {
     hero: defaultStudentsCallsHero,
     calls: defaultStudentsCalls,
     steps: defaultStudentsCallsSteps,
-    requirements: defaultStudentsCallsRequirements,
     ui: defaultStudentsCallsUi,
     filters: defaultStudentsCallsFilters,
   })
@@ -64,14 +60,6 @@ function StudentsCallsPage() {
           downloadIcon={data.ui.cardDownloadIcon}
         />
         <StudentsCallsGuideSection steps={data.steps} />
-        <StudentsCallsRequirementsSection
-          requirements={data.requirements}
-          requirementCheckIcon={data.ui.requirementCheckIcon}
-        />
-        <StudentsCallsAlertSection
-          alertIcon={data.ui.alertIcon}
-          supportIcon={data.ui.supportIcon}
-        />
       </div>
     </div>
   )

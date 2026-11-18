@@ -11,6 +11,12 @@ export const revistasData = {
       '/images/recursos/revistas/revistas_de_estadistica_cientificas_y_academicas_online.jpg',
   },
   filters: ['Todas', 'Internacionales', 'Nacionales', 'Boletines'],
+  ieta: {
+    title: '¿Te interesa conocer más?',
+    text: 'Visita la página oficial del IETA y explora todas sus publicaciones e investigaciones.',
+    buttonText: 'Ir a la página del IETA',
+    url: '/investigacion/acerca-ieta',
+  },
   publicaciones: [
     {
       id: 'pub-001',
@@ -109,8 +115,8 @@ function buildSectionMap(sections) {
 export async function loadRevistasPageData() {
   try {
     const [sections, dbRevistas] = await Promise.all([
-      seccionPaginaApi.list({ paginaSlug: '/recursos/revistas' }).catch(() => []),
-      httpClient.get('/revista').catch(() => []),
+      seccionPaginaApi.list('/recursos/revistas').catch(() => []),
+      httpClient('/revista').catch(() => []),
     ]);
 
     const secMap = buildSectionMap(sections);
@@ -148,10 +154,18 @@ export async function loadRevistasPageData() {
       mappedPublicaciones = [...dbAdapted, ...revistasData.publicaciones];
     }
 
+    const ieta = {
+      title: secMap.get('rec_revistas_ieta_titulo') || revistasData.ieta.title,
+      text: secMap.get('rec_revistas_ieta_texto') || revistasData.ieta.text,
+      buttonText: secMap.get('rec_revistas_ieta_boton') || revistasData.ieta.buttonText,
+      url: secMap.get('rec_revistas_ieta_url') || revistasData.ieta.url,
+    };
+
     return {
       hero,
       filters: revistasData.filters,
       publicaciones: mappedPublicaciones,
+      ieta,
     };
   } catch (err) {
     console.error('Error cargando datos dinámicos de Revistas:', err);

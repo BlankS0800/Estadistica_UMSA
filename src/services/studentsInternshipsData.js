@@ -179,6 +179,18 @@ export const studentsInternshipMapNodes = [
   { label: 'Banca Privada', x: '51%', y: '45%', color: '#0f766e' },
 ]
 
+// Apartado que lleva a la página de Convenios (editable desde el panel: est_pasantias_convenios_*)
+export const studentsInternshipConvenios = {
+  tag: 'Alianzas institucionales',
+  title: 'Convenios para tu pasantía',
+  sub: 'Conoce las instituciones y organismos con los que la Carrera tiene convenios para pasantías y trabajos dirigidos.',
+  label: 'Ver convenios',
+  href: '/institucional/convenios',
+}
+
+// Solo se aceptan enlaces http(s), mailto o rutas internas (evita javascript: y similares).
+const SAFE_URL = /^(https?:\/\/|\/(?!\/)|mailto:)/i
+
 export const studentsInternshipUi = {
   reqCheckIcon: CheckCircle2,
   searchIcon: Search,
@@ -276,9 +288,18 @@ export async function loadStudentsInternshipsData() {
         quote: secMap.get(`est_pasantias_test_${num}_texto`) || t.quote,
       }
     })
-
+      const customHref = (secMap.get('est_pasantias_convenios_url') || '').trim()
+      const dynamicConvenios = {
+        tag: secMap.get('est_pasantias_convenios_tag') || studentsInternshipConvenios.tag,
+        title: secMap.get('est_pasantias_convenios_titulo') || studentsInternshipConvenios.title,
+        sub: secMap.get('est_pasantias_convenios_sub') || studentsInternshipConvenios.sub,
+        label: secMap.get('est_pasantias_convenios_boton') || studentsInternshipConvenios.label,
+        // Si el enlace falta o no es válido, el botón siempre lleva a Convenios (nunca queda muerto)
+        href: SAFE_URL.test(customHref) ? customHref : studentsInternshipConvenios.href,
+      }
     return {
       hero: dynamicHero,
+      convenios: dynamicConvenios,
       modalities: dynamicModalities,
       process: dynamicProcess,
       offers: dynamicOffers,
@@ -292,6 +313,7 @@ export async function loadStudentsInternshipsData() {
     console.error('Error cargando datos dinámicos de pasantías:', err)
     return {
       hero: studentsInternshipsHero,
+      convenios: studentsInternshipConvenios,
       modalities: studentsInternshipModalities,
       process: studentsInternshipProcess,
       offers: studentsInternshipOffers,

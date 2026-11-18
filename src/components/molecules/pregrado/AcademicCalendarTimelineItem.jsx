@@ -5,23 +5,25 @@ function AcademicCalendarTimelineItem({ event, style, index }) {
 
   return (
     <article
-      className="group relative flex items-start gap-6 md:gap-10"
+      className="group relative flex items-start gap-3 md:gap-4"
       style={{ animationDelay: `${index * 55}ms` }}
     >
-      <div className={`relative z-10 flex size-10 shrink-0 items-center justify-center rounded-2xl border-2 border-white text-white shadow-lg transition-transform duration-300 group-hover:scale-110 md:size-14 ${style.color}`}>
-        <EventIcon size={20} className="md:size-6" />
+      <div className={`relative z-10 flex size-8 shrink-0 items-center justify-center rounded-lg border-2 border-white text-white shadow-md transition-transform duration-300 group-hover:scale-110 md:size-9 ${style.color}`}>
+        <EventIcon size={14} />
       </div>
 
-      <div className={`flex-1 rounded-2xl border border-slate-100 bg-[#f8fafc] p-5 transition-all duration-300 hover:border-l-[6px] hover:bg-white hover:shadow-xl md:rounded-[2rem] md:p-6 ${style.border}`}>
-        <span className={`mb-2 inline-block rounded px-2 py-0.5 text-xs font-black uppercase tracking-[0.3em] text-white md:text-[9px] ${style.color}`}>
-          {style.label}
-        </span>
-        <h4 className={`mb-2 text-sm font-black uppercase tracking-tight leading-tight md:text-lg ${style.text}`}>
+      <div className={`flex-1 rounded-xl border border-slate-100 bg-[#f8fafc] px-3 py-2 transition-all duration-300 hover:border-l-[5px] hover:bg-white hover:shadow-lg md:px-4 md:py-2.5 ${style.border}`}>
+        <div className="mb-0.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+          <span className={`inline-block rounded px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-white ${style.color}`}>
+            {style.label}
+          </span>
+          <span className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-slate-500">
+            <CalendarDays size={12} className="text-slate-400" /> {event.date}
+          </span>
+        </div>
+        <h4 className={`text-[13px] font-semibold uppercase leading-snug tracking-normal ${style.text}`}>
           {event.event}
         </h4>
-        <div className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3 text-xs font-bold uppercase tracking-widest text-slate-500 md:text-[11px]">
-          <CalendarDays size={14} className="text-slate-400" /> {event.date}
-        </div>
       </div>
     </article>
   )

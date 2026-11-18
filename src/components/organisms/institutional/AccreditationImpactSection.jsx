@@ -1,6 +1,6 @@
 import ImpactBenefitCard from '../../molecules/cards/ImpactBenefitCard'
 
-const AccreditationImpactSection = ({ highlight, impactCards, cta }) => (
+const AccreditationImpactSection = ({ highlight, impactCards }) => (
   <section className="relative bg-[#f1f5f9] px-6 py-24 md:px-10 md:py-40">
     <svg className="pointer-events-none absolute left-0 top-10 h-[300px] w-[560px] opacity-[0.08]" viewBox="0 0 560 300" fill="none" aria-hidden="true">
       <path d="M0 170 Q140 90 280 170 T560 170" stroke="#00447e" strokeWidth="2" />
@@ -53,32 +53,6 @@ const AccreditationImpactSection = ({ highlight, impactCards, cta }) => (
           {impactCards.map((item, index) => (
             <ImpactBenefitCard key={item.t} item={item} index={index} />
           ))}
-
-          <div className="flex justify-center pt-10">
-            <div className="w-full rounded-[3rem] border-2 border-dashed border-slate-300 bg-white/50 p-8 text-center backdrop-blur-sm">
-              <span className="mb-4 block text-base sm:text-base md:text-lg font-black uppercase tracking-[0.5em] text-slate-400">{cta.title}</span>
-              <h5 className="flex items-center justify-center gap-4 text-xl font-black uppercase tracking-widest text-[#00447e]">
-                <cta.icon className="text-[#c2410c]" size={24} />
-                {cta.label}
-                <cta.icon className="text-[#c2410c]" size={24} />
-              </h5>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-4">
-            {cta.links.map((link, idx) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className={idx === 0
-                  ? 'inline-flex items-center gap-2 rounded-full bg-[#00447e] px-8 py-4 text-sm sm:text-base md:text-lg font-black uppercase tracking-widest text-white shadow-xl transition-[background-color,transform] duration-300 motion-reduce:transition-none hover:bg-[#002a52] active:scale-95'
-                  : 'inline-flex items-center gap-2 rounded-full border-2 border-slate-200 bg-white px-8 py-4 text-sm sm:text-base md:text-lg font-black uppercase tracking-widest text-slate-700 shadow-lg transition-[border-color,color,transform] duration-300 motion-reduce:transition-none hover:border-[#00447e] hover:text-[#00447e] active:scale-95'}
-              >
-                {link.label}
-                <link.icon size={16} />
-              </a>
-            ))}
-          </div>
         </div>
       </div>
     </div>

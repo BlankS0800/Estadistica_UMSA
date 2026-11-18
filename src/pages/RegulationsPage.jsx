@@ -3,8 +3,6 @@ import {
   ArrowRight,
   Landmark,
   History,
-  Star,
-  Zap,
   X,
 } from 'lucide-react'
 import InstitutionalBackdrop from '../components/atoms/layout/InstitutionalBackdrop'
@@ -13,7 +11,35 @@ import {
   getRegulationsData,
   regulationsDataFallback,
 } from '../services/regulationsData'
+import { resolveMediaUrl } from '../services/carouselUtils'
 
+
+// Solo se aceptan enlaces http(s), mailto o rutas internas (evita javascript: y similares).
+const SAFE_URL = /^(https?:\/\/|\/(?!\/)|mailto:)/i
+
+// Mismo aspecto que el botón original; si el administrador aún no cargó el enlace,
+// se muestra atenuado y sin acción.
+const DocumentLink = ({ href, className, children }) => {
+  const url = typeof href === 'string' ? href.trim() : ''
+
+  if (!SAFE_URL.test(url)) {
+    const staticClass = className
+      .split(' ')
+      .filter((c) => !c.startsWith('hover:'))
+      .join(' ')
+    return (
+      <span aria-disabled="true" title="Documento próximamente" className={`${staticClass} cursor-not-allowed opacity-50`}>
+        {children}
+      </span>
+    )
+  }
+
+  return (
+    <a href={resolveMediaUrl(url)} target="_blank" rel="noopener noreferrer" className={className}>
+      {children}
+    </a>
+  )
+}
 function RegulationsPage() {
   const [activeTab, setActiveTab] = useState('academica')
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -45,8 +71,6 @@ function RegulationsPage() {
     universityFramework,
     internalRegulations,
     resolutionHighlight,
-    regulationBenefits,
-    regulationsCta,
   } = pageData
 
   const currentSector = internalRegulations.find((sector) => sector.id === activeTab) ?? internalRegulations[0]
@@ -81,28 +105,16 @@ function RegulationsPage() {
                 {regulationsHero.title[2]}
               </h2>
               <div className="max-w-lg">
-                <p className="mb-10 rounded-r-2xl border-l-4 border-[#c2410c] bg-white/30 py-4 pl-6 text-sm font-medium leading-relaxed text-slate-500 shadow-sm md:text-base">
+                <p className="rounded-r-2xl border-l-4 border-[#c2410c] bg-white/30 py-4 pl-6 text-sm font-medium leading-relaxed text-slate-500 shadow-sm md:text-base">
                   {regulationsHero.description}
                 </p>
-                <div className="flex flex-wrap gap-4">
-                  {regulationsHero.chips.map((chip) => (
-                    <div key={chip.symbol} className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-5 py-2.5 shadow-sm">
-                      <span className="font-serif text-2xl italic leading-none text-[#00447e]">{chip.symbol}</span>
-                      <span className="text-[9px] font-black uppercase leading-tight tracking-widest text-slate-400">
-                        {chip.label} <br />
-                        {chip.subtitle}
-                      </span>
-                    </div>
-                  ))}
-                </div>
               </div>
             </div>
 
             <div className="relative">
               <div className="absolute -inset-10 rounded-full bg-blue-500/5 blur-[80px]" />
               <div className="relative overflow-hidden rounded-[3.5rem] border border-slate-200 bg-white p-4 shadow-2xl">
-                <img src={regulationsHero.imageUrl} className="h-[450px] w-full rounded-[3rem] object-cover grayscale-[0.8] brightness-95 contrast-[1.3]" alt="Marco legal" />
-                <div className="absolute inset-4 rounded-[3rem] bg-[#00447e]/5" />
+                <img src={regulationsHero.imageUrl} className="h-[450px] w-full rounded-[3rem] object-cover" alt="Marco legal" />
                 <div className="absolute bottom-12 right-12 flex flex-col items-end text-white drop-shadow-2xl">
                   <span className="text-4xl font-black italic tracking-tighter">≡</span>
                   <p className="mt-1 border-t border-white/40 pt-1 text-[10px] font-bold uppercase tracking-[0.3em]">Transparencia Total</p>
@@ -147,9 +159,9 @@ function RegulationsPage() {
                   <h4 className="mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-orange-400">{law.title}</h4>
                   <h3 className="mb-4 h-12 overflow-hidden text-lg font-black uppercase leading-tight tracking-tighter text-white">{law.sub}</h3>
                   <p className="mb-8 text-xs font-medium italic leading-relaxed text-white/40">{law.desc}</p>
-                  <button className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-blue-300 transition-[gap] hover:gap-4">
+                  <DocumentLink href={law.url} className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-blue-300 transition-[gap] hover:gap-4">
                     Ver documento <ArrowRight size={14} />
-                  </button>
+                  </DocumentLink>
                 </article>
               ))}
             </div>
@@ -196,9 +208,9 @@ function RegulationsPage() {
                     <h4 className="mb-4 border-b border-slate-100 pb-4 text-base font-black uppercase leading-tight tracking-tighter text-[#002a52]">{item.name}</h4>
                     <p className="text-[11px] font-medium uppercase leading-relaxed tracking-wider text-slate-500">{item.desc}</p>
                   </div>
-                  <button className="mt-8 flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.3em] text-[#c2410c] transition-[gap] hover:gap-4">
+                  <DocumentLink href={item.url} className="mt-8 flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.3em] text-[#c2410c] transition-[gap] hover:gap-4">
                     Ver reglamento <ArrowRight size={14} />
-                  </button>
+                  </DocumentLink>
                 </article>
               ))}
             </div>
@@ -219,7 +231,11 @@ function RegulationsPage() {
                   <p className="mb-12 border-l-2 border-white/20 pl-8 text-base font-medium italic leading-relaxed text-blue-100/70 md:text-lg">
                     {resolutionHighlight.description}
                   </p>
-                  <button className="flex items-center gap-4 rounded-full bg-white px-10 py-5 text-xs font-black uppercase tracking-widest text-[#002a52] shadow-xl transition-[background-color,color] hover:bg-[#c2410c] hover:text-white">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(true)}
+                    className="flex items-center gap-4 rounded-full bg-white px-10 py-5 text-xs font-black uppercase tracking-widest text-[#002a52] shadow-xl transition-[background-color,color] hover:bg-[#c2410c] hover:text-white"
+                  >
                     Explorar resolucion historica <ArrowRight size={20} />
                   </button>
                 </div>
@@ -231,79 +247,6 @@ function RegulationsPage() {
                   <div className="absolute -inset-10 rounded-full bg-white/5 blur-3xl" />
                   <div className="relative rounded-[3rem] border-2 border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur-sm">
                     <img src={resolutionHighlight.imageUrl} className="h-[400px] w-full rounded-[2.5rem] object-cover" alt="Documento historico" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="relative bg-[#f1f5f9] px-6 py-24 md:px-10 md:py-40">
-          <svg className="pointer-events-none absolute left-0 top-10 h-[300px] w-[760px] opacity-[0.14]" viewBox="0 0 760 300" fill="none" aria-hidden="true">
-            <path d="M0 170 Q190 90 380 170 T760 170" stroke="#00447e" strokeWidth="2.8" />
-            <path d="M0 196 Q190 116 380 196 T760 196" stroke="#00447e" strokeWidth="1.8" opacity="0.72" />
-            <path d="M0 222 Q190 142 380 222 T760 222" stroke="#c2410c" strokeWidth="1.6" opacity="0.62" />
-          </svg>
-
-          <div className="mx-auto max-w-[1440px]">
-            <div className="grid items-start gap-16 md:gap-24 lg:grid-cols-[0.8fr_1.2fr]">
-              <div>
-                <div className="lg:sticky lg:top-40">
-                  <div className="mb-6 flex items-center gap-3">
-                    <div className="h-1 w-12 bg-[#00447e]" />
-                    <span className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400">Propuesta de Valor</span>
-                  </div>
-                  <h2 className="mb-10 text-4xl font-black uppercase italic leading-none tracking-tighter text-slate-900 md:text-5xl">
-                    Beneficios del <br />
-                    <span className="text-[#c2410c]">Marco Normativo</span>
-                  </h2>
-                  <p className="mb-14 rounded-r-3xl border-l-4 border-slate-200 bg-white/10 py-4 pl-8 text-sm font-medium leading-relaxed text-slate-500 md:text-base">
-                    Un sistema normativo robusto mejora la calidad academica, reduce incertidumbre y garantiza procesos transparentes.
-                  </p>
-                  <div className="relative overflow-hidden rounded-[4rem] border-b-[10px] border-[#c2410c] bg-[#002a52] p-10 text-white shadow-2xl">
-                    <Zap className="absolute -bottom-10 -right-10 opacity-10" size={160} />
-                    <h4 className="mb-4 text-2xl font-black uppercase tracking-tighter">Gestion 2026</h4>
-                    <p className="mb-10 text-xs font-bold uppercase leading-relaxed tracking-[0.2em] text-blue-100/70">
-                      Actualizacion continua de reglamentos, resoluciones y procedimientos academicos.
-                    </p>
-                    <div className="flex items-center gap-4 rounded-full border border-white/10 bg-white/10 p-4 backdrop-blur-sm">
-                      <div className="size-3 animate-pulse rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]" />
-                      <span className="text-[10px] font-black uppercase tracking-[0.4em]">Repositorio vigente</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative mt-12 space-y-10 lg:mt-0">
-                {regulationBenefits.map((item, index) => (
-                  <article
-                    key={item.title}
-                    className={`group relative flex w-full flex-col items-center gap-10 rounded-[3.5rem] border border-slate-100 bg-white p-10 shadow-xl transition-[box-shadow,transform,border-color] duration-300 hover:z-50 hover:border-[#00447e] hover:shadow-2xl md:flex-row ${
-                      index > 0 ? 'md:-mt-24' : ''
-                    }`}
-                    style={{ zIndex: 30 - index * 10 }}
-                  >
-                    <div className="flex size-24 shrink-0 items-center justify-center rounded-[2.5rem] border border-slate-100 bg-[#f8fafc] text-[#c2410c] shadow-inner transition-colors duration-300 group-hover:bg-[#c2410c] group-hover:text-white">
-                      <item.icon size={36} />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="mb-3 text-2xl font-black uppercase leading-none tracking-tighter text-[#002a52]">{item.title}</h4>
-                      <p className="text-[13px] font-medium uppercase tracking-wider text-slate-500">{item.description}</p>
-                    </div>
-                    <div className="absolute right-12 top-10 font-mono text-[16px] font-black uppercase text-slate-100 transition-colors group-hover:text-slate-200">
-                      {item.symbol}
-                    </div>
-                  </article>
-                ))}
-
-                <div className="flex justify-center pt-16">
-                  <div className="w-full rounded-[4rem] border-2 border-dashed border-slate-300 bg-white/60 p-10 text-center backdrop-blur-md transition-colors hover:border-[#00447e]">
-                    <span className="mb-6 block text-[11px] font-black uppercase tracking-[0.6em] text-slate-400">Referente Nacional</span>
-                    <h5 className="flex flex-wrap items-center justify-center gap-6 text-2xl font-black uppercase tracking-[0.2em] text-[#00447e]">
-                      <Star className="text-[#c2410c] transition-transform hover:scale-125" size={32} />
-                      {regulationsCta.label}
-                      <Star className="text-[#c2410c] transition-transform hover:scale-125" size={32} />
-                    </h5>
                   </div>
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import { CheckCircle2, ExternalLink, FileCheck, Timer } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import PregradoSectionHeader from '../../molecules/pregrado/PregradoSectionHeader'
 
 function RegularAdmissionsSection({ section, visuals }) {
@@ -28,33 +28,7 @@ function RegularAdmissionsSection({ section, visuals }) {
               </div>
             </div>
 
-            <p className="relative z-10 mb-10 text-slate-500 font-medium leading-relaxed italic">{card.description}</p>
-
-            {card.topics && (
-              <div className="relative z-10 mb-12 space-y-4">
-                <h5 className="border-b border-slate-100 pb-2 text-sm sm:text-base md:text-lg font-black uppercase tracking-widest text-slate-400">Áreas de evaluación sugeridas</h5>
-                <div className="flex flex-wrap gap-3">
-                  {card.topics.map((item) => (
-                    <span key={item} className="flex items-center gap-2 rounded-lg border border-slate-100 bg-slate-50 px-4 py-2 text-base sm:text-base md:text-lg font-bold uppercase tracking-tight text-slate-600">
-                      <CheckCircle2 size={12} className="text-[#001d3d]" /> {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {card.highlights && (
-              <div className="relative z-10 mb-12 grid gap-4 sm:grid-cols-2">
-                <div className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-4">
-                  <Timer size={16} className="text-[#ea580c]" />
-                  <span className="text-base sm:text-base md:text-lg font-bold uppercase tracking-tight text-slate-600">{card.highlights[0]}</span>
-                </div>
-                <div className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-4">
-                  <FileCheck size={16} className="text-[#ea580c]" />
-                  <span className="text-base sm:text-base md:text-lg font-bold uppercase tracking-tight text-slate-600">{card.highlights[1]}</span>
-                </div>
-              </div>
-            )}
+            <p className="relative z-10 mb-8 text-slate-500 font-medium leading-relaxed italic">{card.description}</p>
 
             <a href={card.cta.href} target="_blank" rel="noreferrer" className={`relative z-10 inline-flex items-center gap-3 rounded-xl px-8 py-4 text-sm sm:text-base md:text-lg font-black uppercase tracking-widest transition-all ${card.style === 'blue' ? 'bg-[#001d3d] text-white shadow-lg hover:bg-[#ea580c]' : 'border-2 border-slate-200 bg-white text-[#001d3d] shadow-sm hover:border-[#001d3d]'}`}>
               {card.cta.label} <ExternalLink size={16} />

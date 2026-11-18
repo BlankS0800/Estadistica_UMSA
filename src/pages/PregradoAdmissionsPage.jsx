@@ -1,16 +1,13 @@
 import { useState, useEffect } from 'react'
 import InstitutionalBackdrop from '../components/atoms/layout/InstitutionalBackdrop'
 import AdmissionsHeroSection from '../components/organisms/pregrado/AdmissionsHeroSection'
-import AdmissionsTimelineSection from '../components/organisms/pregrado/AdmissionsTimelineSection'
-import GeneralRequirementsSection from '../components/organisms/pregrado/GeneralRequirementsSection'
 import RegularAdmissionsSection from '../components/organisms/pregrado/RegularAdmissionsSection'
 import SpecialAdmissionsSection from '../components/organisms/pregrado/SpecialAdmissionsSection'
 import {
   admissionsHero as defaultHero,
-  admissionsTimeline as defaultTimeline,
   admissionsVisuals,
-  generalRequirements as defaultRequirements,
   regularAdmissions as defaultRegular,
+  specialAdmissions as defaultSpecial,
   specialMeta,
   specialModalities,
   loadAdmissionsPageData,
@@ -19,8 +16,7 @@ import {
 function PregradoAdmissionsPage() {
   const [hero, setHero] = useState(defaultHero)
   const [regular, setRegular] = useState(defaultRegular)
-  const [requirements, setRequirements] = useState(defaultRequirements)
-  const [timeline, setTimeline] = useState(defaultTimeline)
+  const [special, setSpecial] = useState(defaultSpecial)
   const [modalities, setModalities] = useState(specialModalities)
   const [meta, setMeta] = useState(specialMeta)
 
@@ -30,8 +26,7 @@ function PregradoAdmissionsPage() {
       if (!isMounted) return
       if (data.hero) setHero(data.hero)
       if (data.regular) setRegular(data.regular)
-      if (data.requirements) setRequirements(data.requirements)
-      if (data.timeline) setTimeline(data.timeline)
+      if (data.special) setSpecial(data.special)
       if (data.specialModalities) setModalities(data.specialModalities)
       if (data.specialMeta) setMeta(data.specialMeta)
     })
@@ -47,9 +42,7 @@ function PregradoAdmissionsPage() {
       <div className="relative z-10 space-y-32 pb-20">
         <div className="render-optimized"><AdmissionsHeroSection hero={hero} /></div>
         <div className="render-optimized"><RegularAdmissionsSection section={regular} visuals={admissionsVisuals.decorativeIcons} /></div>
-        <div className="render-optimized"><GeneralRequirementsSection section={requirements} visuals={admissionsVisuals.decorativeIcons} /></div>
-        <div className="render-optimized"><AdmissionsTimelineSection section={timeline} visuals={admissionsVisuals.decorativeIcons} /></div>
-        <div className="render-optimized"><SpecialAdmissionsSection modalities={modalities} meta={meta} /></div>
+        <div className="render-optimized"><SpecialAdmissionsSection header={special} modalities={modalities} meta={meta} /></div>
       </div>
     </div>
   )

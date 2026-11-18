@@ -3,6 +3,7 @@ import { revistasData, loadRevistasPageData } from '../services/recursosRevistas
 import RevistasHeroSection from '../components/organisms/resources/RevistasHeroSection';
 import RevistasFilterBar from '../components/organisms/resources/RevistasFilterBar';
 import RevistasPublicationsGrid from '../components/organisms/resources/RevistasPublicationsGrid';
+import RevistasIetaLinkSection from '../components/organisms/resources/RevistasIetaLinkSection';
 
 export default function RecursosRevistasPage() {
   const [data, setData] = useState(revistasData);
@@ -50,6 +51,8 @@ export default function RecursosRevistasPage() {
 
         <RevistasPublicationsGrid publications={filteredPublications} activeFilter={activeFilter} />
       </main>
+
+      <RevistasIetaLinkSection section={data.ieta ?? revistasData.ieta} />
     </div>
   );
 }

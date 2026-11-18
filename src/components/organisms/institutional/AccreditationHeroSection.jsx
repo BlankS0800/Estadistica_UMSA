@@ -1,3 +1,4 @@
+import ImageCarousel from '../../molecules/media/ImageCarousel'
 import { ScatterPlot } from '../../atoms/data/StatisticalCharts'
 
 const AccreditationHeroSection = ({ hero }) => (
@@ -30,14 +31,7 @@ const AccreditationHeroSection = ({ hero }) => (
 
     <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.22),transparent_45%),radial-gradient(circle_at_80%_10%,rgba(234,88,12,0.2),transparent_35%),repeating-linear-gradient(0deg,rgba(255,255,255,0.08),rgba(255,255,255,0.08)_1px,transparent_1px,transparent_24px)]" aria-hidden="true" />
 
-    <div className="pointer-events-none absolute right-24 top-16 hidden select-none font-serif text-8xl italic font-black text-white opacity-[0.08] md:block" aria-hidden="true">
-      Sigma
-    </div>
-    <div className="pointer-events-none absolute bottom-20 left-12 hidden select-none font-serif text-7xl italic font-black text-[#ea580c] opacity-[0.1] md:block" aria-hidden="true">
-      chi2
-    </div>
-
-    <div className="mx-auto grid max-w-[1440px] items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] md:gap-16">
+    <div className="mx-auto grid max-w-[1440px] items-center gap-8 lg:grid-cols-[0.85fr_1.15fr] md:gap-16">
       <div className="relative z-10">
         <div className="mb-6 flex items-center gap-3">
           <div className="h-[2px] w-10 rounded-full bg-[#c2410c]" />
@@ -54,35 +48,12 @@ const AccreditationHeroSection = ({ hero }) => (
           <p className="mb-10 rounded-r-2xl border-l-4 border-[#ea580c] bg-white/10 py-4 pl-6 text-base font-medium leading-relaxed text-slate-200 shadow-sm md:text-base">
             {hero.description}
           </p>
-          <div className="flex flex-wrap gap-4">
-            {hero.chips.map((chip) => (
-              <div key={chip.symbol} className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 shadow-sm">
-                <span className="font-serif text-xl italic text-[#9ad6ff]">{chip.symbol}</span>
-                <span className="text-[8px] font-black uppercase leading-none tracking-widest text-slate-200">
-                  {chip.label} <br />
-                  {chip.subtitle}
-                </span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
       <div className="relative">
         <div className="absolute -inset-10 rounded-full bg-blue-500/5 blur-[60px]" />
-        <div className="relative overflow-hidden rounded-[3rem] border border-slate-200 bg-white p-4 shadow-2xl">
-          <img 
-            src={hero.imageUrl} 
-            onError={(e) => { e.target.style.display = 'none'; }} 
-            className="h-[400px] w-full rounded-[2.5rem] object-cover grayscale-[0.8] brightness-90 contrast-[1.3] md:h-[500px]" 
-            alt="Acreditacion" 
-          />
-          <div className="absolute inset-4 rounded-[2.5rem] bg-[#00447e]/5" />
-          <div className="absolute right-10 top-10 flex flex-col items-end text-white drop-shadow-lg">
-            <span className="text-5xl font-black italic">A+</span>
-            <p className="text-base sm:text-base md:text-lg font-bold uppercase tracking-widest">Nivel Academico</p>
-          </div>
-        </div>
+          <ImageCarousel images={hero.images} alt={hero.title.join(' ')} />
       </div>
     </div>
   </section>

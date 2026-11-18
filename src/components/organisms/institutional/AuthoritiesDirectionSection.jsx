@@ -2,7 +2,7 @@ import AuthorityProfileCard from '../../molecules/cards/AuthorityProfileCard'
 import StatisticalSeal from '../../atoms/data/StatisticalSeal'
 
 const AuthoritiesDirectionSection = ({ directionData }) => (
-  <section className="relative mx-2 overflow-hidden rounded-[4rem] border border-slate-100 bg-white px-6 py-24 shadow-inner md:mx-4 md:rounded-[6rem] md:px-10 md:py-32">
+  <section className="relative mx-2 overflow-hidden rounded-[4rem] border border-slate-100 bg-white px-6 pb-12 pt-24 shadow-inner md:mx-4 md:rounded-[6rem] md:px-10 md:pb-10 md:pt-32">
     <StatisticalSeal symbol="Sigma" label="MUESTRA" value="450" top="10%" left="5%" className="opacity-[0.12]" />
 
     <svg className="pointer-events-none absolute -right-20 top-16 h-[360px] w-[360px] opacity-[0.07]" viewBox="0 0 360 360" fill="none" aria-hidden="true">

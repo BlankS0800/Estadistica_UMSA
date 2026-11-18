@@ -22,9 +22,6 @@ function ConvalidationProcedureSection({ section, visuals }) {
             <span className="font-serif text-slate-400 italic lowercase">{section.title[1]}</span>
           </h3>
           <p className="mb-8 border-l-4 border-[#ea580c] pl-4 text-base font-medium italic leading-relaxed text-slate-500">{section.description}</p>
-          <button className="flex items-center gap-2 rounded-xl bg-[#001d3d] px-8 py-4 text-sm sm:text-base md:text-lg font-black uppercase tracking-widest text-white shadow-lg transition-all hover:bg-[#ea580c]" type="button">
-            {section.ctaLabel}
-          </button>
         </div>
 
         <div className="md:w-2/3">

@@ -224,6 +224,7 @@ export async function getRegulationsData() {
       title: val(`reglamentos_marco_${num}_titulo`, law.title),
       sub: val(`reglamentos_marco_${num}_subtitulo`, law.sub),
       desc: val(`reglamentos_marco_${num}_descripcion`, law.desc),
+      url: val(`reglamentos_marco_${num}_url`, ''),
     }
   })
 
@@ -235,6 +236,7 @@ export async function getRegulationsData() {
       return {
         name: val(`reglamentos_interno_${catKey}_item_${num}_nombre`, it.name),
         desc: val(`reglamentos_interno_${catKey}_item_${num}_descripcion`, it.desc),
+        url: val(`reglamentos_interno_${catKey}_item_${num}_url`, ''),
       }
     })
     return {

@@ -1,11 +1,15 @@
 import { useMemo, useState } from 'react'
+import { ExternalLink } from 'lucide-react'
+import PregradoSectionHeader from '../../molecules/pregrado/PregradoSectionHeader'
 
-function SpecialAdmissionsSection({ modalities, meta }) {
+function SpecialAdmissionsSection({ header, modalities, meta }) {
   const [activeTab, setActiveTab] = useState(modalities[0]?.id ?? '')
   const activeModality = useMemo(() => modalities.find((item) => item.id === activeTab) ?? modalities[0], [modalities, activeTab])
 
   return (
     <section className="mx-auto mb-20 max-w-[1536px] px-4 md:px-12">
+      <PregradoSectionHeader tag={header.tag} title={header.title} sub={header.sub} />
+
       <div className="overflow-hidden rounded-[4rem] border border-slate-200 bg-white shadow-2xl">
         <div className="grid min-h-[700px] lg:grid-cols-[320px_1fr]">
           <aside className="flex flex-col justify-between border-r border-slate-200 bg-slate-50 p-8">
@@ -52,12 +56,14 @@ function SpecialAdmissionsSection({ modalities, meta }) {
                 </div>
               </div>
 
-              <div className="hidden rounded-2xl border border-slate-200 bg-[#f8fafc] p-4 md:flex md:gap-6">
-                <div className="text-center">
-                  <p className="mb-1 flex items-center gap-1 text-base sm:text-base md:text-lg font-black uppercase tracking-widest text-slate-400"><meta.folderIcon size={10} /> Folder exigido</p>
-                  <p className="text-base font-black uppercase text-[#001d3d]">{activeModality.folder}</p>
+              {activeModality.folder && (
+                <div className="hidden rounded-2xl border border-slate-200 bg-[#f8fafc] p-4 md:flex md:gap-6">
+                  <div className="text-center">
+                    <p className="mb-1 flex items-center gap-1 text-base sm:text-base md:text-lg font-black uppercase tracking-widest text-slate-400"><meta.folderIcon size={10} /> Folder exigido</p>
+                    <p className="text-base font-black uppercase text-[#001d3d]">{activeModality.folder}</p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <p className="mb-10 max-w-3xl text-base font-medium italic leading-relaxed text-slate-500">{activeModality.desc}</p>
@@ -83,8 +89,12 @@ function SpecialAdmissionsSection({ modalities, meta }) {
                 </h4>
                 <div className="relative overflow-hidden rounded-3xl bg-[#001d3d] p-8 text-white shadow-xl">
                   <div className="absolute right-0 top-0 p-6 opacity-10"><meta.procedureIcon size={100} /></div>
-                  <p className="mb-2 inline-block border-b border-white/20 pb-2 text-base sm:text-base md:text-lg font-bold uppercase tracking-widest text-[#ea580c]">Horario de recepción</p>
-                  <p className="mb-8 text-xl font-black">{activeModality.horario}</p>
+                  {activeModality.horario && (
+                    <>
+                      <p className="mb-2 inline-block border-b border-white/20 pb-2 text-base sm:text-base md:text-lg font-bold uppercase tracking-widest text-[#ea580c]">Horario de recepción</p>
+                      <p className="mb-8 text-xl font-black">{activeModality.horario}</p>
+                    </>
+                  )}
 
                   <ul className="relative z-10 space-y-5">
                     {activeModality.proc.map((step, index) => (
@@ -98,11 +108,18 @@ function SpecialAdmissionsSection({ modalities, meta }) {
               </div>
             </div>
 
-            {activeModality.hasTable && (
-              <div className="mt-10">
+            {(activeModality.hasTable || activeModality.cta?.href) && (
+              <div className="mt-10 flex flex-wrap gap-4">
+                {activeModality.cta?.href && (
+                  <a href={activeModality.cta.href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 rounded-lg bg-[#001d3d] px-8 py-3 text-sm sm:text-base md:text-lg font-black uppercase tracking-widest text-white shadow-lg transition-colors hover:bg-[#ea580c]">
+                    {activeModality.cta.label} <ExternalLink size={16} />
+                  </a>
+                )}
+                {activeModality.hasTable && (
                 <button className="flex items-center gap-2 rounded-lg border-2 border-slate-200 bg-white px-8 py-3 text-sm sm:text-base md:text-lg font-black uppercase tracking-widest text-[#001d3d] shadow-sm transition-colors hover:border-[#001d3d]" type="button">
                   Descargar tabla de plazas
                 </button>
+                )}
               </div>
             )}
           </div>

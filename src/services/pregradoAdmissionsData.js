@@ -7,6 +7,10 @@ import {
   FileText,
   Folder,
   Globe,
+  GraduationCap,
+  Accessibility,
+  Medal,
+  Trophy,
   Layers,
   ListOrdered,
   Map as MapIcon,
@@ -86,6 +90,12 @@ export const regularAdmissions = {
   ],
 }
 
+export const specialAdmissions = {
+  tag: 'Ingreso por mérito y equidad',
+  title: 'Modalidades Especiales',
+  sub: 'Vías de admisión directa o con requisitos propios, reguladas por el Reglamento de Admisión Estudiantil de la UMSA y la Facultad de Ciencias Puras y Naturales.',
+}
+
 export const generalRequirements = {
   title: ['Documentación', 'General'],
   description:
@@ -156,6 +166,7 @@ export const specialModalities = [
       'Presentar documentación en folder color guindo.',
       'Resultados publicados en vitrinas de la División de Gestiones y portal UMSA.',
     ],
+    cta: { label: 'Ir a Gestiones UMSA', href: 'https://gestiones.umsa.bo' },
   },
   {
     id: 'profesionales',
@@ -179,6 +190,7 @@ export const specialModalities = [
       'La documentación se enviará a la carrera para informe y aprobación.',
       'Con informe favorable, recabar Orden de Compra de Matrícula y pagar en entidad autorizada.',
     ],
+    cta: { label: 'Ver convocatoria de profesionales', href: 'https://estadistica.umsa.bo/documents/1506595/3325785/CONVOCATORIA+PROFESIONALES.pdf/9a21d4da-1ffc-7b84-51fd-04f8654c33db' },
   },
   {
     id: 'cambio_carrera',
@@ -201,6 +213,7 @@ export const specialModalities = [
       'Estudiantes aceptados compran Formulario 010 de Cambio de Carrera.',
       'Con firmas autorizadas se emite orden de matriculación en Estadística.',
     ],
+    cta: { label: 'Ir a Gestiones UMSA', href: 'https://gestiones.umsa.bo' },
   },
   {
     id: 'traspasos_ext',
@@ -222,11 +235,92 @@ export const specialModalities = [
       'Adquirir formulario de traspaso tras autorización.',
       'Someterse a proceso de convalidación de materias en la FCPN.',
     ],
+    cta: { label: 'Ir a Gestiones UMSA', href: 'https://gestiones.umsa.bo' },
+  },
+  {
+    id: 'olimpiadas',
+    title: 'Olimpiadas Científicas',
+    icon: Trophy,
+    desc:
+      'Ingreso para bachilleres con distinciones en olimpiadas científicas reconocidas. Su aplicación depende del reglamento y de los cupos vigentes; confirma la convocatoria en la División de Gestiones.',
+    hasTable: false,
+    reqs: [
+      'Carta de solicitud dirigida a la División de Gestiones indicando la carrera.',
+      'Certificado o diploma oficial de la olimpiada.',
+      'Fotocopia legalizada del Diploma de Bachiller.',
+      'Fotocopia simple de Cédula de Identidad vigente.',
+    ],
+    proc: [
+      'Consultar en Gestiones si la modalidad está habilitada en la convocatoria vigente.',
+      'Presentar la documentación en la fecha y ventanilla que indique la convocatoria.',
+      'Revisar la publicación de resultados en el portal de Gestiones.',
+    ],
+    cta: { label: 'Ver información oficial', href: 'https://gestiones.umsa.bo' },
+  },
+  {
+    id: 'notas',
+    title: 'Mejores Bachilleres (Por Notas)',
+    icon: GraduationCap,
+    desc:
+      'Admisión para bachilleres con promedio de calificaciones sobresaliente en secundaria, de acuerdo con el reglamento y la convocatoria vigente.',
+    hasTable: false,
+    reqs: [
+      'Carta de solicitud dirigida a la División de Gestiones indicando la carrera.',
+      'Certificado de calificaciones con promedio general.',
+      'Fotocopia legalizada del Diploma de Bachiller.',
+      'Fotocopia simple de Cédula de Identidad vigente.',
+    ],
+    proc: [
+      'Consultar en Gestiones el promedio mínimo y los cupos de la convocatoria vigente.',
+      'Presentar la documentación en la fecha y ventanilla que indique la convocatoria.',
+      'Revisar la publicación de resultados en el portal de Gestiones.',
+    ],
+    cta: { label: 'Ver información oficial', href: 'https://gestiones.umsa.bo' },
+  },
+  {
+    id: 'deportistas',
+    title: 'Deportistas Destacados',
+    icon: Medal,
+    desc:
+      'Admisión especial para deportistas con trayectoria acreditada, regulada por el reglamento específico de admisión especial de la UMSA.',
+    hasTable: false,
+    reqs: [
+      'Carta de solicitud dirigida a la División de Gestiones indicando la carrera.',
+      'Certificación de la federación o ente deportivo oficial.',
+      'Fotocopia legalizada del Diploma de Bachiller.',
+      'Fotocopia simple de Cédula de Identidad vigente.',
+    ],
+    proc: [
+      'Consultar en Gestiones el cronograma de admisión especial vigente.',
+      'Presentar la documentación en la fecha y ventanilla que indique la convocatoria.',
+      'Revisar la publicación de resultados en el portal de Gestiones.',
+    ],
+    cta: { label: 'Ver información oficial', href: 'https://gestiones.umsa.bo' },
+  },
+  {
+    id: 'discapacidad',
+    title: 'Personas con Discapacidad',
+    icon: Accessibility,
+    desc:
+      'Admisión especial directa para bachilleres con discapacidad. La evaluación de postulantes está a cargo de la comisión universitaria correspondiente, según el cronograma de admisión especial.',
+    hasTable: false,
+    reqs: [
+      'Carnet o certificación oficial de discapacidad vigente.',
+      'Carta de solicitud dirigida a la División de Gestiones indicando la carrera.',
+      'Fotocopia legalizada del Diploma de Bachiller.',
+      'Fotocopia simple de Cédula de Identidad vigente.',
+    ],
+    proc: [
+      'Presentar la solicitud y los documentos en Gestiones según el cronograma de admisión especial.',
+      'Someterse a la evaluación de la comisión de postulantes con discapacidad.',
+      'Revisar los resultados publicados por la universidad.',
+    ],
+    cta: { label: 'Ver información oficial', href: 'https://gestiones.umsa.bo' },
   },
 ]
 
 export const specialMeta = {
-  title: ['Casos', 'Especiales'],
+  title: ['Modalidades', 'Especiales'],
   entity: 'División de Gestiones, Admisiones y Registros UMSA',
   requisitesIcon: FileText,
   procedureIcon: ListOrdered,
@@ -316,6 +410,13 @@ export async function loadAdmissionsPageData() {
       }),
     }
 
+    const special = {
+      ...specialAdmissions,
+      tag: secMap.get('admisiones_especiales_tag') || specialAdmissions.tag,
+      title: secMap.get('admisiones_especiales_titulo') || specialAdmissions.title,
+      sub: secMap.get('admisiones_especiales_subtitulo') || specialAdmissions.sub,
+    }
+
     const reqItems = [
       secMap.get('admision_req_item1'),
       secMap.get('admision_req_item2'),
@@ -343,56 +444,39 @@ export async function loadAdmissionsPageData() {
       entity: secMap.get('admision_esp_sub') || specialMeta.entity,
     }
 
+    const keyPrefix = {
+      paralelas: 'paralelas',
+      profesionales: 'profesional',
+      cambio_carrera: 'cambio',
+      traspasos_ext: 'traspaso',
+      olimpiadas: 'olimpiadas',
+      notas: 'notas',
+      deportistas: 'deportistas',
+      discapacidad: 'discapacidad',
+    }
+
     const dynSpecialModalities = specialModalities.map((item) => {
-      if (item.id === 'paralelas') {
-        const reqs = [
-          secMap.get('admision_esp_paralelas_req1'),
-          secMap.get('admision_esp_paralelas_req2'),
-          secMap.get('admision_esp_paralelas_req3'),
-          secMap.get('admision_esp_paralelas_req4'),
-        ].filter(Boolean)
-        return {
-          ...item,
-          title: secMap.get('admision_esp_paralelas_title') || item.title,
-          desc: secMap.get('admision_esp_paralelas_desc') || item.desc,
-          folder: secMap.get('admision_esp_paralelas_folder') || item.folder,
-          horario: secMap.get('admision_esp_paralelas_horario') || item.horario,
-          reqs: reqs.length > 0 ? reqs : item.reqs,
-        }
+      const k = `admision_esp_${keyPrefix[item.id] ?? item.id}`
+      const listFrom = (suffix, defaults, max) =>
+        Array.from({ length: Math.max(defaults.length, max) }, (_, i) =>
+          secMap.get(`${k}_${suffix}${i + 1}`) || defaults[i],
+        ).filter(Boolean)
+
+      return {
+        ...item,
+        title: secMap.get(`${k}_title`) || item.title,
+        desc: secMap.get(`${k}_desc`) || item.desc,
+        folder: secMap.get(`${k}_folder`) || item.folder,
+        horario: secMap.get(`${k}_horario`) || item.horario,
+        reqs: listFrom('req', item.reqs, 6),
+        proc: listFrom('proc', item.proc, 5),
+        cta: item.cta
+          ? {
+              label: secMap.get(`${k}_cta_label`) || item.cta.label,
+              href: secMap.get(`${k}_cta_href`) || item.cta.href,
+            }
+          : undefined,
       }
-      if (item.id === 'profesionales') {
-        const reqs = [
-          secMap.get('admision_esp_profesional_req1'),
-          secMap.get('admision_esp_profesional_req2'),
-          secMap.get('admision_esp_profesional_req3'),
-          secMap.get('admision_esp_profesional_req4'),
-        ].filter(Boolean)
-        return {
-          ...item,
-          title: secMap.get('admision_esp_profesional_title') || item.title,
-          desc: secMap.get('admision_esp_profesional_desc') || item.desc,
-          folder: secMap.get('admision_esp_profesional_folder') || item.folder,
-          horario: secMap.get('admision_esp_profesional_horario') || item.horario,
-          reqs: reqs.length > 0 ? reqs : item.reqs,
-        }
-      }
-      if (item.id === 'traspasos_ext') {
-        const reqs = [
-          secMap.get('admision_esp_traspaso_req1'),
-          secMap.get('admision_esp_traspaso_req2'),
-          secMap.get('admision_esp_traspaso_req3'),
-          secMap.get('admision_esp_traspaso_req4'),
-        ].filter(Boolean)
-        return {
-          ...item,
-          title: secMap.get('admision_esp_traspaso_title') || item.title,
-          desc: secMap.get('admision_esp_traspaso_desc') || item.desc,
-          folder: secMap.get('admision_esp_traspaso_folder') || item.folder,
-          horario: secMap.get('admision_esp_traspaso_horario') || item.horario,
-          reqs: reqs.length > 0 ? reqs : item.reqs,
-        }
-      }
-      return item
     })
 
     let timeline = admissionsTimeline
@@ -425,12 +509,13 @@ export async function loadAdmissionsPageData() {
       }
     }
 
-    return { hero, regular, requirements, timeline, specialModalities: dynSpecialModalities, specialMeta: dynSpecialMeta }
+    return { hero, regular, special, requirements, timeline, specialModalities: dynSpecialModalities, specialMeta: dynSpecialMeta }
   } catch (err) {
     console.error('Error cargando admisiones dinámicas:', err)
     return {
       hero: admissionsHero,
       regular: regularAdmissions,
+      special: specialAdmissions,
       requirements: generalRequirements,
       timeline: admissionsTimeline,
       specialModalities,

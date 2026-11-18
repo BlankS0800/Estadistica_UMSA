@@ -1,10 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { ArrowRight, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { StatisticalAnnotations } from '../../atoms/data/Stats';
 import { HeroSlideContent } from '../../molecules/home/HeroSlideContent';
-import { TopNewsHeader } from '../../molecules/home/TopNewsHeader';
-import { TopNewsCard } from '../../molecules/home/TopNewsCard';
 
 const readStat = (statEntry) => {
   if (!statEntry) return '';
@@ -13,19 +11,7 @@ const readStat = (statEntry) => {
   return parts[1] ? parts[1].trim() : statEntry;
 };
 
-const buildTopNews = (news = []) =>
-  news.slice(0, 3).map((item) => ({
-    id: item.id,
-    category: item.category,
-    categoryColor: item.accent || '#00447e',
-    date: item.date,
-    title: item.title,
-    imageUrl: item.imageUrl,
-    readTime: item.readTime,
-    href: item.href || '#',
-  }));
-
-export const HeroNewsSection = ({ slides = [], news = [] }) => {
+export const HeroNewsSection = ({ slides = [], scrollLabel = 'Últimas noticias' }) => {
   const [current, setCurrent] = useState(0);
   const timerRef = useRef(null);
 
@@ -47,8 +33,6 @@ export const HeroNewsSection = ({ slides = [], news = [] }) => {
   if (!slides.length) return null;
 
   const slide = slides[current];
-  const topNews = buildTopNews(news);
-
   const scrollToNews = () => {
     const newsSection = document.getElementById('news-section-full');
     if (newsSection) {
@@ -79,15 +63,7 @@ export const HeroNewsSection = ({ slides = [], news = [] }) => {
               className="absolute inset-0"
               style={{
                 background:
-                  'linear-gradient(105deg, rgba(10,22,40,0.76) 0%, rgba(10,22,40,0.78) 60%, rgba(10,22,40,0.68) 100%)',
-              }}
-            />
-
-            <div
-              className="hidden lg:block absolute inset-y-0 right-0 w-[42%]"
-              style={{
-                background:
-                  'linear-gradient(90deg, rgba(0,68,126,0) 0%, rgba(0,68,126,0.70) 45%, rgba(0,68,126,0.92) 100%)',
+                  'linear-gradient(100deg, rgba(10,22,40,0.86) 0%, rgba(10,22,40,0.66) 55%, rgba(10,22,40,0.38) 100%)',
               }}
             />
 
@@ -138,72 +114,54 @@ export const HeroNewsSection = ({ slides = [], news = [] }) => {
       </div>
 
       <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-8 sm:py-10">
-        <div className="w-full max-w-[1360px] grid grid-cols-1 lg:grid-cols-[1.05fr_430px] xl:grid-cols-[1fr_520px] gap-8 xl:gap-10 items-center">
+        <div className="w-full max-w-[1360px]">
           <HeroSlideContent key={current} slide={slide} />
-
-          <div className="hidden lg:flex w-full max-w-[520px] justify-self-end flex-col py-6 pl-3 pr-0 xl:pl-5 xl:pr-0">
-            <TopNewsHeader mode="hero" />
-
-            <div className="space-y-3">
-              {topNews.map((item, idx) => (
-                <TopNewsCard key={item.id} item={item} idx={idx} mode="hero" />
-              ))}
-            </div>
-
-            <button
-              onClick={scrollToNews}
-              className="w-full flex items-center justify-center gap-2 p-3.5 rounded-[1.25rem] transition-all group mt-4"
-              style={{
-                background: 'linear-gradient(135deg, rgba(234,88,12,0.20) 0%, rgba(234,88,12,0.12) 100%)',
-                backdropFilter: 'blur(16px)',
-                border: '2px solid rgba(234,88,12,0.35)',
-                boxShadow: '0 4px 16px rgba(234,88,12,0.15)',
-              }}
-            >
-              <ChevronDown className="size-4 text-orange-300 group-hover:text-orange-200 transition-colors" />
-              <span className="text-xs font-black text-orange-200 group-hover:text-white uppercase tracking-wider transition-colors">
-                Ver todas las noticias y agenda
-              </span>
-              <ArrowRight className="size-3.5 text-orange-300 group-hover:text-orange-200 transition-colors" />
-            </button>
-          </div>
         </div>
       </div>
       <div className="absolute bottom-5 sm:bottom-6 inset-x-0 z-30 px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 pointer-events-none">
-        <div className="w-full max-w-[1360px] mx-auto grid grid-cols-1 lg:grid-cols-[1.05fr_430px] xl:grid-cols-[1fr_520px] gap-8 xl:gap-10">
-          <div className="flex justify-center">
-            <div
-              className="pointer-events-auto flex items-center gap-2.5 px-3.5 py-2 rounded-full"
-              style={{
-                background: 'rgba(10,22,40,0.65)',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255,255,255,0.15)',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-              }}
-            >
-              {slides.map((item, i) => (
-                <button
-                  key={`${item.title}-${i}`}
-                  onClick={() => go(i)}
-                  className="group relative transition-all"
-                  aria-label={`Ir a slide ${i + 1}`}
-                >
-                  <div
-                    className="rounded-full transition-all duration-300"
-                    style={{
-                      width: i === current ? '28px' : '8px',
-                      height: '8px',
-                      background:
-                        i === current
-                          ? 'linear-gradient(135deg, #ea580c 0%, #fb923c 100%)'
-                          : 'rgba(255,255,255,0.35)',
-                      boxShadow: i === current ? '0 4px 12px rgba(234,88,12,0.5)' : 'none',
-                    }}
-                  />
-                </button>
-              ))}
-            </div>
+        <div className="w-full max-w-[1360px] mx-auto flex items-center justify-between gap-4">
+          <div
+            className="pointer-events-auto flex items-center gap-2.5 px-3.5 py-2 rounded-full"
+            style={{
+              background: 'rgba(10,22,40,0.65)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255,255,255,0.15)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+            }}
+          >
+            {slides.map((item, i) => (
+              <button
+                key={`${item.title}-${i}`}
+                onClick={() => go(i)}
+                className="group relative transition-all"
+                aria-label={`Ir a slide ${i + 1}`}
+              >
+                <div
+                  className="rounded-full transition-all duration-300"
+                  style={{
+                    width: i === current ? '28px' : '8px',
+                    height: '8px',
+                    background:
+                      i === current
+                        ? 'linear-gradient(135deg, #ea580c 0%, #fb923c 100%)'
+                        : 'rgba(255,255,255,0.35)',
+                    boxShadow: i === current ? '0 4px 12px rgba(234,88,12,0.5)' : 'none',
+                  }}
+                />
+              </button>
+            ))}
           </div>
+
+          <button
+            type="button"
+            onClick={scrollToNews}
+            className="pointer-events-auto group inline-flex items-center gap-3 rounded-full bg-[#ea580c] py-2.5 pl-6 pr-2.5 text-base font-semibold text-white shadow-lg shadow-black/30 ring-1 ring-white/20 transition-all hover:bg-[#c2410c] hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            {scrollLabel}
+            <span className="flex size-9 items-center justify-center rounded-full bg-white/20 text-white transition-transform duration-300 group-hover:translate-y-0.5">
+              <ChevronDown className="size-5 motion-safe:animate-[scrollCue_2.4s_ease-in-out_infinite]" />
+            </span>
+          </button>
         </div>
       </div>
 
@@ -213,56 +171,8 @@ export const HeroNewsSection = ({ slides = [], news = [] }) => {
       />
 
       <style>
-        {`@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } } @keyframes slideInRight { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }`}
+        {`@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } } @keyframes scrollCue { 0%, 100% { transform: translateY(-1px); } 50% { transform: translateY(2px); } } @keyframes slideInRight { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }`}
       </style>
-    </section>
-  );
-};
-
-export const HomeTopNewsSection = ({ news = [] }) => {
-  const topNews = buildTopNews(news);
-
-  const scrollToNews = () => {
-    const newsSection = document.getElementById('news-section-full');
-    if (newsSection) {
-      newsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
-  return (
-    <section className="relative lg:hidden px-4 sm:px-6 md:px-10 lg:px-20 pt-8 sm:pt-10 md:pt-12 pb-10 sm:pb-12 bg-[#f1f5f9] overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none opacity-[0.10]" aria-hidden="true">
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1400 520" preserveAspectRatio="none" fill="none">
-          <path d="M0 360C350 360 700 200 1050 170C1200 155 1320 140 1400 360" stroke="#00447e" strokeWidth="2" />
-          <path d="M0 385C350 385 700 225 1050 195C1200 180 1320 165 1400 385" stroke="#ea580c" strokeWidth="1.8" opacity="0.65" />
-        </svg>
-      </div>
-
-      <div className="max-w-[1200px] mx-auto relative z-10">
-        <TopNewsHeader />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
-          {topNews.map((item, idx) => (
-            <TopNewsCard key={item.id} item={item} idx={idx} mode="section" />
-          ))}
-        </div>
-
-        <button
-          onClick={scrollToNews}
-          className="w-full md:w-auto md:min-w-[380px] mx-auto flex items-center justify-center gap-2 p-4 rounded-[1.5rem] transition-all group mt-5 sm:mt-6"
-          style={{
-            background: 'linear-gradient(135deg, rgba(234,88,12,0.18) 0%, rgba(234,88,12,0.10) 100%)',
-            border: '2px solid rgba(234,88,12,0.35)',
-            boxShadow: '0 4px 16px rgba(234,88,12,0.15)',
-          }}
-        >
-          <ChevronDown className="size-4 text-orange-500 group-hover:text-orange-400 transition-colors" />
-          <span className="text-base font-black text-orange-600 group-hover:text-[#1e293b] uppercase tracking-wider transition-colors">
-            Ver todas las noticias y agenda
-          </span>
-          <ArrowRight className="size-3.5 text-orange-500 group-hover:text-orange-400 transition-colors" />
-        </button>
-      </div>
     </section>
   );
 };
@@ -280,31 +190,5 @@ HeroNewsSection.propTypes = {
       stats: PropTypes.array,
     }),
   ),
-  news: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number,
-      category: PropTypes.string,
-      accent: PropTypes.string,
-      date: PropTypes.string,
-      title: PropTypes.string,
-      imageUrl: PropTypes.string,
-      readTime: PropTypes.string,
-      href: PropTypes.string,
-    }),
-  ),
-};
-
-HomeTopNewsSection.propTypes = {
-  news: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number,
-      category: PropTypes.string,
-      accent: PropTypes.string,
-      date: PropTypes.string,
-      title: PropTypes.string,
-      imageUrl: PropTypes.string,
-      readTime: PropTypes.string,
-      href: PropTypes.string,
-    }),
-  ),
+  scrollLabel: PropTypes.string,
 };

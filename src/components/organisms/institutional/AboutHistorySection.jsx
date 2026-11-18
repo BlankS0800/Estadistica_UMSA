@@ -1,12 +1,8 @@
-import { useState } from 'react'
-import { Award, CheckCircle2, Microscope, X } from 'lucide-react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { CheckCircle2 } from 'lucide-react'
 import StatisticalOverlay from '../../atoms/data/StatisticalOverlay'
 
-const AboutHistorySection = ({ ieta }) => {
-  const [isZoomed, setIsZoomed] = useState(false)
-
-  return (
+   const AboutHistorySection = () => {
+return (
     <section className="relative overflow-hidden bg-white px-6 py-16 md:px-10 md:py-24">
       <svg className="pointer-events-none absolute left-0 top-0 h-[500px] w-[500px] opacity-[0.06]" viewBox="0 0 500 500" fill="none" aria-hidden="true">
         <circle cx="100" cy="100" r="200" stroke="#00447e" strokeWidth="2" />
@@ -25,7 +21,7 @@ const AboutHistorySection = ({ ieta }) => {
       </div>
       <div className="absolute left-14 top-[62%] hidden font-mono text-[10px] font-bold tracking-[0.25em] text-[#00447e] opacity-[0.22] md:block">ARCHIVE_TRACE</div>
 
-      <div className="mx-auto grid max-w-6xl items-start gap-12 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
+      <div className="mx-auto max-w-4xl">
         <div>
           <div className="mb-5 flex items-center gap-3">
             <div className="h-1 w-10 bg-[#c2410c]" />
@@ -61,92 +57,9 @@ const AboutHistorySection = ({ ieta }) => {
             </div>
           </div>
         </div>
-
-        <div className="lg:sticky lg:top-40">
-          <div className="relative overflow-hidden rounded-2xl border-b-4 border-[#c2410c] bg-[#002a52] p-7 text-white shadow-xl">
-            <h4 className="mb-4 border-b border-white/20 pb-4 text-xl font-bold">{ieta.title}</h4>
-            <p className="mb-8 text-base leading-relaxed text-blue-100/80">{ieta.text}</p>
-
-            <div className="flex items-center gap-4">
-              <div className="flex size-11 items-center justify-center rounded-xl bg-white text-[#002a52] shadow-xl">
-                <Microscope size={24} />
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-100/70">Fundado en</p>
-                <p className="text-xl font-black">{ieta.founded}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 grid grid-cols-2 gap-4">
-            <button
-              onClick={() => setIsZoomed(true)}
-              className="h-40 overflow-hidden rounded-[2.5rem] shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 cursor-zoom-in group relative outline-none focus:ring-2 focus:ring-[#00447e] focus:ring-offset-2"
-              title="Click para agrandar la imagen de Acreditación CEUB"
-              aria-label="Agrandar imagen de Acreditación CEUB"
-            >
-              <img
-                src="/images/institucional/certificacion_ceub.png"
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                alt="Certificacion CEUB"
-              />
-              <div className="absolute inset-0 bg-[#002a52]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </button>
-            <div className="flex flex-col items-center justify-center rounded-[2.5rem] border border-slate-200 bg-white p-8 text-center">
-              <Award className="mb-2 text-[#c2410c]" size={32} />
-              <p className="text-base sm:text-base md:text-lg font-black uppercase tracking-widest text-slate-400 leading-none">Acreditacion</p>
-              <p className="mt-1 text-lg font-black uppercase text-[#002a52]">CEUB</p>
-            </div>
-          </div>
-        </div>
       </div>
 
-      {/* Acreditación CEUB Lightbox Modal */}
-      <AnimatePresence>
-        {isZoomed && (
-          <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 sm:p-6 md:p-10">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsZoomed(false)}
-              className="absolute inset-0 bg-[#001d3d]/90 backdrop-blur-md cursor-zoom-out"
-            />
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 250 }}
-              className="relative max-h-[85vh] max-w-5xl w-full bg-white rounded-[2rem] overflow-hidden shadow-2xl z-10 border border-slate-200/50 p-2 sm:p-4 flex flex-col items-center"
-            >
-              {/* Close Button */}
-              <button
-                onClick={() => setIsZoomed(false)}
-                className="absolute top-4 right-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-[#002a52] text-white hover:bg-[#c2410c] transition-all shadow-lg active:scale-95"
-                aria-label="Cerrar"
-                title="Cerrar"
-              >
-                <X size={20} />
-              </button>
-
-              <div className="w-full h-full overflow-auto flex items-center justify-center p-2">
-                <img
-                  src="/images/institucional/certificacion_ceub.png"
-                  className="max-h-[75vh] w-auto object-contain rounded-xl select-none"
-                  alt="Acreditación CEUB Ampliada"
-                />
-              </div>
-              
-              <div className="py-2 text-center">
-                <p className="text-xs font-mono font-black uppercase tracking-widest text-[#002a52]">
-                  Certificación de Acreditación - CEUB
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      
     </section>
   )
 }

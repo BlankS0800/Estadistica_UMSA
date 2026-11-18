@@ -6,7 +6,7 @@ function ContactHeroSection({ hero }) {
   const HeroIcon = hero.icon
 
   return (
-    <section className="relative overflow-hidden border-b-[8px] border-[#ea580c] bg-[#001d3d] px-6 pb-48 pt-[140px] md:px-10">
+    <section className="relative overflow-hidden border-b-[8px] border-[#ea580c] bg-[#001d3d] px-6 pb-16 pt-[140px] md:px-10 md:pb-20">
       <div
         className="absolute inset-0 opacity-[0.06]"
         style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '28px 28px' }}
@@ -30,16 +30,9 @@ function ContactHeroSection({ hero }) {
             <span className="font-serif lowercase italic tracking-normal text-[#ea580c]">{hero.title[1]}</span>
           </h1>
 
-          <p className="mx-auto mb-10 max-w-3xl text-base font-medium italic leading-relaxed text-blue-200/85 md:text-lg">
+          <p className="mx-auto max-w-3xl text-base font-medium italic leading-relaxed text-blue-200/85 md:text-lg">
             {hero.description}
           </p>
-
-          <button
-            type="button"
-            className="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/10 px-8 py-4 text-sm sm:text-base md:text-lg font-black uppercase tracking-widest text-white shadow-lg backdrop-blur-md transition-colors hover:bg-white/20"
-          >
-            {hero.ctaLabel}
-          </button>
         </div>
 
       </div>
@@ -55,7 +48,6 @@ ContactHeroSection.propTypes = {
     eyebrow: PropTypes.string.isRequired,
     title: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     description: PropTypes.string.isRequired,
-    ctaLabel: PropTypes.string.isRequired,
     leftShape: PropTypes.elementType,
     rightShape: PropTypes.elementType,
     icon: PropTypes.elementType,

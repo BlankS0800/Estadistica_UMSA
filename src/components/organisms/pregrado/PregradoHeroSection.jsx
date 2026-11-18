@@ -2,7 +2,7 @@ import { ChevronRight } from 'lucide-react'
 
 function PregradoHeroSection({ hero }) {
   return (
-    <section className="relative flex min-h-[85vh] items-center overflow-hidden border-b-8 border-[#ea580c] bg-[linear-gradient(160deg,#001d3d_0%,#003666_55%,#00447e_100%)]">
+    <section className="relative flex min-h-[85vh] items-center overflow-hidden pb-28 pt-16 md:pb-32 md:pt-20 border-b-8 border-[#ea580c] bg-[linear-gradient(160deg,#001d3d_0%,#003666_55%,#00447e_100%)]">
       <div className="absolute inset-0">
         <img 
           src={hero.imageUrl} 
@@ -53,9 +53,6 @@ function PregradoHeroSection({ hero }) {
               {hero.primaryCta.label}
               <ChevronRight className="transition-transform group-hover:translate-x-1" size={16} />
             </a>
-            <a href={hero.secondaryCta.href} className="rounded-2xl border border-white/20 bg-transparent px-8 py-4 text-sm sm:text-base md:text-lg font-black uppercase tracking-widest text-white transition hover:bg-white/5">
-              {hero.secondaryCta.label}
-            </a>
           </div>
         </div>
       </div>
@@ -63,10 +60,6 @@ function PregradoHeroSection({ hero }) {
       <div className="absolute bottom-10 right-10 hidden flex-col items-end gap-2 font-mono text-[9px] text-white opacity-10 md:flex">
         <div className="flex items-center gap-3"><span>REGRESION</span> <div className="h-px w-20 bg-white" /> <span>y = b0 + b1x</span></div>
         <div className="flex items-center gap-3"><span>CONFIANZA</span> <div className="h-px w-20 bg-white" /> <span>95% CI</span></div>
-      </div>
-
-      <div className="pointer-events-none absolute left-1/2 top-[16%] hidden -translate-x-1/2 text-[130px] font-black italic text-[#8dc7ff]/[0.09] lg:block" aria-hidden="true">
-        Sigma
       </div>
     </section>
   )

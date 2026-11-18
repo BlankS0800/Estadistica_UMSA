@@ -48,7 +48,7 @@ function AccreditationPage() {
           <AccreditationImpactSection
             highlight={pageData.impactHighlights}
             impactCards={pageData.impactCards}
-            cta={pageData.accreditationCta}
+            
           />
         </div>
       </div>

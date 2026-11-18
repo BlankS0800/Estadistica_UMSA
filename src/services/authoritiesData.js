@@ -1,6 +1,7 @@
 import { Briefcase, Gavel, GraduationCap, Scale, UserCheck, Users, Zap } from 'lucide-react'
 import { httpClient } from '../api/httpClient'
 import { seccionPaginaApi } from './seccionPaginaService'
+import { parseCarouselItems, resolveMediaUrl } from './carouselUtils'
 
 export const authoritiesHero = {
   eyebrow: 'Gobierno y Liderazgo',
@@ -8,10 +9,7 @@ export const authoritiesHero = {
   description:
     'Liderazgo comprometido con la excelencia académica y la transparencia institucional en la Carrera de Estadística, fundamentado en cogobierno paritario.',
   imageUrl: '/images/institucional/autoridades_hero.jpeg',
-  chips: [
-    { symbol: 'partial', label: 'Gestión', subtitle: 'Eficiente' },
-    { symbol: 'beta', label: 'Beta = 0.8', subtitle: 'Potencia Académica' },
-  ],
+
 }
 
 export const hccStudentsFallback = [
@@ -49,6 +47,7 @@ export const hccMeta = {
 export const orgStructure = {
   title: 'Arquitectura de Gestión',
   subtitle: 'Organigrama Funcional',
+  imageUrl: '',
   top: { title: 'Dirección de Carrera', level: 'Nivel Ejecutivo' },
   middle: [
     { title: 'Honorable Consejo (HCC)', subtitle: 'Cogobierno Docente - Estudiantil', tag: 'Normativo', icon: Scale },
@@ -144,18 +143,9 @@ export async function getAuthoritiesData() {
     ],
     description: val('autoridades_inicio_descripcion', authoritiesHero.description),
     imageUrl: val('autoridades_inicio_imagen', authoritiesHero.imageUrl),
-    chips: [
-      {
-        symbol: val('autoridades_chip_01_simbolo', authoritiesHero.chips[0].symbol),
-        label: val('autoridades_chip_01_etiqueta', authoritiesHero.chips[0].label),
-        subtitle: val('autoridades_chip_01_subtitulo', authoritiesHero.chips[0].subtitle),
-      },
-      {
-        symbol: val('autoridades_chip_02_simbolo', authoritiesHero.chips[1].symbol),
-        label: val('autoridades_chip_02_etiqueta', authoritiesHero.chips[1].label),
-        subtitle: val('autoridades_chip_02_subtitulo', authoritiesHero.chips[1].subtitle),
-      },
-    ],
+      images: parseCarouselItems(val('autoridades_inicio_carrusel', ''), [
+    { url: resolveMediaUrl(val('autoridades_inicio_imagen', authoritiesHero.imageUrl)), caption: '' },
+  ]),
   }
 
   const dynamicHccMeta = {
@@ -171,6 +161,7 @@ export async function getAuthoritiesData() {
     ...orgStructure,
     title: val('autoridades_estructura_titulo', orgStructure.title),
     subtitle: val('autoridades_estructura_subtitulo', orgStructure.subtitle),
+    imageUrl: resolveMediaUrl(val('autoridades_organigrama', '')),
     top: {
       level: val('autoridades_estructura_top_nivel', orgStructure.top.level),
       title: val('autoridades_estructura_top_titulo', orgStructure.top.title),

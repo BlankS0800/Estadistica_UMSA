@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Handshake, Landmark, Star, Zap } from 'lucide-react'
+import { Handshake, Landmark, Zap } from 'lucide-react'
 import InstitutionalBackdrop from '../components/atoms/layout/InstitutionalBackdrop'
 import StatisticalSeal from '../components/atoms/data/StatisticalSeal'
 import {
@@ -32,7 +32,7 @@ function ConveniosPage() {
     }
   }, [])
 
-  const { conveniosHero, sectors, proposal, benefits, conveniosCta, totalConveniosCount } = pageData
+  const { conveniosHero, sectors, proposal, benefits, totalConveniosCount } = pageData
   const activeSector = sectors.find((sector) => sector.id === activeTab) || sectors[0]
 
   return (
@@ -67,32 +67,15 @@ function ConveniosPage() {
                 {conveniosHero.title[2]}
               </h2>
               <div className="max-w-lg">
-                <p className="mb-10 rounded-r-2xl border-l-4 border-[#c2410c] bg-white/30 py-4 pl-6 text-sm font-medium leading-relaxed text-slate-500 shadow-sm md:text-base">
+                <p className="rounded-r-2xl border-l-4 border-[#c2410c] bg-white/30 py-4 pl-6 text-sm font-medium leading-relaxed text-slate-500 shadow-sm md:text-base">
                   {conveniosHero.description}
                 </p>
-                <div className="flex flex-wrap gap-4">
-                  {conveniosHero.chips.map((chip, idx) => (
-                    <div key={`${chip.symbol}-${idx}`} className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-5 py-2.5 shadow-sm">
-                      <span className="font-serif text-2xl italic leading-none text-[#00447e]">{chip.symbol}</span>
-                      <span className="text-[9px] font-black uppercase leading-tight tracking-widest text-slate-400">
-                        {chip.label} <br />
-                        {chip.subtitle}
-                      </span>
-                    </div>
-                  ))}
-                </div>
               </div>
             </div>
-
             <div className="relative">
               <div className="absolute -inset-10 rounded-full bg-blue-500/5 blur-[80px]" />
               <div className="relative overflow-hidden rounded-[3.5rem] border border-slate-200 bg-white p-4 shadow-2xl">
-                <img src={conveniosHero.imageUrl} className="h-[450px] w-full rounded-[3rem] object-cover grayscale-[0.8] brightness-95 contrast-[1.3]" alt="Alianzas Estratégicas" />
-                <div className="absolute inset-4 rounded-[3rem] bg-[#00447e]/5" />
-                <div className="absolute bottom-12 right-12 flex flex-col items-end text-white drop-shadow-2xl">
-                  <span className="text-4xl font-black italic tracking-tighter">infty</span>
-                  <p className="mt-1 border-t border-white/40 pt-1 text-[10px] font-bold uppercase tracking-[0.3em]">Oportunidad Real</p>
-                </div>
+                <img src={conveniosHero.imageUrl} className="h-[450px] w-full rounded-[3rem] object-cover" alt="Alianzas Estratégicas" />
               </div>
             </div>
           </div>
@@ -212,17 +195,6 @@ function ConveniosPage() {
                     <div className="absolute right-12 top-10 font-mono text-[16px] font-black uppercase text-slate-100 transition-colors group-hover:text-slate-200">{item.symbol}</div>
                   </article>
                 ))}
-
-                <div className="pt-16 flex justify-center">
-                  <div className="w-full rounded-[4rem] border-2 border-dashed border-slate-300 bg-white/60 p-10 text-center backdrop-blur-md transition-colors hover:border-[#00447e]">
-                    <span className="mb-6 block text-[11px] font-black uppercase tracking-[0.6em] text-slate-400">{conveniosCta.title}</span>
-                    <h5 className="flex flex-wrap items-center justify-center gap-6 text-2xl font-black uppercase tracking-[0.2em] text-[#00447e]">
-                      <Star className="text-[#c2410c] transition-transform hover:scale-125" size={32} />
-                      {conveniosCta.label}
-                      <Star className="text-[#c2410c] transition-transform hover:scale-125" size={32} />
-                    </h5>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

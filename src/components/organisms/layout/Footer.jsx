@@ -1,10 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { SocialLink } from '../../molecules/feedback/Interactive';
-import { ExternalAccessLinks, FooterLinkList } from '../../molecules/data/ListsAndTags';
 import { 
   footerAbout, 
-  footerColumns, 
   mockSocialLinks, 
   mockDirectAccessLinks 
 } from '../../../services/mockData';
@@ -53,13 +51,13 @@ export const Footer = () => {
         </svg>
       </div>
 
-      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-16 relative z-10">
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-12 relative z-10">
         
-        {/* Main Grid: Info + 4 Link columns + Map/SIA */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-12 border-b border-slate-800">
-          
-          {/* Column 1: Info (Occupies 3 columns on large screens) */}
-          <div className="lg:col-span-3 space-y-6">
+        {/* Main Grid: Identidad + Contacto y horario + Ubicación y enlaces */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-14 pb-10 border-b border-slate-800">
+
+          {/* Columna 1: Identidad */}
+          <div className="space-y-6">
             <div className="flex items-center gap-4">
               <img
                 src="/iconos/blancopeq.png"
@@ -70,7 +68,7 @@ export const Footer = () => {
                 }}
               />
               <div>
-                <h3 className="font-extrabold text-lg text-white leading-tight">
+                <h3 className="font-extrabold text-xl text-white leading-tight">
                   {footerAbout.title}
                 </h3>
                 <p className="text-xs text-orange-400 font-bold uppercase tracking-wider">
@@ -78,34 +76,13 @@ export const Footer = () => {
                 </p>
               </div>
             </div>
-            
-            <p className="text-sm text-slate-300 leading-relaxed font-medium">
+
+            <p className="text-sm text-slate-300 leading-relaxed font-medium max-w-md">
               {footerAbout.description}
             </p>
 
-            <div className="space-y-3.5 pt-2">
-              <div className="flex items-start gap-3">
-                <MapPin className="size-4 text-orange-400 shrink-0 mt-1" />
-                <p className="text-xs text-slate-300 leading-snug">{footerAbout.address}</p>
-              </div>
-              {footerAbout.phones.map((phoneItem, idx) => (
-                <div key={idx} className="flex items-center gap-3">
-                  <Phone className="size-4 text-[#2563eb] shrink-0" />
-                  <a href={`tel:${phoneItem.clean}`} className="text-xs text-slate-300 hover:text-white transition-colors font-medium">
-                    {phoneItem.display}
-                  </a>
-                </div>
-              ))}
-              <div className="flex items-center gap-3">
-                <Mail className="size-4 text-orange-400 shrink-0" />
-                <a href={`mailto:${footerAbout.email}`} className="text-xs text-slate-300 hover:text-white transition-colors font-medium">
-                  {footerAbout.email}
-                </a>
-              </div>
-            </div>
-
             {/* Social Icons */}
-            <div className="flex gap-2.5 pt-2">
+            <div className="flex gap-2.5">
               {parsedSocialLinks.map((socialItem, idx) => (
                 <SocialLink
                   key={`${socialItem.label}-${idx}`}
@@ -119,32 +96,31 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Columns 2-5: Nav columns (Occupy 6 columns combined, 1.5 each) */}
-          <div className="lg:col-span-6 grid grid-cols-2 sm:grid-cols-4 gap-8">
-            {footerColumns.map((col, idx) => (
-              <div key={`${col.title}-${idx}`} className="space-y-4">
-                <FooterLinkList title={col.title} links={col.links} />
-              </div>
-            ))}
-          </div>
-
-          {/* Column 6: Map & Direct Access (Occupies 3 columns) */}
-          <div className="lg:col-span-3 space-y-6">
+          {/* Columna 2: Contacto y horario */}
+          <div className="space-y-6">
             <div>
               <h3 className="font-extrabold text-xs text-white uppercase tracking-widest mb-4">
-                Ubicación Facultativa
+                Contacto
               </h3>
-              <div className="rounded-2xl overflow-hidden border border-slate-800 shadow-2xl relative">
-                <iframe
-                  title="Monoblock UMSA"
-                  src={footerAbout.mapUrl}
-                  width="100%"
-                  height="130"
-                  style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg) grayscale(40%) contrast(1.1) brightness(0.95)' }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
+              <div className="space-y-3.5">
+                <div className="flex items-start gap-3">
+                  <MapPin className="size-4 text-orange-400 shrink-0 mt-0.5" />
+                  <p className="text-sm text-slate-300 leading-snug">{footerAbout.address}</p>
+                </div>
+                {footerAbout.phones.map((phoneItem, idx) => (
+                  <div key={idx} className="flex items-center gap-3">
+                    <Phone className="size-4 text-[#2563eb] shrink-0" />
+                    <a href={`tel:${phoneItem.clean}`} className="text-sm text-slate-300 hover:text-white transition-colors font-medium">
+                      {phoneItem.display}
+                    </a>
+                  </div>
+                ))}
+                <div className="flex items-center gap-3">
+                  <Mail className="size-4 text-orange-400 shrink-0" />
+                  <a href={`mailto:${footerAbout.email}`} className="text-sm text-slate-300 hover:text-white transition-colors font-medium">
+                    {footerAbout.email}
+                  </a>
+                </div>
               </div>
             </div>
 
@@ -157,6 +133,27 @@ export const Footer = () => {
               {footerAbout.schedule.map((line, idx) => (
                 <p key={idx} className="text-xs text-slate-400 leading-snug">{line}</p>
               ))}
+            </div>
+          </div>
+
+          {/* Columna 3: Ubicación y enlaces */}
+          <div className="space-y-6 md:col-span-2 lg:col-span-1">
+            <div>
+              <h3 className="font-extrabold text-xs text-white uppercase tracking-widest mb-4">
+                Ubicación Facultativa
+              </h3>
+              <div className="rounded-2xl overflow-hidden border border-slate-800 shadow-2xl relative">
+                <iframe
+                  title="Monoblock UMSA"
+                  src={footerAbout.mapUrl}
+                  width="100%"
+                  height="150"
+                  style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg) grayscale(40%) contrast(1.1) brightness(0.95)' }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
             </div>
 
             {/* Systems Access (SIA / Moodle) */}

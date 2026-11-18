@@ -10,6 +10,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { seccionPaginaApi } from './seccionPaginaService'
+import { parseCarouselItems, resolveMediaUrl } from './carouselUtils'
 
 export const accreditationHero = {
   eyebrow: 'Acreditacion',
@@ -17,10 +18,7 @@ export const accreditationHero = {
   description:
     'Nuestra carrera lidera el análisis de datos en Bolivia bajo estándares estrictos del sistema universitario. La acreditación vigente ante el CEUB respalda competitividad y mejora continua.',
   imageUrl: '/images/institucional/acreditacion_hero.jpeg',
-  chips: [
-    { symbol: 'int', label: 'Integridad', subtitle: 'Curricular' },
-    { symbol: 'chi2', label: 'Validez', subtitle: 'Estadística' },
-  ],
+  images: [{ url: '/images/institucional/acreditacion_hero.jpeg', caption: '' }],
 }
 
 export const credentials = [
@@ -112,6 +110,9 @@ const getRecordValue = (records, key, fallback) => {
 
 const getAccreditationDataFromRecords = (records) => {
   const value = (key, fallback) => getRecordValue(records, key, fallback)
+  const heroImageUrl = resolveMediaUrl(
+    value('acreditacion_inicio_imagen', accreditationHero.imageUrl),
+  )
 
   return {
     accreditationHero: {
@@ -123,16 +124,10 @@ const getAccreditationDataFromRecords = (records) => {
         value('acreditacion_inicio_titulo_03', accreditationHero.title[2]),
       ],
       description: value('acreditacion_inicio_descripcion', accreditationHero.description),
-      imageUrl: value('acreditacion_inicio_imagen', accreditationHero.imageUrl),
-      chips: accreditationHero.chips.map((chip, index) => {
-        const number = String(index + 1).padStart(2, '0')
-        return {
-          ...chip,
-          symbol: value(`acreditacion_chip_${number}_simbolo`, chip.symbol),
-          label: value(`acreditacion_chip_${number}_etiqueta`, chip.label),
-          subtitle: value(`acreditacion_chip_${number}_subtitulo`, chip.subtitle),
-        }
-      }),
+      imageUrl: heroImageUrl,
+      images: parseCarouselItems(value('acreditacion_inicio_carrusel', ''), [
+        { url: heroImageUrl, caption: '' },
+      ]),
     },
     credentials: credentials.map((card, index) => {
       const number = String(index + 1).padStart(2, '0')

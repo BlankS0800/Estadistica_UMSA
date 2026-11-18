@@ -10,14 +10,6 @@ const AboutHeroSection = ({ hero }) => (
       <circle cx="210" cy="210" r="100" stroke="#ea580c" strokeWidth="1.3" opacity="0.56" />
       <circle cx="210" cy="210" r="66" stroke="#8dc7ff" strokeWidth="1" opacity="0.44" />
     </svg>
-
-    <div className="absolute top-32 right-24 hidden select-none font-serif text-9xl italic font-black text-white opacity-[0.08] lg:block" aria-hidden="true">
-      Sum
-    </div>
-    <div className="absolute bottom-20 left-20 hidden select-none font-serif text-8xl italic font-black text-[#ea580c] opacity-[0.1] md:block" aria-hidden="true">
-      sigma
-    </div>
-
     <svg className="pointer-events-none absolute right-0 top-0 h-[400px] w-[600px] opacity-[0.08]" viewBox="0 0 600 400" fill="none" aria-hidden="true">
       <path d="M0 200 Q150 100 300 200 T600 200" stroke="#ea580c" strokeWidth="2.4" />
       <path d="M0 220 Q150 120 300 220 T600 220" stroke="#9ad6ff" strokeWidth="1.5" opacity="0.74" />
@@ -51,18 +43,9 @@ const AboutHeroSection = ({ hero }) => (
         </h1>
 
         <div className="max-w-lg">
-          <p className="mb-8 rounded-r-2xl border-l-4 border-[#ea580c] bg-white/10 py-4 pl-6 text-base font-medium leading-relaxed text-slate-200 shadow-sm md:text-base">
+          <p className="rounded-r-2xl border-l-4 border-[#ea580c] bg-white/10 py-4 pl-6 text-base font-medium leading-relaxed text-slate-200 shadow-sm md:text-base">
             {hero.description}
           </p>
-
-          <div className="flex flex-wrap gap-3">
-            <div className="rounded-full border border-[#ea580c]/30 bg-[#ea580c]/20 px-3 py-1 text-sm sm:text-base md:text-lg font-black uppercase tracking-widest text-[#ffb184]">
-              Fundada en 1984
-            </div>
-            <div className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[8px] font-black uppercase italic tracking-widest text-blue-100">
-              R2 = 1.00
-            </div>
-          </div>
         </div>
       </div>
 

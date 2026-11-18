@@ -1,44 +1,13 @@
 import React from 'react';
-import { ArrowRight, Calendar } from 'lucide-react';
-import { AgendaEventCard, CompactNewsCard, FeaturedNewsCard } from '../../molecules/cards/CardBlocks';
+import { ArrowRight } from 'lucide-react';
+import { CompactNewsCard, FeaturedNewsCard } from '../../molecules/cards/CardBlocks';
 
 /**
- * Panel Dividido: Noticias (Izquierda) y Agenda (Derecha) (Organismo 6)
+ * Panel de Noticias (Organismo 6). La Agenda se retiró de esta sección.
  */
-export const SplitPanel = ({ news = [], events = [] }) => {
+export const SplitPanel = ({ news = [] }) => {
   const featuredNews = news[0] ?? null;
   const secondaryNews = news.slice(1, 7);
-
-  const agendaVariants = [
-    {
-      accent: '#00447e',
-      bgGradient: 'linear-gradient(175.377deg, rgba(255,255,255,1) 1.742%, rgba(248,250,252,0.98) 98.258%)',
-      border: 'rgba(203,213,225,0.50)',
-      badgeFrom: '#00447e',
-      badgeTo: '#003a6b',
-    },
-    {
-      accent: '#00447e',
-      bgGradient: 'linear-gradient(175.377deg, rgba(255,255,255,1) 1.742%, rgba(248,250,252,0.98) 98.258%)',
-      border: 'rgba(203,213,225,0.50)',
-      badgeFrom: '#00447e',
-      badgeTo: '#003a6b',
-    },
-    {
-      accent: '#ea580c',
-      bgGradient: 'linear-gradient(175.377deg, rgba(255,255,255,1) 1.742%, rgba(248,250,252,0.98) 98.258%)',
-      border: 'rgba(203,213,225,0.50)',
-      badgeFrom: '#ea580c',
-      badgeTo: '#c2410c',
-    },
-    {
-      accent: '#64748b',
-      bgGradient: 'linear-gradient(175.377deg, rgba(255,255,255,1) 1.742%, rgba(248,250,252,0.98) 98.258%)',
-      border: 'rgba(203,213,225,0.50)',
-      badgeFrom: '#64748b',
-      badgeTo: '#475569',
-    },
-  ];
 
   return (
     <section className="py-20 px-6 sm:px-12 lg:px-20 bg-[#001d3d] relative overflow-hidden">
@@ -54,55 +23,27 @@ export const SplitPanel = ({ news = [], events = [] }) => {
       <div className="absolute bottom-20 left-20 text-7xl font-black text-white opacity-[0.04] select-none pointer-events-none" aria-hidden="true">p</div>
 
       <div className="max-w-[1200px] mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="h-[3px] w-6 bg-white/40 rounded-full" />
-                  <span className="text-base sm:text-base md:text-lg font-bold uppercase tracking-widest text-white/60">Noticias</span>
-                </div>
-                <h2 className="text-[24px] font-bold text-white">Actualidad <span className="text-[#ea580c]">Institucional</span></h2>
-              </div>
-              <a href="#" className="flex items-center gap-1.5 text-base font-semibold text-white/70 hover:text-white transition">
-                Ver noticias <ArrowRight className="size-4" />
-              </a>
+            <div className="flex items-center gap-2 mb-1">
+              <div className="h-[3px] w-6 bg-white/40 rounded-full" />
+              <span className="text-base sm:text-base md:text-lg font-bold uppercase tracking-widest text-white/60">Noticias</span>
             </div>
-
-            {featuredNews && (
-              <FeaturedNewsCard item={featuredNews} />
-            )}
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {secondaryNews.map((item) => (
-                <CompactNewsCard key={item.id} item={item} />
-              ))}
-            </div>
+            <h2 className="text-[24px] font-bold text-white">Actualidad <span className="text-[#ea580c]">Institucional</span></h2>
           </div>
+          <a href="#" className="flex items-center gap-1.5 text-base font-semibold text-white/70 hover:text-white transition">
+            Ver noticias <ArrowRight className="size-4" />
+          </a>
+        </div>
 
-          <div>
-            <div className="mb-8">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="h-[3px] w-6 bg-[#ea580c] rounded-full" />
-                <span className="text-base sm:text-base md:text-lg font-bold uppercase tracking-widest text-white/60">Agenda</span>
-              </div>
-              <h2 className="text-[24px] font-bold text-white">Agenda <span className="text-[#ea580c]">UMSA</span></h2>
-            </div>
+        {featuredNews && (
+          <FeaturedNewsCard item={featuredNews} />
+        )}
 
-            <div className="space-y-4">
-              {events.map((event, idx) => {
-                const variant = agendaVariants[idx % agendaVariants.length];
-                return (
-                  <AgendaEventCard key={`${event.title}-${idx}`} event={event} variant={variant} />
-                );
-              })}
-            </div>
-
-            <a href="#" className="flex items-center justify-center gap-2 mt-5 py-3 rounded-xl text-base font-semibold border transition-all hover:shadow-md" style={{ color: '#1a6b1a', borderColor: 'rgba(26,107,26,0.3)', background: 'rgba(26,107,26,0.05)' }}>
-              <Calendar className="size-4" />
-              Ver calendario completo
-            </a>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {secondaryNews.map((item) => (
+            <CompactNewsCard key={item.id} item={item} />
+          ))}
         </div>
       </div>
     </section>
