@@ -6,27 +6,31 @@ import * as fs from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.enableCors();
+
+  const corsOrigin = process.env.CORS_ORIGIN;
+  app.enableCors(corsOrigin ? { origin: corsOrigin.split(',') } : undefined);
 
   const uploadDir = process.env.UPLOAD_DIR || join(process.cwd(), 'uploads');
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
   }
 
-  // Servir archivos estáticos bajo el prefijo /uploads/
+  // Servir archivos subidos bajo el prefijo /uploads/
   app.useStaticAssets(uploadDir, {
     prefix: '/uploads/',
   });
 
-  // Servir imágenes públicas del portal bajo /images/ para previsualización en el admin
-  const portalImagesDir = join(process.cwd(), '..', '..', 'Estadistica-Umsa-main', 'public', 'images');
+  // Opcional en desarrollo local (en Docker el frontend/Nginx sirve /images/ directamente)
+  const portalImagesDir =
+    process.env.PORTAL_IMAGES_DIR ||
+    join(process.cwd(), '..', 'frontend', 'public', 'images');
   if (fs.existsSync(portalImagesDir)) {
     app.useStaticAssets(portalImagesDir, {
       prefix: '/images/',
     });
   }
 
-  await app.listen(3000);
+  const port = Number(process.env.PORT) || 3000;
+  await app.listen(port);
 }
 bootstrap();
-

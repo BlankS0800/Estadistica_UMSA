@@ -33,7 +33,6 @@ import RecursosBancoDatosPage from '../pages/RecursosBancoDatosPage'
 import RecursosRevistasPage from '../pages/RecursosRevistasPage'
 import RecursosTesisPage from '../pages/RecursosTesisPage'
 import RecursosDocumentosPage from '../pages/RecursosDocumentosPage'
-import TextEditorPage from '../pages/TextEditorPage'
 
 export const pageRegistry = [
   { path: '/', component: LandingPage },
@@ -82,7 +81,6 @@ export const pageRegistry = [
   { path: '/pregrado/admisiones', component: PregradoAdmissionsPage },
   { path: '/pregrado/convalidaciones', component: PregradoConvalidationsPage },
   { path: '/pregrado/modalidades-graduacion', component: PregradoGraduationPage },
-  { path: '/editor-texto', component: TextEditorPage },
 ]
 
 // Planned paths for upcoming screens. Add real page components as they are created.

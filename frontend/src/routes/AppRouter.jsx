@@ -1,43 +1,56 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
-import AppTemplate from '../components/templates/AppTemplate.jsx'
-import HomePage from '../pages/HomePage.jsx'
-import NotFoundPage from '../pages/NotFoundPage.jsx'
-import PostgradoDiplomadosPage from '../pages/PostgradoDiplomadosPage.jsx'
-import StudentsProceduresPage from '../pages/StudentsProceduresPage.jsx'
-import StudentsCenterPage from '../pages/StudentsCenterPage.jsx'
-import StudentsCallsPage from '../pages/StudentsCallsPage.jsx'
-import StudentsInternshipsPage from '../pages/StudentsInternshipsPage.jsx'
-import StudentsScientificSocietyPage from '../pages/StudentsScientificSocietyPage.jsx'
-import ContactPage from '../pages/ContactPage.jsx'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { Header } from '../components/organisms/layout/Header'
+import { Footer } from '../components/organisms/layout/Footer'
+import { mockNavItems } from '../services/mockData'
+import { resolvePageByPath } from './pageRegistry'
+import { PrivateRoute, PublicRoute } from '../admin/routes/auth.guard'
+import LogInPage from '../admin/pages/LogInPage'
+import SignUpPage from '../admin/pages/SignUpPage'
+import TextEditorPage from '../admin/pages/TextEditorPage'
+
+function PublicPortalShell() {
+  const { pathname } = useLocation()
+  const ActivePage = resolvePageByPath(pathname)
+
+  return (
+    <div className="min-h-screen bg-[#f5f5f5] font-sans pt-[64px] sm:pt-[70px]">
+      <Header navItems={mockNavItems} />
+
+      <main>
+        <ActivePage />
+      </main>
+
+      <Footer />
+    </div>
+  )
+}
 
 /**
- * Central route registry for the application.
- *
- * Keep this file small and declarative so future pages can be added without coupling routing,
- * layouts, or content concerns in a single component.
- *
- * @returns {JSX.Element} Route tree for the public application.
+ * Router central unificado:
+ * - Rutas bajo /admin/* renderizan el panel de autenticación y edición sin Header/Footer público.
+ * - El resto de rutas renderizan el portal público a través de pageRegistry.
  */
 function AppRouter() {
   return (
     <Routes>
-      <Route element={<AppTemplate />}>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/inicio" element={<Navigate to="/" replace />} />
-        <Route path="/postgrado/diplomados-especialidades" element={<PostgradoDiplomadosPage />} />
-        <Route path="/postgrado/diplomados" element={<PostgradoDiplomadosPage />} />
-        <Route path="/estudiantes/guia-seguimiento-tramites" element={<StudentsProceduresPage />} />
-        <Route path="/estudiantes/tramites" element={<StudentsProceduresPage />} />
-        <Route path="/estudiantes/centro-estudiantes" element={<StudentsCenterPage />} />
-        <Route path="/estudiantes/convocatorias-auxiliaturas" element={<StudentsCallsPage />} />
-        <Route path="/estudiantes/auxiliaturas" element={<StudentsCallsPage />} />
-        <Route path="/estudiantes/pasantias-bolsa-trabajo" element={<StudentsInternshipsPage />} />
-        <Route path="/estudiantes/pasantias" element={<StudentsInternshipsPage />} />
-        <Route path="/estudiantes/sociedad-cientifica" element={<StudentsScientificSocietyPage />} />
-        <Route path="/estudiantes/sociedades-cientificas" element={<StudentsScientificSocietyPage />} />
-        <Route path="/contacto" element={<ContactPage />} />
-        <Route path="*" element={<NotFoundPage />} />
+      {/* Panel de administración */}
+      <Route path="/admin" element={<Navigate to="/admin/editor" replace />} />
+      <Route element={<PublicRoute />}>
+        <Route path="/admin/login" element={<LogInPage />} />
+        <Route path="/admin/sign-up" element={<SignUpPage />} />
       </Route>
+      <Route element={<PrivateRoute />}>
+        <Route path="/admin/editor" element={<TextEditorPage />} />
+      </Route>
+
+      {/* Redirecciones de compatibilidad desde rutas anteriores */}
+      <Route path="/editor-texto" element={<Navigate to="/admin/editor" replace />} />
+      <Route path="/auth" element={<Navigate to="/admin/login" replace />} />
+      <Route path="/auth/log-in" element={<Navigate to="/admin/login" replace />} />
+      <Route path="/auth/sign-up" element={<Navigate to="/admin/sign-up" replace />} />
+
+      {/* Portal público */}
+      <Route path="*" element={<PublicPortalShell />} />
     </Routes>
   )
 }
