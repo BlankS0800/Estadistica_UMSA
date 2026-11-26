@@ -1,0 +1,344 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
+}
+
+model SeccionPagina {
+  claveCampo String @id @map("clave_campo") @db.VarChar(255)
+  paginaSlug String @map("pagina_slug") @db.VarChar(255)
+  valor      String @db.Text
+  tipo       String @db.VarChar(255)
+
+  @@map("seccion_pagina")
+}
+
+model Docente {
+  id                    Int    @id @default(autoincrement())
+  nombre                String @db.VarChar(255)
+  gradoAcademico        String @map("grado_academico") @db.VarChar(255)
+  tipo                  String @db.VarChar(255)
+  resumenCv             String @map("resumen_cv") @db.VarChar(500)
+  correoInstitucional   String @map("correo_institucional") @db.VarChar(255)
+  cargoAutoridad        String? @map("cargo_autoridad") @db.VarChar(255)
+  imagen                String @db.VarChar(255)
+
+  @@map("docente")
+}
+
+model Administrativo {
+  id                  Int    @id @default(autoincrement())
+  nombre              String @db.VarChar(255)
+  cargo               String @db.VarChar(255)
+  correoInstitucional String @map("correo_institucional") @db.VarChar(255)
+  foto                String @db.VarChar(255)
+
+  @@map("administrativo")
+}
+
+model Auxiliar {
+  id                  Int    @id @default(autoincrement())
+  nombre              String @db.VarChar(255)
+  tipo                String @db.VarChar(255)
+  foto                String @db.VarChar(255)
+  materia             String? @db.VarChar(255)
+  paralelo            String? @db.VarChar(255)
+  diasAuxiliatura     String? @map("dias_auxiliatura") @db.VarChar(255)
+  horarioAuxiliatura  String? @map("horario_auxiliatura") @db.VarChar(255)
+  aula                String? @db.VarChar(255)
+
+  @@map("auxiliar")
+}
+
+model EstudianteAutoridad {
+  id     Int    @id @default(autoincrement())
+  nombre String @db.VarChar(255)
+  cargo  String @db.VarChar(255)
+  imagen String @db.VarChar(255)
+
+  @@map("estudiante_autoridad")
+}
+
+model Convenio {
+  id          Int    @id @default(autoincrement())
+  titulo      String @db.VarChar(255)
+  descripcion String @db.Text
+  sector      String @db.VarChar(255)
+
+  @@map("convenio")
+}
+
+model MateriaPregrado {
+  idMateriaAct     Int      @id @default(autoincrement()) @map("Id_materia_act")
+  siglaMateriaAct  String   @map("sigla_materia_act") @db.VarChar(255)
+  nombreMateriaAct String   @map("nombre_materia_act") @db.VarChar(255)
+  horasMateria     Int      @map("horas_materia")
+  prerrequisitos   String   @map("prerrequisitos") @db.VarChar(500)
+  semestre         Int      @map("semestre")
+
+  incluye          Incluye[]
+
+  @@map("materia_pregrado")
+}
+
+model PlanEstudios {
+  idPlanEstudio Int       @id @default(autoincrement()) @map("Id_plan_estudio")
+  nombrePlan    String    @map("nombre_plan") @db.VarChar(255)
+
+  incluye       Incluye[]
+
+  @@map("plan_estudios")
+}
+
+model Incluye {
+  idPlanEstudio Int             @map("Id_plan_estudio")
+  idMateriaAct  Int             @map("Id_materia_act")
+
+  planEstudio   PlanEstudios    @relation(fields: [idPlanEstudio], references: [idPlanEstudio], onDelete: Cascade)
+  materia       MateriaPregrado @relation(fields: [idMateriaAct], references: [idMateriaAct], onDelete: Cascade)
+
+  @@id([idPlanEstudio, idMateriaAct])
+  @@map("incluye")
+}
+
+model Convalida {
+  idMateriaAct         Int    @id @default(autoincrement()) @map("Id_materia_act")
+  idMateriaAntigua     Int?   @map("Id_materia_antigua")
+  nombreMateriaAntigua String @map("nombre_materia_antigua") @db.VarChar(255)
+  siglaMateriaAntigua  String @map("sigla_materia_antigua") @db.VarChar(255)
+
+  @@map("convalida")
+}
+
+model Convocatoria {
+  idConvocatoria      Int      @id @default(autoincrement()) @map("Id_convocatoria")
+  periodoConvocatoria String   @map("periodo_convocatoria") @db.VarChar(255)
+  descConvocatoria    String   @map("desc_convocatoria") @db.Text
+  insPreu             String   @map("ins_preu") @db.VarChar(255)
+  insPsa              String   @map("ins_psa") @db.VarChar(255)
+  fechaEntregaDocs    DateTime @map("fecha_entrega_docs") @db.Date
+  matriculacionKardex String   @map("matriculacion_kardex") @db.VarChar(255)
+
+  @@map("convocatoria")
+}
+
+model Programa {
+  idPrograma Int                @id @default(autoincrement()) @map("id_programa")
+  nombre     String             @map("nombre") @db.VarChar(255)
+  tipo       String             @map("tipo") @db.VarChar(100)
+  costo      String             @map("costo") @db.VarChar(100)
+
+  organiza   OrganizaPosgrado[]
+
+  @@map("programa")
+}
+
+model Modulo {
+  idModulo     Int                @id @default(autoincrement()) @map("id_modulo")
+  tituloModulo String             @map("titulo_modulo") @db.VarChar(255)
+  numeroModulo String             @map("numero_modulo") @db.VarChar(50)
+
+  organiza     OrganizaPosgrado[]
+  incluye      IncluyePosgrado?
+
+  @@map("modulo")
+}
+
+model OrganizaPosgrado {
+  idPrograma Int      @map("id_programa")
+  idModulo   Int      @map("id_modulo")
+
+  programa   Programa @relation(fields: [idPrograma], references: [idPrograma], onDelete: Cascade)
+  modulo     Modulo   @relation(fields: [idModulo], references: [idModulo], onDelete: Cascade)
+
+  @@id([idPrograma, idModulo])
+  @@map("organiza_posgrado")
+}
+
+model IncluyePosgrado {
+  idModulo           Int    @id @map("id_modulo")
+  horasPresencial    String @map("horas_presencial") @db.VarChar(100)
+  horasInvestigacion String @map("horas_investigacion") @db.VarChar(100)
+
+  modulo             Modulo @relation(fields: [idModulo], references: [idModulo], onDelete: Cascade)
+
+  @@map("incluye_posgrado")
+}
+
+model DirectivoEstudiante {
+  id     Int    @id @default(autoincrement()) @map("id")
+  nombre String @map("nombre") @db.VarChar(255)
+  cargo  String @map("cargo") @db.VarChar(255)
+  area   String @map("area") @db.VarChar(255)
+
+  @@map("directivo_estudiante")
+}
+
+model ConvocatoriaAuxiliatura {
+  id               Int       @id @default(autoincrement()) @map("id")
+  materia          String    @map("materia") @db.VarChar(255)
+  tipo             String    @map("tipo") @db.VarChar(100)
+  descripcion      String    @map("descripcion") @db.Text
+  fechaPublicacion DateTime? @map("fecha_publicacion") @db.Date
+  fechaCierre      DateTime? @map("fecha_cierre") @db.Date
+  plazas           Int       @map("plazas")
+  estado           String    @map("estado") @db.VarChar(100)
+
+  @@map("convocatoria_auxiliatura")
+}
+
+model Pasantia {
+  id          Int       @id @default(autoincrement()) @map("id")
+  titulo      String    @map("titulo") @db.VarChar(255)
+  tipo        String    @map("tipo") @db.VarChar(100)
+  descripcion String    @map("descripcion") @db.Text
+  area        String    @map("area") @db.VarChar(255)
+  empresa     String    @map("empresa") @db.VarChar(255)
+  fechaCierre DateTime? @map("fecha_cierre") @db.Date
+  requisitos  String    @map("requisitos") @db.Text
+
+  @@map("pasantia")
+}
+
+model PublicacionesEstudiantiles {
+  id     Int    @id @default(autoincrement()) @map("id")
+  titulo String @map("titulo") @db.VarChar(255)
+  anio   Int    @map("anio")
+  autor  String @map("autor") @db.VarChar(255)
+  area   String @map("area") @db.VarChar(255)
+
+  @@map("publicaciones_estudiantiles")
+}
+
+model MatrizCientifica {
+  id          Int    @id @default(autoincrement()) @map("id")
+  titulo      String @map("titulo") @db.VarChar(255)
+  descripcion String @map("descripcion") @db.Text
+  autor       String @map("autor") @db.VarChar(255)
+
+  @@map("matriz_cientifica")
+}
+
+model Autor {
+  id        Int      @id @default(autoincrement()) @map("id")
+  nombre    String?  @map("nombre") @db.VarChar(255)
+  area      String?  @map("area") @db.VarChar(255)
+  tipo      String?  @map("tipo") @db.VarChar(100)
+  ubicacion String?  @map("ubicacion") @db.VarChar(255)
+  libros    Libro[]
+
+  @@map("autor")
+}
+
+model Libro {
+  id                Int      @id @default(autoincrement()) @map("id")
+  titulo            String?  @map("titulo") @db.VarChar(500)
+  editor            String?  @map("editor") @db.VarChar(255)
+  descripcionFisica String?  @map("descripcion_fisica") @db.VarChar(255)
+  codigoIsbn        String?  @map("codigo_isbn") @db.VarChar(100)
+  calificacionDewey String?  @map("calificacion_dewey") @db.VarChar(100)
+  temas             String?  @map("temas") @db.Text
+  link              String?  @map("link") @db.VarChar(500)
+  idAutor           Int?     @map("id_autor")
+  autorRel          Autor?   @relation(fields: [idAutor], references: [id])
+
+  @@map("libro")
+}
+
+model Revista {
+  id          Int     @id @default(autoincrement()) @map("id")
+  titulo      String? @map("titulo") @db.VarChar(500)
+  tipo        String? @map("tipo") @db.VarChar(100)
+  publicacion String? @map("publicacion") @db.VarChar(255)
+  autor       String? @map("autor") @db.VarChar(255)
+  descripcion String? @map("descripcion") @db.Text
+  link        String? @map("link") @db.VarChar(500)
+
+  @@map("revista")
+}
+
+model DocumentoDigital {
+  id                 Int       @id @default(autoincrement()) @map("id")
+  titulo             String?   @map("titulo") @db.VarChar(500)
+  tipo               String?   @map("tipo") @db.VarChar(100)
+  peso               String?   @map("peso") @db.VarChar(100)
+  fechaActualizacion DateTime? @map("fecha_actualizacion") @db.Date
+  linkDescarga       String?   @map("link_descarga") @db.VarChar(500)
+
+  @@map("documento_digital")
+}
+
+model Tesis {
+  id           Int     @id @default(autoincrement()) @map("id")
+  titulo       String? @map("titulo") @db.VarChar(500)
+  tipo         String? @map("tipo") @db.VarChar(100)
+  area         String? @map("area") @db.VarChar(255)
+  tutor        String? @map("tutor") @db.VarChar(255)
+  investigador String? @map("investigador") @db.VarChar(255)
+  resumen      String? @map("resumen") @db.Text
+  link         String? @map("link") @db.VarChar(500)
+
+  @@map("tesis")
+}
+
+model BancoDatos {
+  id       Int            @id @default(autoincrement()) @map("id")
+  titulo   String?        @map("titulo") @db.VarChar(500)
+  tipo     String?        @map("tipo") @db.VarChar(100)
+  fuente   String?        @map("fuente") @db.VarChar(255)
+  anio     Int?           @map("anio")
+  resumen  String?        @map("resumen") @db.Text
+  archivos DatosArchivo[]
+
+  @@map("banco_datos")
+}
+
+model DatosArchivo {
+  id           Int         @id @default(autoincrement()) @map("id")
+  titulo       String?     @map("titulo") @db.VarChar(500)
+  formato      String?     @map("formato") @db.VarChar(100)
+  peso         String?     @map("peso") @db.VarChar(100)
+  linkDescarga String?     @map("link_descarga") @db.VarChar(500)
+  idBancoDatos Int?        @map("id_banco_datos")
+  bancoRel     BancoDatos? @relation(fields: [idBancoDatos], references: [id])
+
+  @@map("datos_archivo")
+}
+
+model Noticia {
+  id              Int       @id @default(autoincrement())
+  categoria       String    @db.VarChar(100)
+  color           String    @db.VarChar(20)
+  fecha           DateTime  @db.Date
+  titulo          String    @db.VarChar(255)
+  extracto        String    @db.Text
+  imagenUrl       String?   @map("imagen_url") @db.VarChar(500)
+  tiempoLectura   String    @map("tiempo_lectura") @db.VarChar(50)
+  enlace          String    @db.VarChar(255)
+  estado          String    @default("published") @db.VarChar(20)
+  fechaExpiracion DateTime? @map("fecha_expiracion") @db.Date
+
+  @@map("noticia")
+}
+
+model Evento {
+  id        Int      @id @default(autoincrement())
+  fecha     DateTime @db.Date
+  color     String   @db.VarChar(20)
+  categoria String   @db.VarChar(100)
+  titulo    String   @db.VarChar(255)
+  hora      String   @db.VarChar(50)
+  ubicacion String   @db.VarChar(255)
+  estado    String   @default("published") @db.VarChar(20)
+
+  @@map("evento")
+}
