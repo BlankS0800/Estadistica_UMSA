@@ -959,7 +959,7 @@ export default function TextEditorPage() {
                   />
                 </button>
                 {openNavGroup === groupIndex && (
-                  <div className="absolute left-0 top-full z-20 min-w-72 rounded-b-xl rounded-tr-xl border border-slate-200 bg-white p-2 shadow-xl">
+                  <div className="absolute left-0 top-full z-20 min-w-[min(18rem,calc(100vw-2rem))] sm:min-w-72 rounded-b-xl rounded-tr-xl border border-slate-200 bg-white p-2 shadow-xl">
                     {group.items.map((tab) => {
                       const sectionCount = sections.filter(
                         (section) => normalizePageSlug(section.paginaSlug) === tab.slug,
@@ -1103,7 +1103,7 @@ export default function TextEditorPage() {
             </div>
 
             {/* Accordion List */}
-            <div className="max-h-[calc(100vh-270px)] flex-1 space-y-2.5 overflow-y-auto p-3">
+            <div className="max-h-72 lg:max-h-[calc(100vh-270px)] flex-1 space-y-2.5 overflow-y-auto p-3">
               {filteredGroups.length === 0 ? (
                 <div className="p-6 text-center text-xs text-slate-400">
                   {searchTerm ? (
