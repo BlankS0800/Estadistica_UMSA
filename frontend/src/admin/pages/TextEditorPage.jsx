@@ -7,7 +7,6 @@ import PlantelCrud from '../components/PlantelCrud'
 import EstudianteAutoridadCrud from '../components/EstudianteAutoridadCrud'
 import ConvenioCrud from '../components/ConvenioCrud'
 import MateriaPlanCrud from '../components/MateriaPlanCrud'
-import ConvalidaCrud from '../components/ConvalidaCrud'
 import ConvocatoriaCrud from '../components/ConvocatoriaCrud'
 import ProgramaCrud from '../components/ProgramaCrud'
 import ModuloCrud from '../components/ModuloCrud'
@@ -24,7 +23,7 @@ import TesisCrud from '../components/TesisCrud'
 import BancoDatosCrud from '../components/BancoDatosCrud'
 import DatosArchivoCrud from '../components/DatosArchivoCrud'
 import NoticiaCrud from '../components/NoticiaCrud'
-import EventoCrud from '../components/EventoCrud'
+import CarouselEditor from '../components/CarouselEditor'
 
 import {
   IconSearch,
@@ -292,12 +291,40 @@ function formatFieldLabel(subKey, tipo) {
 
 const QUICK_ACCESS_ITEMS = [
   { id: 'noticias', label: 'Noticias', slug: '/', mode: 'crud', description: 'Publicar o editar noticias' },
-  { id: 'agenda', label: 'Agenda y Eventos', slug: '/', mode: 'eventos', description: 'Fechas y actividades' },
+  { id: 'banner', label: 'Banner Inicio', slug: '/', mode: 'textos', description: 'Slides, textos y fotos' },
   { id: 'convocatorias', label: 'Admisiones', slug: '/pregrado/admisiones', mode: 'crud', description: 'Convocatorias vigentes' },
   { id: 'auxiliaturas', label: 'Auxiliaturas', slug: '/estudiantes/convocatorias-auxiliaturas', mode: 'crud', description: 'Plazas y requisitos' },
   { id: 'docentes', label: 'Docentes', slug: '/institucional/docentes', mode: 'crud', description: 'Plantel docente' },
-  { id: 'calendario', label: 'Calendario', slug: '/pregrado/calendario-academico', mode: 'textos', description: 'Fechas académicas' },
+  { id: 'convalidaciones', label: 'Convalidaciones', slug: '/pregrado/convalidaciones', mode: 'textos', description: 'Tabla oficial y pasos' },
 ]
+
+// Claves de Inicio que ya no se muestran en LandingPage.jsx
+const HIDDEN_INICIO_PREFIXES = [
+  'inicio_aliado_',
+  'inicio_ieta_',
+  'inicio_perfil_',
+  'inicio_rol_',
+  'inicio_stat_',
+  'inicio_servicio_',
+]
+
+function isVisibleSection(section) {
+  const slug = normalizePageSlug(section.paginaSlug)
+  if (slug === '/') {
+    if (/^inicio_slide_\d+_stat_\d+$/.test(section.claveCampo)) return false
+    if (/^inicio_acceso_\d+_stat$/.test(section.claveCampo)) return false
+    return !HIDDEN_INICIO_PREFIXES.some((prefix) => section.claveCampo.startsWith(prefix))
+  }
+  return true
+}
+
+function isCarouselSection(section) {
+  return section?.tipo === 'carrusel' || Boolean(section?.claveCampo?.endsWith('_carrusel'))
+}
+
+function isMediaSection(section) {
+  return section?.tipo === 'imagen' || isCarouselSection(section)
+}
 
 function normalizeRawGroup(g) {
   if (g === 'serv') return 'servicios'
@@ -354,9 +381,30 @@ function buildSectionGroups(pageSections) {
     }
 
     const parts = keyAfterPrefix.split('_')
-    const rawSegment = (parts[0] || 'general').toLowerCase()
-    const rawGroup = normalizeRawGroup(rawSegment)
-    const subKey = parts.length > 1 ? parts.slice(1).join('_') : parts[0]
+    let rawSegment = (parts[0] || 'general').toLowerCase()
+    let rawGroup = normalizeRawGroup(rawSegment)
+    let subKey = parts.length > 1 ? parts.slice(1).join('_') : parts[0]
+    let groupLabel = formatGroupLabel(rawGroup)
+
+    // Agrupar cada slide de Inicio por separado (Slide 1, Slide 2, Slide 3)
+    const slideMatch = section.claveCampo.match(/^inicio_slide_(\d+)_(.+)$/)
+    if (slideMatch) {
+      const slideNum = Number(slideMatch[1])
+      rawGroup = `slide_${slideMatch[1]}`
+      groupLabel = `Banner · Slide ${slideNum}`
+      subKey = slideMatch[2]
+    } else if (section.claveCampo.startsWith('inicio_acceso_')) {
+      rawGroup = 'accesos'
+      groupLabel = 'Accesos Rápidos'
+      subKey = section.claveCampo.replace(/^inicio_acceso_/, '')
+    } else if (
+      section.claveCampo.startsWith('inicio_noticias_') ||
+      section.claveCampo === 'inicio_hero_noticias_boton'
+    ) {
+      rawGroup = 'noticias_ui'
+      groupLabel = 'Sección Noticias'
+      subKey = section.claveCampo.replace(/^inicio_/, '')
+    }
 
     const enhancedSection = {
       ...section,
@@ -367,7 +415,7 @@ function buildSectionGroups(pageSections) {
     if (!groupsMap.has(rawGroup)) {
       groupsMap.set(rawGroup, {
         key: rawGroup,
-        label: formatGroupLabel(rawGroup),
+        label: groupLabel,
         sections: [],
       })
     }
@@ -375,7 +423,11 @@ function buildSectionGroups(pageSections) {
     groupsMap.get(rawGroup).sections.push(enhancedSection)
   })
 
-  return Array.from(groupsMap.values())
+  // Colocar imágenes y carruseles primero dentro de cada grupo para encontrarlos de inmediato
+  return Array.from(groupsMap.values()).map((group) => ({
+    ...group,
+    sections: [...group.sections].sort((a, b) => Number(isMediaSection(b)) - Number(isMediaSection(a))),
+  }))
 }
 
 export default function TextEditorPage() {
@@ -399,9 +451,10 @@ export default function TextEditorPage() {
   const [error, setError] = useState('')
   const [toast, setToast] = useState(null)
 
-  // UI state for group organization, search, and collapsible accordions
+  // UI state for group organization, search, type filter, and collapsible accordions
   const [openSectionGroups, setOpenSectionGroups] = useState({})
   const [searchTerm, setSearchTerm] = useState('')
+  const [typeFilter, setTypeFilter] = useState('all')
 
   const showToast = (type, text) => {
     setToast({ type, text })
@@ -439,9 +492,11 @@ export default function TextEditorPage() {
         setSavedValues(initialSaved)
         const initialPageSlug = findInitialPage(data)
         setActivePageSlug(initialPageSlug)
-        setActiveKey(
-          data.find((section) => normalizePageSlug(section.paginaSlug) === initialPageSlug)?.claveCampo ?? '',
+        const initialPageSections = data.filter(
+          (section) => normalizePageSlug(section.paginaSlug) === initialPageSlug && isVisibleSection(section),
         )
+        const initialGroups = buildSectionGroups(initialPageSections)
+        setActiveKey(initialGroups[0]?.sections[0]?.claveCampo ?? initialPageSections[0]?.claveCampo ?? '')
       })
       .catch((requestError) => {
         if (isMounted) setError(requestError.message)
@@ -456,9 +511,15 @@ export default function TextEditorPage() {
   }, [])
 
   const pageSections = sections.filter(
-    (section) => normalizePageSlug(section.paginaSlug) === activePageSlug,
+    (section) => normalizePageSlug(section.paginaSlug) === activePageSlug && isVisibleSection(section),
   )
   const activeSection = pageSections.find((section) => section.claveCampo === activeKey)
+
+  const mediaCount = useMemo(
+    () => pageSections.filter((s) => isMediaSection(s)).length,
+    [pageSections],
+  )
+  const textCount = pageSections.length - mediaCount
 
   const sectionGroups = useMemo(() => {
     return buildSectionGroups(pageSections)
@@ -469,21 +530,24 @@ export default function TextEditorPage() {
 
     return sectionGroups
       .map((group) => {
-        if (!term) return group
-        const matchingSections = group.sections.filter(
-          (s) =>
+        const matchingSections = group.sections.filter((s) => {
+          if (typeFilter === 'media' && !isMediaSection(s)) return false
+          if (typeFilter === 'texto' && isMediaSection(s)) return false
+          if (!term) return true
+          return (
             s.claveCampo.toLowerCase().includes(term) ||
             s.subKey.toLowerCase().includes(term) ||
             formatFieldLabel(s.subKey, s.tipo).toLowerCase().includes(term) ||
-            (s.valor && s.valor.toLowerCase().includes(term)),
-        )
+            (s.valor && s.valor.toLowerCase().includes(term))
+          )
+        })
         return {
           ...group,
           sections: matchingSections,
         }
       })
       .filter((group) => group.sections.length > 0)
-  }, [sectionGroups, selectedGroupFilter, searchTerm])
+  }, [sectionGroups, searchTerm, typeFilter])
 
   const activeGroup = sectionGroups.find((g) =>
     g.sections.some((s) => s.claveCampo === activeKey),
@@ -501,7 +565,6 @@ export default function TextEditorPage() {
       '/institucional/autoridades',
       '/institucional/docentes',
       '/pregrado/malla-curricular',
-      '/pregrado/convalidaciones',
       '/pregrado/admisiones',
       '/postgrado/maestria-terminal',
       '/postgrado',
@@ -526,12 +589,13 @@ export default function TextEditorPage() {
 
   const changePage = (pageSlug) => {
     setActivePageSlug(pageSlug)
-    setSelectedGroupFilter('all')
     setSearchTerm('')
+    setTypeFilter('all')
     const targetSections = sections.filter(
-      (section) => normalizePageSlug(section.paginaSlug) === pageSlug,
+      (section) => normalizePageSlug(section.paginaSlug) === pageSlug && isVisibleSection(section),
     )
-    setActiveKey(targetSections[0]?.claveCampo ?? '')
+    const targetGroups = buildSectionGroups(targetSections)
+    setActiveKey(targetGroups[0]?.sections[0]?.claveCampo ?? targetSections[0]?.claveCampo ?? '')
     setMessage(null)
     setPageMode('textos')
   }
@@ -595,13 +659,14 @@ export default function TextEditorPage() {
 
   const openQuickAccess = (item) => {
     setActivePageSlug(item.slug)
-    setSelectedGroupFilter('all')
     setSearchTerm('')
+    setTypeFilter('all')
     setOpenNavGroup(null)
     const targetSections = sections.filter(
-      (section) => normalizePageSlug(section.paginaSlug) === item.slug,
+      (section) => normalizePageSlug(section.paginaSlug) === item.slug && isVisibleSection(section),
     )
-    setActiveKey(targetSections[0]?.claveCampo ?? '')
+    const targetGroups = buildSectionGroups(targetSections)
+    setActiveKey(targetGroups[0]?.sections[0]?.claveCampo ?? targetSections[0]?.claveCampo ?? '')
     setMessage(null)
     setError('')
     setPageMode(item.mode)
@@ -973,6 +1038,43 @@ export default function TextEditorPage() {
                 )}
               </div>
 
+              {/* Filtro rápido por tipo (Todos / Imágenes / Textos) */}
+              <div className="mt-2.5 grid grid-cols-3 gap-1 rounded-lg bg-slate-200/70 p-1 text-[11px] font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setTypeFilter('all')}
+                  className={`rounded-md py-1 transition ${
+                    typeFilter === 'all'
+                      ? 'bg-white text-umsa-blue shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Todos ({pageSections.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTypeFilter('media')}
+                  className={`rounded-md py-1 transition ${
+                    typeFilter === 'media'
+                      ? 'bg-white text-amber-700 shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Imágenes ({mediaCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTypeFilter('texto')}
+                  className={`rounded-md py-1 transition ${
+                    typeFilter === 'texto'
+                      ? 'bg-white text-umsa-blue shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Textos ({textCount})
+                </button>
+              </div>
+
               {/* Expand / Collapse all controls */}
               {sectionGroups.length > 1 && (
                 <div className="mt-2.5 flex items-center justify-between text-[11px] text-slate-500">
@@ -1024,7 +1126,7 @@ export default function TextEditorPage() {
                   const hasActiveSection = group.sections.some(
                     (section) => section.claveCampo === activeKey,
                   )
-                  const isOpen = searchTerm
+                  const isOpen = searchTerm || typeFilter === 'media'
                     ? true
                     : openSectionGroups[group.key] !== undefined
                     ? openSectionGroups[group.key]
@@ -1075,7 +1177,9 @@ export default function TextEditorPage() {
                         <div className="space-y-1 border-t border-slate-100 bg-slate-50/60 p-1.5">
                           {group.sections.map((section) => {
                             const isSelected = section.claveCampo === activeKey
+                            const isCarousel = isCarouselSection(section)
                             const isImage = section.tipo === 'imagen'
+                            const isMedia = isImage || isCarousel
                             const isDirty = dirtyKeys.has(section.claveCampo)
                             const friendlyLabel = formatFieldLabel(section.subKey, section.tipo)
 
@@ -1108,12 +1212,17 @@ export default function TextEditorPage() {
                                     className={`shrink-0 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium ${
                                       isSelected
                                         ? 'bg-white/20 text-white'
-                                        : isImage
+                                        : isMedia
                                         ? 'bg-amber-100 text-amber-800'
                                         : 'bg-slate-100 text-slate-600'
                                     }`}
                                   >
-                                    {isImage ? (
+                                    {isCarousel ? (
+                                      <>
+                                        <IconImage className="h-3 w-3" />
+                                        <span>Carrusel</span>
+                                      </>
+                                    ) : isImage ? (
                                       <>
                                         <IconImage className="h-3 w-3" />
                                         <span>Imagen</span>
@@ -1132,7 +1241,11 @@ export default function TextEditorPage() {
                                       isSelected ? 'text-sky-100/90' : 'text-slate-500'
                                     }`}
                                   >
-                                    {isImage ? 'Imagen configurada' : section.valor}
+                                    {isCarousel
+                                      ? 'Galería de imágenes'
+                                      : isImage
+                                      ? 'Imagen configurada'
+                                      : section.valor}
                                   </div>
                                 )}
                               </button>
@@ -1265,20 +1378,6 @@ export default function TextEditorPage() {
                   )}
                 </button>
 
-                {activePageSlug === '/' && (
-                  <button
-                    type="button"
-                    onClick={() => setPageMode('eventos')}
-                    className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition ${
-                      pageMode === 'eventos'
-                        ? 'bg-umsa-blue text-white shadow-xs'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                    }`}
-                  >
-                    <IconCalendar className="h-3.5 w-3.5" />
-                    <span>Agenda</span>
-                  </button>
-                )}
                 {activePageSlug === '/recursos/biblioteca' && (
                   <button
                     type="button"
@@ -1389,16 +1488,12 @@ export default function TextEditorPage() {
               </>
             ) : pageMode === 'crud' && activePageSlug === '/pregrado/malla-curricular' ? (
               <MateriaPlanCrud />
-            ) : pageMode === 'crud' && activePageSlug === '/pregrado/convalidaciones' ? (
-              <ConvalidaCrud />
             ) : pageMode === 'crud' && activePageSlug === '/pregrado/admisiones' ? (
               <ConvocatoriaCrud />
             ) : pageMode === 'crud' && ['/postgrado', '/postgrado/maestria-terminal', '/postgrado/maestria-autofinanciada', '/postgrado/autofinanciada', '/postgrado/diplomados', '/postgrado/diplomados-especialidades'].includes(activePageSlug) ? (
               <ModuloCrud />
             ) : pageMode === 'crud' && activePageSlug === '/' ? (
               <NoticiaCrud />
-            ) : pageMode === 'eventos' ? (
-              <EventoCrud />
             ) : pageMode === 'autores' ? (
               <AutorCrud />
             ) : (pageMode === 'libros' || (pageMode === 'crud' && activePageSlug === '/recursos/biblioteca')) ? (
@@ -1489,7 +1584,12 @@ export default function TextEditorPage() {
                       className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-100/90 px-3.5 py-2 text-xs font-semibold text-slate-600 shadow-2xs select-none cursor-default"
                       title="Tipo de contenido"
                     >
-                      {activeSection.tipo === 'imagen' ? (
+                      {isCarouselSection(activeSection) ? (
+                        <>
+                          <IconImage className="h-4 w-4 text-amber-600" />
+                          <span className="text-slate-700">Carrusel de imágenes</span>
+                        </>
+                      ) : activeSection.tipo === 'imagen' ? (
                         <>
                           <IconImage className="h-4 w-4 text-amber-600" />
                           <span className="text-slate-700">Imagen</span>
@@ -1504,7 +1604,13 @@ export default function TextEditorPage() {
                   </div>
                 </div>
 
-                {activeSection.tipo === 'imagen' ? (
+                {isCarouselSection(activeSection) ? (
+                  <CarouselEditor
+                    value={activeSection.valor}
+                    onChange={(nextValue) => updateActiveSection('valor', nextValue)}
+                    onNotify={showToast}
+                  />
+                ) : activeSection.tipo === 'imagen' ? (
                   <div className="flex flex-1 flex-col gap-5">
                     {/* Upload Dropzone */}
                     <div

@@ -93,8 +93,8 @@ export default function NoticiaCrud() {
     event.target.value = ''
     if (!file) return
 
-    if (!file.type.startsWith('image/')) {
-      setError('El archivo seleccionado debe ser una imagen.')
+    if (!file.type.startsWith('image/') || file.type === 'image/svg+xml') {
+      setError('El archivo seleccionado debe ser una imagen válida (JPG, PNG, WEBP o GIF).')
       return
     }
     if (file.size > 10 * 1024 * 1024) {
@@ -191,7 +191,7 @@ export default function NoticiaCrud() {
     })
   }, [records, estadoFilter, searchTerm])
 
-  const canPreview = form.imagenUrl && !form.imagenUrl.startsWith('/images/')
+  const canPreview = Boolean(form.imagenUrl)
 
   return (
     <div className="flex flex-1 flex-col gap-6">
