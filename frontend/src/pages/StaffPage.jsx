@@ -259,7 +259,7 @@ function StaffPage() {
           {activeTab === 'auxiliares' && (
             <div className="mx-auto grid max-w-4xl grid-cols-1 gap-10 md:grid-cols-2">
               {filteredAux.map((aux, i) => (
-                <article key={`${aux.name}-${i}`} className="group relative flex gap-8 overflow-hidden rounded-[4rem] border border-slate-100 bg-white p-10 shadow-xl">
+                <article key={`${aux.name}-${i}`} className="group relative flex flex-col sm:flex-row gap-5 sm:gap-8 overflow-hidden rounded-[4rem] border border-slate-100 bg-white p-10 shadow-xl">
                   <div className="size-20 shrink-0 overflow-hidden rounded-[2rem] border border-[#c2410c]/10 bg-[#c2410c]/5 transition-colors duration-300 group-hover:ring-2 group-hover:ring-[#c2410c]">
                     <img
                       src={getStaffImage(aux.photo)}

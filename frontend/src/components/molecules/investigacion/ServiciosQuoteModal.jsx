@@ -19,7 +19,7 @@ const ServiciosQuoteModal = ({ isOpen, onClose }) => {
         initial={{ opacity: 0, scale: 0.9, y: 20 }} 
         animate={{ opacity: 1, scale: 1, y: 0 }} 
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl relative overflow-hidden border border-white/20 flex flex-col md:flex-row"
+        className="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto md:overflow-hidden rounded-[3rem] shadow-2xl relative border border-white/20 flex flex-col md:flex-row"
       >
         <div className="md:w-2/5 bg-[#001d3d] p-10 text-white relative">
           <StatisticalOverlay color="#ffffff" opacity="0.1" />

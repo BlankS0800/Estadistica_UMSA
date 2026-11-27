@@ -53,7 +53,7 @@ export default function LetterFilterDropdown({
             initial={{ opacity: 0, y: 15, scale: 0.95 }} 
             animate={{ opacity: 1, y: 0, scale: 1 }} 
             exit={{ opacity: 0, y: 15, scale: 0.95 }}
-            className="absolute right-0 top-full mt-4 p-6 bg-white rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] border border-slate-200 w-[350px] z-50"
+            className="absolute right-0 top-full mt-4 p-4 sm:p-6 bg-white rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] border border-slate-200 w-[min(350px,calc(100vw-2rem))] md:w-[350px] z-50"
           >
             <div className="flex items-center justify-between mb-5 pb-4 border-b border-slate-100">
               <span className="text-sm font-black text-slate-400 uppercase tracking-widest">Matriz Alfabética</span>

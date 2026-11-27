@@ -9,7 +9,7 @@ const AutoresDossierModal = ({ author, onClose }) => {
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6">
       <button type="button" onClick={onClose} className="absolute inset-0 cursor-pointer bg-[#001d3d]/60 backdrop-blur-md" aria-label="Cerrar" />
 
-      <article className="relative flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-[3rem] border border-white/20 bg-white shadow-2xl md:flex-row">
+      <article className="relative flex max-h-[90vh] w-full max-w-5xl flex-col overflow-y-auto md:overflow-hidden rounded-[3rem] border border-white/20 bg-white shadow-2xl md:flex-row">
         <button type="button" onClick={onClose} className="absolute right-6 top-6 z-50 rounded-full border border-slate-200 bg-white/50 p-2 text-slate-400 shadow-sm transition-all hover:bg-[#ea580c] hover:text-white">
           <X size={24} />
         </button>

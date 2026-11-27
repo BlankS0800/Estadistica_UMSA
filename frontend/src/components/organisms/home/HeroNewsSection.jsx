@@ -42,8 +42,7 @@ export const HeroNewsSection = ({ slides = [], scrollLabel = 'Últimas noticias'
 
   return (
     <section
-      className="relative w-full bg-[#0a1628] overflow-hidden"
-      style={{ height: 'clamp(600px, 78vh, 760px)' }}
+      className="relative w-full bg-[#0a1628] overflow-hidden min-h-[560px] pb-20 md:pb-0 md:h-[clamp(600px,78vh,760px)]"
     >
       <div className="absolute inset-0">
         {slides.map((s, i) => (
@@ -139,7 +138,7 @@ export const HeroNewsSection = ({ slides = [], scrollLabel = 'Últimas noticias'
           <button
             type="button"
             onClick={scrollToNews}
-            className="pointer-events-auto group inline-flex items-center gap-3 rounded-full bg-[#ea580c] py-2.5 pl-6 pr-2.5 text-base font-semibold text-white shadow-lg shadow-black/30 ring-1 ring-white/20 transition-all hover:bg-[#c2410c] hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="pointer-events-auto group inline-flex items-center gap-2 sm:gap-3 rounded-full bg-[#ea580c] py-2 pl-4 pr-2 sm:py-2.5 sm:pl-6 sm:pr-2.5 text-sm sm:text-base font-semibold text-white shadow-lg shadow-black/30 ring-1 ring-white/20 transition-all hover:bg-[#c2410c] hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             {scrollLabel}
             <span className="flex size-9 items-center justify-center rounded-full bg-white/20 text-white transition-transform duration-300 group-hover:translate-y-0.5">

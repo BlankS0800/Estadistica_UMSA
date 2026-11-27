@@ -55,32 +55,32 @@ export default function BookDetailModal({ selectedBookDetail, setSelectedBookDet
                  <Library size={16} /> {selectedBookDetail.libro.categoria}
                </div>
              </div>
-             <h2 className="text-4xl md:text-5xl font-black text-[#001d3d] uppercase tracking-tighter leading-tight mb-5">{selectedBookDetail.libro.titulo}</h2>
-             <p className="text-base font-bold text-[#ea580c] uppercase tracking-widest flex items-center gap-3 bg-orange-50 px-6 py-3 rounded-xl w-max">
+             <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-[#001d3d] uppercase tracking-tighter leading-tight mb-5">{selectedBookDetail.libro.titulo}</h2>
+             <p className="text-sm sm:text-base font-bold text-[#ea580c] uppercase tracking-widest flex items-center gap-3 bg-orange-50 px-4 sm:px-6 py-3 rounded-xl max-w-full w-fit md:w-max">
                {selectedBookDetail.libro.autor?.toLowerCase().includes('umsa') || selectedBookDetail.libro.autor?.toLowerCase().includes('instituto') ? <Building2 size={20}/> : <User size={20} />}
                Por: {selectedBookDetail.libro.autor || 'Autor Institucional'}
              </p>
            </div>
 
            <div className="space-y-6 relative z-10">
-              <div className="grid grid-cols-[160px_1fr] gap-4 text-base border-b border-slate-100 pb-5">
+              <div className="grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-1.5 sm:gap-4 text-base border-b border-slate-100 pb-5">
                  <span className="font-black text-slate-400 uppercase tracking-[0.2em] text-xs mt-1">Editor</span>
                  <span className="font-bold text-slate-700">{selectedBookDetail.libro.editor} <span className="text-[#ea580c]">({selectedBookDetail.libro.fecha})</span></span>
               </div>
 
-              <div className="grid grid-cols-[160px_1fr] gap-4 text-base border-b border-slate-100 pb-5 items-center">
+              <div className="grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-1.5 sm:gap-4 text-base border-b border-slate-100 pb-5 items-start sm:items-center">
                  <span className="font-black text-slate-400 uppercase tracking-[0.2em] text-xs">Clasif. Dewey</span>
                  <div className="flex items-center gap-5">
                     <span className="font-mono font-black text-white bg-[#001d3d] px-6 py-2.5 rounded-xl border-2 border-[#ea580c] shadow-md">{selectedBookDetail.libro.codigo}</span>
                  </div>
               </div>
 
-              <div className="grid grid-cols-[160px_1fr] gap-4 text-base border-b border-slate-100 pb-5 items-center">
+              <div className="grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-1.5 sm:gap-4 text-base border-b border-slate-100 pb-5 items-start sm:items-center">
                  <span className="font-black text-slate-400 uppercase tracking-[0.2em] text-xs mt-1">Ubicación</span>
                  <span className="font-bold text-slate-700 flex items-center gap-2"><MapPin size={16} className="text-[#ea580c]"/> Biblioteca Central UMSA</span>
               </div>
 
-              <div className="grid grid-cols-[160px_1fr] gap-4 text-base items-center">
+              <div className="grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-1.5 sm:gap-4 text-base items-start sm:items-center">
                  <span className="font-black text-slate-400 uppercase tracking-[0.2em] text-xs">Estado</span>
                  <span className="text-green-600 font-black uppercase text-sm flex items-center gap-2">
                    <div className="size-2.5 bg-green-500 rounded-full animate-pulse"></div> Disponible para Consulta

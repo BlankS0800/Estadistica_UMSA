@@ -137,3 +137,92 @@
     color: #00233f;
   }
 }
+
+
+/* ============================================================================
+   Capa responsive exclusiva para móvil (< 768px).
+   No afecta en absoluto a pantallas de monitor / escritorio (>= 768px).
+   ============================================================================ */
+@media (max-width: 767px) {
+  html,
+  body,
+  #root {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  /* Desactivar escalado de presentación en celulares */
+  .institutional-page,
+  .pregrado-page {
+    --presentation-content-scale: 1 !important;
+    --presentation-tag-scale: 1 !important;
+  }
+
+  /* Evitar desborde de palabras largas en encabezados y tarjetas */
+  h1,
+  h2,
+  h3,
+  h4 {
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  /* Escalar títulos gigantes sin prefijo responsive para que quepan en 360px-430px */
+  :is(h1, h2, .font-black, .font-bold)[class~='text-4xl'] {
+    font-size: 1.75rem !important;
+    line-height: 1.12 !important;
+  }
+
+  :is(h1, h2, .font-black, .font-bold)[class~='text-5xl'] {
+    font-size: 2rem !important;
+    line-height: 1.12 !important;
+  }
+
+  /* Reducir espaciado extremo entre letras (tracking 0.3em-0.5em) en etiquetas móviles */
+  [class*='tracking-[0.3'],
+  [class*='tracking-[0.4'],
+  [class*='tracking-[0.5'] {
+    letter-spacing: 0.14em !important;
+  }
+
+  :is(h1, h2, .font-black, .font-bold)[class~='text-6xl'] {
+    font-size: 2.25rem !important;
+    line-height: 1.1 !important;
+  }
+
+  :is(h1, h2, .font-black, .font-bold)[class~='text-7xl'],
+  :is(h1, h2, .font-black, .font-bold)[class~='text-8xl'] {
+    font-size: 2.5rem !important;
+    line-height: 1.08 !important;
+  }
+
+  /* Reducir paddings sobredimensionados sin prefijo móvil */
+  [class~='p-10'],
+  [class~='p-12'],
+  [class~='p-14'],
+  [class~='p-16'] {
+    padding: 1.25rem !important;
+  }
+
+  [class~='px-10'],
+  [class~='px-12'],
+  [class~='px-16'],
+  [class~='px-20'] {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Reducir radios exagerados (3rem / 4rem) en tarjetas móviles */
+  [class~='rounded-[3rem]'],
+  [class~='rounded-[4rem]'] {
+    border-radius: 1.5rem !important;
+  }
+
+  /* Tablas siempre desplazables horizontalmente sin romper la página */
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
