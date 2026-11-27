@@ -13,7 +13,7 @@ export const serviciosIetaHero = {
   subtitle: 'Unidad especializada del Instituto de Estadística Teórica y Aplicada (IETA) dedicada al procesamiento de datos, consultoría metodológica y formación profesional continua.',
   stats: [
     { label: 'Confianza', value: '95%' },
-    { label: 'Muestra', value: 'N = Institucional' }
+    { label: 'Alcance', value: 'Institucional' }
   ]
 }
 

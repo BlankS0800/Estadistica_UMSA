@@ -44,8 +44,6 @@ function HeaderDropdown({ item, open }) {
           <path d="M0 215C50 215 100 165 150 75C200 -15 250 35 300 215" stroke={accent} strokeWidth="1.5" />
           <path d="M0 200C50 200 100 150 150 60C200 -30 250 20 300 200" stroke={accent} strokeWidth="1.1" opacity="0.7" />
         </svg>
-        <div className="absolute top-2 left-3 font-mono text-[7px] text-[#94a3b8] opacity-40">n = {item.children.length}</div>
-        <div className="absolute bottom-2 right-3 font-mono text-[7px] text-[#94a3b8] opacity-40">σ = 0.05</div>
       </div>
 
       <div className="relative px-3 mb-2">
@@ -278,8 +276,6 @@ function Header({
         <svg className="absolute inset-0 w-full h-full opacity-[0.06]" viewBox="0 0 1400 70" preserveAspectRatio="none" fill="none">
           <path d="M0 50C233 50 467 34 700 10C933 -14 1167 8 1400 50" stroke="white" strokeWidth="1.5" />
         </svg>
-        <span className="absolute top-[8px] left-[14px] font-mono text-[8px] text-white/30">σ = 1.05</span>
-        <span className="absolute top-[8px] right-[14px] font-mono text-[8px] text-white/30">R² = 0.94</span>
       </div>
 
       <div className="relative max-w-[1440px] mx-auto px-3 sm:px-4 lg:px-6 h-[64px] sm:h-[70px] flex items-center justify-between gap-2 sm:gap-3">

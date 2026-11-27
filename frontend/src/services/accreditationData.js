@@ -29,7 +29,7 @@ export const credentials = [
     desc: 'Aval oficial del CEUB que certifica excelencia en currículo, plantel docente e infraestructura técnica de la carrera.',
     cta: 'Ver Resolución Oficial',
     icon: ShieldCheck,
-    stats: { label: 'p < 0.05', value: 'check' },
+    stats: { label: 'Vigente', value: 'check' },
   },
   {
     title: 'Autoevaluación Continua',
@@ -38,7 +38,7 @@ export const credentials = [
     desc: 'Proceso sistemático de revisión de indicadores académicos y administrativos para asegurar cumplimiento de estándares internacionales.',
     cta: 'Consultar Indicadores',
     icon: Users,
-    stats: { label: 'CI: 99.5%', value: 'star' },
+    stats: { label: 'Continua', value: 'star' },
   },
   {
     title: 'Evaluación de Pares Externos',
@@ -47,7 +47,7 @@ export const credentials = [
     desc: 'Reconocimiento otorgado por expertos tras auditoría técnica de procesos de enseñanza, investigación e interacción social.',
     cta: 'Informe de Evaluación',
     icon: Award,
-    stats: { label: 'p < 0.01', value: 'diamond' },
+    stats: { label: 'Certificada', value: 'diamond' },
   },
 ]
 

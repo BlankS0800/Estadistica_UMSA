@@ -48,28 +48,28 @@ export const values = [
     title: 'Excelencia Académica',
     description: 'Compromiso con la formación de profesionales altamente calificados con pensamiento crítico y capacidad analítica.',
     color: '#00447e',
-    stat: 'R2 = 0.98',
+    stat: '',
   },
   {
     icon: Users,
     title: 'Inclusión e Igualdad',
     description: 'Educación de calidad accesible para todos los sectores de la sociedad boliviana sin discriminación.',
     color: '#c2410c',
-    stat: 'p < 0.01',
+    stat: '',
   },
   {
     icon: FlaskConical,
     title: 'Investigación Científica',
     description: 'Generación de conocimiento aplicado mediante IETA para resolver problemas nacionales estratégicos.',
     color: '#00447e',
-    stat: 'n = 25+',
+    stat: '',
   },
   {
     icon: Globe,
     title: 'Responsabilidad Social',
     description: 'Contribución activa al desarrollo sostenible mediante análisis estadístico ético y socialmente responsable.',
     color: '#c2410c',
-    stat: 'sigma = 1.05',
+    stat: '',
   },
 ]
 

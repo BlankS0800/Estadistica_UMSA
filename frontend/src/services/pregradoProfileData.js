@@ -250,7 +250,7 @@ export const occupationalField = {
     status: {
       icon: BadgeCheck,
       label: 'Alta demanda profesional',
-      metric: 'n = 380+',
+      metric: '',
     },
   },
 }

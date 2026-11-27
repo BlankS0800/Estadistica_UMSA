@@ -355,7 +355,7 @@ export const specialEnrollmentNote = {
 export const footerMeta = {
   brand: 'Estadística — UMSA',
   subtitle: 'Excelencia Académica CEUB',
-  metrics: ['Sigma = 9.600 HRS', 'R2 = 0.99 QUALITY'],
+  metrics: ['Plan de Estudios Oficial', 'Acreditación CEUB'],
   icon: Layers,
 }
 

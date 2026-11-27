@@ -19,9 +19,6 @@ export const SplitPanel = ({ news = [] }) => {
         </svg>
       </div>
 
-      <div className="absolute top-20 right-16 text-8xl font-black text-white opacity-[0.04] select-none pointer-events-none" aria-hidden="true">χ²</div>
-      <div className="absolute bottom-20 left-20 text-7xl font-black text-white opacity-[0.04] select-none pointer-events-none" aria-hidden="true">p</div>
-
       <div className="max-w-[1200px] mx-auto relative z-10">
         <div className="flex items-center justify-between mb-8">
           <div>

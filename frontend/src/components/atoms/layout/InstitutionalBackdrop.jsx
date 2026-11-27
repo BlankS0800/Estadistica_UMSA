@@ -28,11 +28,6 @@ const InstitutionalBackdrop = () => (
       <line x1="10" y1="130" x2="210" y2="130" stroke="#00447e" strokeWidth="1" opacity="0.48" />
       <line x1="10" y1="100" x2="210" y2="100" stroke="#00447e" strokeWidth="1" opacity="0.34" />
     </svg>
-
-    <div className="absolute right-20 top-24 hidden select-none font-serif text-8xl italic font-black text-[#00447e] opacity-[0.05] md:block">Sigma</div>
-    <div className="absolute bottom-24 left-12 hidden select-none font-serif text-7xl italic font-black text-[#c2410c] opacity-[0.04] md:block">mu</div>
-    <div className="absolute left-10 top-[36%] hidden select-none font-serif text-6xl italic font-black text-[#00447e] opacity-[0.04] lg:block">chi2</div>
-    <div className="absolute right-10 top-[62%] hidden font-mono text-[10px] font-bold tracking-[0.22em] text-[#00447e] opacity-[0.25] lg:block">REF_QUALITY_2026</div>
   </div>
 )
 

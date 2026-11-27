@@ -31,9 +31,6 @@ export const QuickAccess = ({ links = [] }) => (
                 <path d="M0 70C75 70 150 50 225 20C262 5 282 0 300 70" stroke="#14b8a6" strokeWidth="1.6" />
                 <path d="M0 78C75 78 150 58 225 28C262 13 282 8 300 78" stroke="#14b8a6" strokeWidth="1.2" opacity="0.7" />
               </svg>
-              {link.stat && (
-                <div className="absolute top-2 right-3 text-right font-mono text-[7px] text-[#64748b] opacity-40">n = {link.stat}</div>
-              )}
             </div>
 
             <div className="relative shrink-0 size-[52px] rounded-[14px] flex items-center justify-center shadow-lg transition-transform group-hover:scale-110" style={{ background: `linear-gradient(135deg, ${link.color}, ${link.color}bb)`, boxShadow: '0px 4px 8px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.08)' }}>

@@ -251,7 +251,6 @@ function StaffPage() {
                   <button type="button" className="mx-auto flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-widest text-[#c2410c] transition-[gap] duration-300 hover:gap-4">
                     Contactar <ArrowRight size={12} />
                   </button>
-                  <div className="absolute bottom-2 right-4 font-mono text-[7px] text-slate-100 transition-colors group-hover:text-slate-200">mu = 85 | sigma = 12</div>
                 </article>
               ))}
             </div>

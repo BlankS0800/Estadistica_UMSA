@@ -92,22 +92,6 @@ export const HeroNewsSection = ({ slides = [], scrollLabel = 'Últimas noticias'
                   opacity="0.5"
                 />
               </svg>
-
-              <div className="hidden xl:block absolute top-24 left-[15%] text-[10rem] font-black text-white opacity-[0.025] select-none pointer-events-none font-serif italic">
-                σ
-              </div>
-              <div className="hidden xl:block absolute bottom-40 right-[22%] text-[8rem] font-black text-[#ea580c] opacity-[0.03] select-none pointer-events-none font-serif italic">
-                R²
-              </div>
-
-              <StatisticalAnnotations
-                position="bottom"
-                annotations={[
-                  { label: 'σ', value: readStat(s.stats?.[0]) || '1.05' },
-                  { label: 'R²', value: readStat(s.stats?.[1]) || '0.94' },
-                  { label: 'n', value: readStat(s.stats?.[2]) || '380+' },
-                ]}
-              />
             </div>
           </div>
         ))}
