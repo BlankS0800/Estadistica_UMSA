@@ -9,7 +9,7 @@ const InvestigacionContactoHeroSection = ({ data }) => {
     <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-[#001d3d] border-b-[8px] border-[#ea580c]">
       <div className="absolute inset-0 z-0">
         <img 
-          src="/images/investigacion/ieta_contacto_hero.jpg" 
+          src="/images/investigacion/ieta_hero.jpg" 
           alt="Campus Cota Cota" 
           className="w-full h-full object-cover grayscale opacity-40 contrast-[1.3]"
         />

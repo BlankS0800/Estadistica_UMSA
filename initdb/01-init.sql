@@ -3511,3 +3511,45 @@ ALTER TABLE ONLY public.organiza_posgrado
 -- PostgreSQL database dump complete
 --
 
+
+-- Claves agregadas para sincronizar el panel /admin con los cambios visuales del portal
+INSERT INTO public.seccion_pagina (clave_campo, pagina_slug, valor, tipo) VALUES
+  ('convalidacion_tabla_imagen', '/pregrado/convalidaciones', '', 'imagen'),
+  ('convalidacion_mapeo_tag', '/pregrado/convalidaciones', 'Mapeo analítico', 'texto'),
+  ('convalidacion_mapeo_titulo', '/pregrado/convalidaciones', 'Tabla de convalidaciones oficiales', 'texto'),
+  ('convalidacion_mapeo_subtitulo', '/pregrado/convalidaciones', 'Consulta la tabla oficial de equivalencias entre planes de estudio y descárgala para tu trámite.', 'texto'),
+  ('convalidacion_cta_label', '/pregrado/convalidaciones', 'Descargar tabla', 'texto'),
+  ('rec_biblio_hero_imagen', '/recursos/biblioteca', '/images/pregrado/pregrado_hero.jpg', 'imagen'),
+  ('rec_revistas_ieta_url', '/recursos/revistas', '/investigacion/revista-varianza', 'texto'),
+  ('est_pasantias_convenios_url', '/estudiantes/pasantias-bolsa-trabajo', '/institucional/convenios', 'texto')
+ON CONFLICT (clave_campo) DO NOTHING;
+
+-- Claves de interfaz de noticias (Inicio) y carruseles de imágenes (Acreditación y Autoridades)
+INSERT INTO public.seccion_pagina (clave_campo, pagina_slug, valor, tipo) VALUES
+  ('inicio_hero_noticias_boton', '/', 'Últimas noticias', 'texto'),
+  ('inicio_noticias_titulo', '/', 'Actualidad institucional', 'texto'),
+  ('inicio_noticias_descripcion', '/', 'Comunicados, convocatorias e investigación de la Carrera de Estadística.', 'texto'),
+  ('inicio_noticias_buscador', '/', 'Buscar en las noticias', 'texto'),
+  ('inicio_noticias_borrar', '/', 'Borrar búsqueda', 'texto'),
+  ('inicio_noticias_todas', '/', 'Todas', 'texto'),
+  ('inicio_noticias_lectura', '/', 'de lectura', 'texto'),
+  ('inicio_noticias_caducada', '/', 'Caducada', 'texto'),
+  ('inicio_noticias_mas', '/', 'Ver más noticias', 'texto'),
+  ('inicio_noticias_resultados', '/', 'Noticias encontradas: {n}', 'texto'),
+  ('inicio_noticias_vacio_titulo', '/', 'No encontramos noticias', 'texto'),
+  ('inicio_noticias_vacio_texto', '/', 'Prueba con otras palabras o elige otra categoría.', 'texto'),
+  ('acreditacion_inicio_carrusel', '/institucional/acreditacion', '[{"url":"/images/institucional/acreditacion_hero.jpeg","caption":""}]', 'carrusel'),
+  ('autoridades_inicio_carrusel', '/institucional/autoridades', '[{"url":"/images/institucional/autoridades_hero.jpeg","caption":""}]', 'carrusel')
+ON CONFLICT (clave_campo) DO NOTHING;
+
+-- Limpieza de fórmulas decorativas en seccion_pagina
+UPDATE public.seccion_pagina SET valor = '' WHERE clave_campo IN (
+  'nosotros_valor_01_estadistica',
+  'nosotros_valor_02_estadistica',
+  'nosotros_valor_03_estadistica',
+  'nosotros_valor_04_estadistica'
+);
+UPDATE public.seccion_pagina SET valor = 'Vigente' WHERE clave_campo = 'acreditacion_credencial_01_estadistica';
+UPDATE public.seccion_pagina SET valor = 'Continua' WHERE clave_campo = 'acreditacion_credencial_02_estadistica';
+UPDATE public.seccion_pagina SET valor = 'Certificada' WHERE clave_campo = 'acreditacion_credencial_03_estadistica';
+UPDATE public.seccion_pagina SET valor = '12+' WHERE clave_campo = 'convenios_chip_02_etiqueta';
