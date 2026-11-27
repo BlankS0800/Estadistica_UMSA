@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { authService } from '../services/auth.service'
 
 export default function LogInPage() {
@@ -108,15 +108,6 @@ export default function LogInPage() {
               >
                 Ingresar
               </button>
-
-              <p className="text-sm font-light text-umsa-text-suave text-center">
-                <Link
-                  to="/admin/sign-up"
-                  className="cursor-pointer font-semibold text-umsa-orange hover:underline"
-                >
-                  Registrar Cuenta
-                </Link>
-              </p>
             </form>
           </div>
         </div>

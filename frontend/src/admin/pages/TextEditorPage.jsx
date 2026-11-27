@@ -483,7 +483,7 @@ export default function TextEditorPage() {
         }
       })
       .filter((group) => group.sections.length > 0)
-  }, [sectionGroups, searchTerm])
+  }, [sectionGroups, selectedGroupFilter, searchTerm])
 
   const activeGroup = sectionGroups.find((g) =>
     g.sections.some((s) => s.claveCampo === activeKey),
@@ -526,6 +526,7 @@ export default function TextEditorPage() {
 
   const changePage = (pageSlug) => {
     setActivePageSlug(pageSlug)
+    setSelectedGroupFilter('all')
     setSearchTerm('')
     const targetSections = sections.filter(
       (section) => normalizePageSlug(section.paginaSlug) === pageSlug,
@@ -594,6 +595,7 @@ export default function TextEditorPage() {
 
   const openQuickAccess = (item) => {
     setActivePageSlug(item.slug)
+    setSelectedGroupFilter('all')
     setSearchTerm('')
     setOpenNavGroup(null)
     const targetSections = sections.filter(
