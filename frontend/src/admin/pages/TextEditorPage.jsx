@@ -225,6 +225,80 @@ function formatGroupLabel(groupKey) {
   return groupKey.charAt(0).toUpperCase() + groupKey.slice(1)
 }
 
+const FIELD_WORD_MAP = {
+  titulo: 'Título',
+  subtitulo: 'Subtítulo',
+  descripcion: 'Descripción',
+  desc: 'Descripción',
+  texto: 'Texto',
+  contenido: 'Contenido',
+  imagen: 'Imagen',
+  img: 'Imagen',
+  foto: 'Fotografía',
+  banner: 'Banner',
+  hero: 'Portada',
+  badge: 'Etiqueta superior',
+  etiqueta: 'Etiqueta',
+  cta: 'Botón de acción',
+  boton: 'Botón',
+  btn: 'Botón',
+  url: 'Enlace',
+  link: 'Enlace',
+  telefono: 'Teléfono',
+  correo: 'Correo electrónico',
+  email: 'Correo electrónico',
+  direccion: 'Dirección',
+  horario: 'Horario',
+  ubicacion: 'Ubicación',
+  mision: 'Misión',
+  vision: 'Visión',
+  objetivo: 'Objetivo',
+  resumen: 'Resumen',
+  nota: 'Nota',
+  aviso: 'Aviso',
+  alerta: 'Alerta',
+  fecha: 'Fecha',
+  periodo: 'Periodo',
+  nombre: 'Nombre',
+  cargo: 'Cargo',
+  pie: 'Pie de página',
+  kpi: 'Indicador',
+  numero: 'Número',
+  valor: 'Valor',
+  label: 'Etiqueta',
+  title: 'Título',
+  subtitle: 'Subtítulo',
+}
+
+function formatFieldLabel(subKey, tipo) {
+  if (!subKey) return tipo === 'imagen' ? 'Imagen' : 'Texto'
+  const words = subKey
+    .split('_')
+    .filter(Boolean)
+    .map((word, index) => {
+      const lower = word.toLowerCase()
+      if (FIELD_WORD_MAP[lower]) {
+        return index === 0
+          ? FIELD_WORD_MAP[lower]
+          : FIELD_WORD_MAP[lower].toLowerCase()
+      }
+      if (/^\d+$/.test(word)) return `#${word}`
+      return index === 0
+        ? lower.charAt(0).toUpperCase() + lower.slice(1)
+        : lower
+    })
+  return words.join(' ')
+}
+
+const QUICK_ACCESS_ITEMS = [
+  { id: 'noticias', label: 'Noticias', slug: '/', mode: 'crud', description: 'Publicar o editar noticias' },
+  { id: 'agenda', label: 'Agenda y Eventos', slug: '/', mode: 'eventos', description: 'Fechas y actividades' },
+  { id: 'convocatorias', label: 'Admisiones', slug: '/pregrado/admisiones', mode: 'crud', description: 'Convocatorias vigentes' },
+  { id: 'auxiliaturas', label: 'Auxiliaturas', slug: '/estudiantes/convocatorias-auxiliaturas', mode: 'crud', description: 'Plazas y requisitos' },
+  { id: 'docentes', label: 'Docentes', slug: '/institucional/docentes', mode: 'crud', description: 'Plantel docente' },
+  { id: 'calendario', label: 'Calendario', slug: '/pregrado/calendario-academico', mode: 'textos', description: 'Fechas académicas' },
+]
+
 function normalizeRawGroup(g) {
   if (g === 'serv') return 'servicios'
   if (g === 'mod') return 'modalidades'
@@ -307,23 +381,49 @@ function buildSectionGroups(pageSections) {
 export default function TextEditorPage() {
   const navigate = useNavigate()
   const fileInputRef = useRef(null)
+  const navRef = useRef(null)
   const [sections, setSections] = useState([])
+  const [savedValues, setSavedValues] = useState({})
   const [activePageSlug, setActivePageSlug] = useState('/')
   const [openNavGroup, setOpenNavGroup] = useState(null)
   const [activeKey, setActiveKey] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [savingAll, setSavingAll] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [copiedUrl, setCopiedUrl] = useState(false)
   const [previewError, setPreviewError] = useState(false)
+  const [showAdvancedImageUrl, setShowAdvancedImageUrl] = useState(false)
   const [message, setMessage] = useState(null)
   const [error, setError] = useState('')
+  const [toast, setToast] = useState(null)
 
   // UI state for group organization, search, and collapsible accordions
   const [selectedGroupFilter, setSelectedGroupFilter] = useState('all')
   const [openSectionGroups, setOpenSectionGroups] = useState({})
   const [searchTerm, setSearchTerm] = useState('')
+
+  const showToast = (type, text) => {
+    setToast({ type, text })
+  }
+
+  useEffect(() => {
+    if (!toast) return undefined
+    const timer = setTimeout(() => setToast(null), 3500)
+    return () => clearTimeout(timer)
+  }, [toast])
+
+  // Cerrar menú desplegable superior al hacer clic fuera
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (navRef.current && !navRef.current.contains(event.target)) {
+        setOpenNavGroup(null)
+      }
+    }
+    document.addEventListener('mousedown', handleOutsideClick)
+    return () => document.removeEventListener('mousedown', handleOutsideClick)
+  }, [])
 
   useEffect(() => {
     let isMounted = true
@@ -333,6 +433,11 @@ export default function TextEditorPage() {
       .then((data) => {
         if (!isMounted) return
         setSections(data)
+        const initialSaved = {}
+        data.forEach((s) => {
+          initialSaved[s.claveCampo] = s.valor ?? ''
+        })
+        setSavedValues(initialSaved)
         const initialPageSlug = findInitialPage(data)
         setActivePageSlug(initialPageSlug)
         setActiveKey(
@@ -456,11 +561,56 @@ export default function TextEditorPage() {
     setOpenSectionGroups({})
   }
 
+  const dirtyKeys = useMemo(() => {
+    const set = new Set()
+    sections.forEach((s) => {
+      if ((s.valor ?? '') !== (savedValues[s.claveCampo] ?? '')) {
+        set.add(s.claveCampo)
+      }
+    })
+    return set
+  }, [sections, savedValues])
+
+  const isActiveDirty = activeSection ? dirtyKeys.has(activeSection.claveCampo) : false
+  const activeEnhancedSection = activeGroupSections.find((s) => s.claveCampo === activeKey)
+  const activeFriendlyLabel = activeEnhancedSection
+    ? formatFieldLabel(activeEnhancedSection.subKey, activeEnhancedSection.tipo)
+    : activeSection
+    ? formatFieldLabel(activeSection.claveCampo, activeSection.tipo)
+    : ''
+
+  // Proteger contra cierre accidental de pestaña con cambios sin guardar
+  useEffect(() => {
+    if (dirtyKeys.size === 0) return undefined
+    const handleBeforeUnload = (event) => {
+      event.preventDefault()
+      event.returnValue = ''
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [dirtyKeys.size])
+
   const selectSection = (key) => {
     setActiveKey(key)
     setPageMode('textos')
     setMessage(null)
+    setError('')
     setPreviewError(false)
+    setShowAdvancedImageUrl(false)
+  }
+
+  const openQuickAccess = (item) => {
+    setActivePageSlug(item.slug)
+    setSelectedGroupFilter('all')
+    setSearchTerm('')
+    setOpenNavGroup(null)
+    const targetSections = sections.filter(
+      (section) => normalizePageSlug(section.paginaSlug) === item.slug,
+    )
+    setActiveKey(targetSections[0]?.claveCampo ?? '')
+    setMessage(null)
+    setError('')
+    setPageMode(item.mode)
   }
 
   const updateActiveSection = (field, value) => {
@@ -475,6 +625,14 @@ export default function TextEditorPage() {
     }
   }
 
+  const discardActiveChanges = () => {
+    if (!activeSection) return
+    const original = savedValues[activeSection.claveCampo] ?? ''
+    updateActiveSection('valor', original)
+    setMessage('Cambios descartados')
+    showToast('info', 'Se restauró el último valor guardado')
+  }
+
   const saveSection = async () => {
     if (!activeSection || !activeSection.claveCampo.trim()) return
 
@@ -484,19 +642,67 @@ export default function TextEditorPage() {
 
     try {
       await seccionPaginaService.save(activeSection)
+      setSavedValues((prev) => ({
+        ...prev,
+        [activeSection.claveCampo]: activeSection.valor ?? '',
+      }))
       setMessage('Cambios guardados con éxito')
+      showToast('success', 'Cambios guardados y publicados en el portal')
     } catch (requestError) {
       setError(requestError.message)
+      showToast('error', requestError.message || 'No se pudo guardar')
     } finally {
       setSaving(false)
     }
   }
 
+  const saveAllDirty = async () => {
+    const dirtySections = sections.filter((s) => dirtyKeys.has(s.claveCampo))
+    if (dirtySections.length === 0) return
+
+    setSavingAll(true)
+    setError('')
+    setMessage(null)
+
+    try {
+      await Promise.all(dirtySections.map((s) => seccionPaginaService.save(s)))
+      setSavedValues((prev) => {
+        const next = { ...prev }
+        dirtySections.forEach((s) => {
+          next[s.claveCampo] = s.valor ?? ''
+        })
+        return next
+      })
+      const msg = `${dirtySections.length} ${dirtySections.length === 1 ? 'sección guardada' : 'secciones guardadas'} con éxito`
+      setMessage(msg)
+      showToast('success', msg)
+    } catch (requestError) {
+      setError(requestError.message)
+      showToast('error', requestError.message || 'Error al guardar cambios pendientes')
+    } finally {
+      setSavingAll(false)
+    }
+  }
+
+  // Atajo de teclado Ctrl+S / Cmd+S para guardar la sección actual
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+        if (pageMode === 'textos' && activeSection && !saving) {
+          event.preventDefault()
+          saveSection()
+        }
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  })
+
   const handleUploadFile = async (file) => {
     if (!file) return
 
-    if (!file.type.startsWith('image/')) {
-      setError('Por favor selecciona un archivo de imagen válido (JPEG, PNG, WEBP, GIF, SVG).')
+    if (!file.type.startsWith('image/') || file.type === 'image/svg+xml') {
+      setError('Por favor selecciona una imagen válida (JPG, PNG, WEBP o GIF).')
       return
     }
 
@@ -512,9 +718,11 @@ export default function TextEditorPage() {
     try {
       const result = await uploadService.uploadImage(file)
       updateActiveSection('valor', result.url)
-      setMessage(`Imagen subida con éxito: ${result.filename}`)
+      setMessage('Imagen cargada. Haz clic en "Guardar cambios" para publicarla.')
+      showToast('info', 'Imagen subida. Recuerda presionar "Guardar cambios".')
     } catch (uploadError) {
       setError(uploadError.message || 'Error al subir la imagen al servidor.')
+      showToast('error', uploadError.message || 'Error al subir la imagen')
     } finally {
       setUploading(false)
     }
@@ -569,25 +777,83 @@ export default function TextEditorPage() {
     <main className="min-h-screen bg-slate-100 p-4 text-slate-800 sm:p-8">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="mb-1 text-xs font-bold uppercase tracking-[0.2em] text-umsa-orange">
               Administración de contenido
             </p>
-            <h1 className="text-2xl font-bold text-umsa-blue sm:text-3xl">Editor de página</h1>
+            <h1 className="text-2xl font-bold text-umsa-blue sm:text-3xl">Panel de edición</h1>
           </div>
-          <button
-            type="button"
-            onClick={signOut}
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-umsa-blue hover:text-umsa-blue shadow-2xs"
-          >
-            <IconLogOut className="h-4 w-4 text-slate-500" />
-            <span>Cerrar sesión</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2.5">
+            {dirtyKeys.size > 0 && (
+              <button
+                type="button"
+                onClick={saveAllDirty}
+                disabled={savingAll}
+                className="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-bold text-white shadow-xs transition hover:bg-amber-600 disabled:opacity-50"
+              >
+                <IconSave className="h-4 w-4" />
+                <span>
+                  {savingAll
+                    ? 'Guardando todo...'
+                    : `Guardar pendientes (${dirtyKeys.size})`}
+                </span>
+              </button>
+            )}
+            <a
+              href={activePageSlug}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-semibold text-umsa-blue transition hover:border-umsa-blue hover:bg-sky-100 shadow-2xs"
+            >
+              <IconExternalLink className="h-4 w-4" />
+              <span>Ver página en vivo</span>
+            </a>
+            <button
+              type="button"
+              onClick={signOut}
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-umsa-blue hover:text-umsa-blue shadow-2xs"
+            >
+              <IconLogOut className="h-4 w-4 text-slate-500" />
+              <span>Cerrar sesión</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Accesos rápidos para tareas frecuentes */}
+        <div className="mb-5 rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
+          <div className="mb-2.5 flex items-center justify-between">
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              Accesos rápidos · ¿Qué deseas actualizar hoy?
+            </p>
+            <span className="hidden text-xs text-slate-400 sm:inline">
+              Usa <kbd className="rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono text-[10px] text-slate-600">Ctrl + S</kbd> para guardar rápido
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+            {QUICK_ACCESS_ITEMS.map((item) => {
+              const isCurrent = activePageSlug === item.slug && pageMode === item.mode
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => openQuickAccess(item)}
+                  className={`flex flex-col rounded-lg border px-3 py-2 text-left transition ${
+                    isCurrent
+                      ? 'border-umsa-blue bg-sky-50 text-umsa-blue shadow-2xs'
+                      : 'border-slate-200 bg-slate-50/70 text-slate-700 hover:border-sky-300 hover:bg-white'
+                  }`}
+                >
+                  <span className="text-xs font-bold">{item.label}</span>
+                  <span className="mt-0.5 truncate text-[11px] text-slate-500">{item.description}</span>
+                </button>
+              )
+            })}
+          </div>
         </div>
 
         {/* Page navigation tabs */}
-        <div className="relative z-10 mb-4 flex flex-wrap gap-1 border-b border-slate-200 pb-1">
+        <div ref={navRef} className="relative z-10 mb-4 flex flex-wrap gap-1 border-b border-slate-200 pb-1">
           {pageGroups.map((group, groupIndex) => {
             const groupHasActivePage = group.items.some((item) => item.slug === activePageSlug)
             const groupSectionCount = group.items.reduce(
@@ -847,6 +1113,8 @@ export default function TextEditorPage() {
                           {group.sections.map((section) => {
                             const isSelected = section.claveCampo === activeKey
                             const isImage = section.tipo === 'imagen'
+                            const isDirty = dirtyKeys.has(section.claveCampo)
+                            const friendlyLabel = formatFieldLabel(section.subKey, section.tipo)
 
                             return (
                               <button
@@ -856,12 +1124,22 @@ export default function TextEditorPage() {
                                 className={`w-full rounded-lg px-2.5 py-2 text-left transition ${
                                   isSelected
                                     ? 'bg-umsa-blue text-white shadow-sm'
+                                    : isDirty
+                                    ? 'border border-amber-300 bg-amber-50/70 text-slate-800 hover:bg-amber-50'
                                     : 'border border-slate-100 bg-white text-slate-700 hover:border-sky-200 hover:bg-sky-50/60'
                                 }`}
                               >
-                                <div className="flex items-center justify-between gap-1">
-                                  <span className="truncate text-xs font-semibold">
-                                    {section.subKey || section.claveCampo}
+                                <div className="flex items-center justify-between gap-1.5">
+                                  <span className="flex items-center gap-1.5 truncate text-xs font-semibold">
+                                    {isDirty && (
+                                      <span
+                                        className={`h-2 w-2 shrink-0 rounded-full ${
+                                          isSelected ? 'bg-amber-300' : 'bg-amber-500'
+                                        }`}
+                                        title="Tiene cambios sin guardar"
+                                      />
+                                    )}
+                                    <span className="truncate">{friendlyLabel}</span>
                                   </span>
                                   <span
                                     className={`shrink-0 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium ${
@@ -875,22 +1153,15 @@ export default function TextEditorPage() {
                                     {isImage ? (
                                       <>
                                         <IconImage className="h-3 w-3" />
-                                        <span>img</span>
+                                        <span>Imagen</span>
                                       </>
                                     ) : (
                                       <>
                                         <IconFileText className="h-3 w-3" />
-                                        <span>txt</span>
+                                        <span>Texto</span>
                                       </>
                                     )}
                                   </span>
-                                </div>
-                                <div
-                                  className={`mt-0.5 truncate font-mono text-[10px] ${
-                                    isSelected ? 'text-sky-100' : 'text-slate-400'
-                                  }`}
-                                >
-                                  {section.claveCampo}
                                 </div>
                                 {section.valor && (
                                   <div
@@ -898,7 +1169,7 @@ export default function TextEditorPage() {
                                       isSelected ? 'text-sky-100/90' : 'text-slate-500'
                                     }`}
                                   >
-                                    {section.valor}
+                                    {isImage ? 'Imagen configurada' : section.valor}
                                   </div>
                                 )}
                               </button>
@@ -1237,36 +1508,33 @@ export default function TextEditorPage() {
                 {/* Section Form Details */}
                 <div className="mb-6 flex flex-wrap items-start justify-between gap-4 border-b border-slate-200 pb-5">
                   <div className="min-w-0 flex-1">
-                    <label
-                      htmlFor="section-key"
-                      className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400"
-                    >
-                      Clave de sección
-                    </label>
-                    <input
-                      id="section-key"
-                      value={activeSection.claveCampo}
-                      readOnly
-                      className="w-full font-mono text-base font-bold text-slate-800 outline-none"
-                    />
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="text-xl font-bold text-slate-800">{activeFriendlyLabel}</h2>
+                      {isActiveDirty && (
+                        <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-bold text-amber-800">
+                          Sin guardar
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-1 text-xs text-slate-400">
+                      Identificador interno:{' '}
+                      <span className="font-mono text-slate-500">{activeSection.claveCampo}</span>
+                    </p>
                   </div>
                   <div>
-                    <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
-                      Tipo de dato
-                    </span>
                     <div
-                      className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-100/90 px-3.5 py-2 text-sm font-semibold text-slate-600 shadow-2xs select-none cursor-default"
-                      title="Tipo de dato no editable"
+                      className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-100/90 px-3.5 py-2 text-xs font-semibold text-slate-600 shadow-2xs select-none cursor-default"
+                      title="Tipo de contenido"
                     >
                       {activeSection.tipo === 'imagen' ? (
                         <>
-                          <IconImage className="h-4 w-4 text-slate-500" />
-                          <span className="text-slate-600">Imagen / Archivo</span>
+                          <IconImage className="h-4 w-4 text-amber-600" />
+                          <span className="text-slate-700">Imagen</span>
                         </>
                       ) : (
                         <>
-                          <IconFileText className="h-4 w-4 text-slate-500" />
-                          <span className="text-slate-600">Texto</span>
+                          <IconFileText className="h-4 w-4 text-umsa-blue" />
+                          <span className="text-slate-700">Texto</span>
                         </>
                       )}
                     </div>
@@ -1292,7 +1560,7 @@ export default function TextEditorPage() {
                       <input
                         ref={fileInputRef}
                         type="file"
-                        accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
                         onChange={handleImageFileChange}
                         disabled={uploading}
                         className="hidden"
@@ -1302,7 +1570,7 @@ export default function TextEditorPage() {
                         <div className="flex flex-col items-center gap-2 py-3">
                           <div className="h-8 w-8 animate-spin rounded-full border-3 border-umsa-blue border-t-transparent" />
                           <p className="text-sm font-semibold text-umsa-blue">Subiendo imagen al servidor...</p>
-                          <p className="text-xs text-slate-400">Guardando en el almacenamiento persistente</p>
+                          <p className="text-xs text-slate-400">Espera un momento, se mostrará en la vista previa</p>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center gap-2 py-2">
@@ -1311,100 +1579,96 @@ export default function TextEditorPage() {
                           </div>
                           <div>
                             <p className="text-sm font-semibold text-slate-700">
-                              <span className="text-umsa-blue underline">Haz clic para subir</span> o arrastra una imagen aquí
+                              <span className="text-umsa-blue underline">Haz clic para elegir una foto</span> o arrástrala aquí
                             </p>
                             <p className="mt-1 text-xs text-slate-400">
-                              Admite JPEG, PNG, WEBP, GIF, SVG (hasta 10 MB)
+                              Formatos admitidos: JPG, PNG, WEBP o GIF (máximo 10 MB)
                             </p>
                           </div>
                         </div>
                       )}
                     </div>
 
-                    {/* URL Input and Actions */}
-                    <div>
-                      <div className="mb-1 flex items-center justify-between">
-                        <label htmlFor="image-value" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                          Ruta o URL de la imagen
-                        </label>
-                        {activeSection.valor && (
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={copyImageUrl}
-                              className="inline-flex items-center gap-1 text-xs font-semibold text-umsa-blue hover:underline"
-                            >
-                              {copiedUrl ? (
-                                <>
-                                  <IconCheck className="h-3.5 w-3.5 text-emerald-600" />
-                                  <span className="text-emerald-600">¡Copiado!</span>
-                                </>
-                              ) : (
-                                <>
-                                  <IconCopy className="h-3.5 w-3.5" />
-                                  <span>Copiar ruta</span>
-                                </>
-                              )}
-                            </button>
-                            {activeSection.valor.startsWith('/uploads/') && (
-                              <a
-                                href={uploadService.resolveMediaUrl(activeSection.valor)}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-umsa-blue"
-                              >
-                                <IconExternalLink className="h-3.5 w-3.5" />
-                                <span>Abrir original</span>
-                              </a>
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex gap-2">
-                        <input
-                          id="image-value"
-                          value={activeSection.valor}
-                          onChange={(event) => updateActiveSection('valor', event.target.value)}
-                          className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono outline-none focus:border-umsa-blue focus:ring-2 focus:ring-sky-100"
-                          placeholder="Ej: /uploads/images/... o https://..."
-                        />
-                        {activeSection.valor && (
-                          <button
-                            type="button"
-                            onClick={() => updateActiveSection('valor', '')}
-                            title="Quitar imagen actual"
-                            className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-100"
-                          >
-                            <IconTrash className="h-3.5 w-3.5" />
-                            <span>Quitar</span>
-                          </button>
-                        )}
-                      </div>
-                    </div>
-
                     {/* Preview Area */}
                     <div className="flex flex-col gap-2">
-                      <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
-                        <span>Vista previa</span>
-                        {activeSection.valor && (
-                          <span className="rounded bg-slate-100 px-2 py-0.5 font-mono text-[11px] text-slate-600">
-                            {activeSection.valor.startsWith('/uploads/') ? '📁 Archivo local en servidor' : '🌐 Enlace externo'}
-                          </span>
-                        )}
+                      <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-slate-500">
+                        <span>Vista previa actual</span>
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => setShowAdvancedImageUrl((prev) => !prev)}
+                            className="text-xs font-semibold text-umsa-blue hover:underline"
+                          >
+                            {showAdvancedImageUrl ? 'Ocultar enlace / ruta' : 'Usar enlace externo o ver ruta'}
+                          </button>
+                          {activeSection.valor && (
+                            <button
+                              type="button"
+                              onClick={() => updateActiveSection('valor', '')}
+                              className="inline-flex items-center gap-1 rounded-md border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-600 hover:bg-red-100"
+                            >
+                              <IconTrash className="h-3.5 w-3.5" />
+                              <span>Quitar imagen</span>
+                            </button>
+                          )}
+                        </div>
                       </div>
+
+                      {showAdvancedImageUrl && (
+                        <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                          <div className="mb-1.5 flex items-center justify-between">
+                            <label htmlFor="image-value" className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                              Ruta o URL de la imagen (opcional)
+                            </label>
+                            {activeSection.valor && (
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={copyImageUrl}
+                                  className="inline-flex items-center gap-1 text-xs font-semibold text-umsa-blue hover:underline"
+                                >
+                                  {copiedUrl ? (
+                                    <>
+                                      <IconCheck className="h-3.5 w-3.5 text-emerald-600" />
+                                      <span className="text-emerald-600">¡Copiado!</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <IconCopy className="h-3.5 w-3.5" />
+                                      <span>Copiar ruta</span>
+                                    </>
+                                  )}
+                                </button>
+                                <a
+                                  href={uploadService.resolveMediaUrl(activeSection.valor)}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-umsa-blue"
+                                >
+                                  <IconExternalLink className="h-3.5 w-3.5" />
+                                  <span>Abrir original</span>
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                          <input
+                            id="image-value"
+                            value={activeSection.valor}
+                            onChange={(event) => updateActiveSection('valor', event.target.value)}
+                            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-mono outline-none focus:border-umsa-blue focus:ring-2 focus:ring-sky-100"
+                            placeholder="Ej: /uploads/images/... o https://..."
+                          />
+                        </div>
+                      )}
 
                       <div className="flex min-h-64 flex-1 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-900/5 p-4">
                         {activeSection.valor ? (
                           <div className="relative max-h-96 max-w-full flex flex-col items-center justify-center">
                             {previewError ? (
                               <div className="rounded-lg bg-amber-50 border border-amber-200 p-4 text-center text-xs text-amber-800 max-w-md">
-                                <p className="font-semibold mb-1">⚠️ No se pudo cargar la vista previa</p>
-                                <p className="font-mono text-[11px] text-amber-700/90 break-all select-all">
-                                  {uploadService.resolveMediaUrl(activeSection.valor)}
-                                </p>
-                                <p className="mt-2 text-slate-500">
-                                  Verifica que la ruta sea correcta o sube una nueva imagen desde el botón superior.
+                                <p className="font-semibold mb-1">No se pudo cargar la vista previa</p>
+                                <p className="mt-1 text-slate-600">
+                                  Sube una nueva imagen desde el recuadro superior o verifica el enlace en opciones avanzadas.
                                 </p>
                               </div>
                             ) : (
@@ -1421,7 +1685,7 @@ export default function TextEditorPage() {
                         ) : (
                           <div className="flex flex-col items-center gap-1 text-slate-400">
                             <IconImage className="h-10 w-10 stroke-1" />
-                            <span className="text-sm">No hay ninguna imagen asignada a esta sección</span>
+                            <span className="text-sm">No hay ninguna imagen asignada todavía</span>
                           </div>
                         )}
                       </div>
@@ -1429,15 +1693,24 @@ export default function TextEditorPage() {
                   </div>
                 ) : (
                   <div className="flex flex-1 flex-col">
-                    <label htmlFor="text-value" className="mb-2 text-sm font-semibold text-slate-600">
-                      Contenido
-                    </label>
+                    <div className="mb-2 flex items-center justify-between">
+                      <label htmlFor="text-value" className="text-sm font-semibold text-slate-600">
+                        Texto visible en el portal
+                      </label>
+                      <span className="text-xs text-slate-400">
+                        {(activeSection.valor || '').length} caracteres ·{' '}
+                        {(activeSection.valor || '').trim()
+                          ? (activeSection.valor || '').trim().split(/\s+/).length
+                          : 0}{' '}
+                        palabras
+                      </span>
+                    </div>
                     <textarea
                       id="text-value"
                       value={activeSection.valor}
                       onChange={(event) => updateActiveSection('valor', event.target.value)}
                       className="min-h-80 flex-1 resize-y rounded-xl border border-slate-300 p-4 text-base leading-7 outline-none focus:border-umsa-blue focus:ring-2 focus:ring-sky-100"
-                      placeholder="Escribe el contenido de esta sección..."
+                      placeholder="Escribe aquí el texto que se mostrará en la página..."
                     />
                   </div>
                 )}
@@ -1456,16 +1729,33 @@ export default function TextEditorPage() {
                         {message}
                       </span>
                     )}
+                    {!error && !message && isActiveDirty && (
+                      <span className="text-xs font-medium text-amber-700">
+                        Tienes cambios sin guardar en este campo.
+                      </span>
+                    )}
                   </div>
-                  <button
-                    type="button"
-                    onClick={saveSection}
-                    disabled={saving}
-                    className="inline-flex items-center gap-2 rounded-lg bg-umsa-blue px-6 py-2.5 text-sm font-bold text-white shadow-xs transition hover:bg-sky-900 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <IconSave className="h-4 w-4" />
-                    <span>{saving ? 'Guardando...' : 'Guardar sección'}</span>
-                  </button>
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    {isActiveDirty && (
+                      <button
+                        type="button"
+                        onClick={discardActiveChanges}
+                        disabled={saving}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 disabled:opacity-50"
+                      >
+                        <span>Descartar</span>
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={saveSection}
+                      disabled={saving || !isActiveDirty}
+                      className="inline-flex items-center gap-2 rounded-lg bg-umsa-blue px-6 py-2.5 text-sm font-bold text-white shadow-xs transition hover:bg-sky-900 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <IconSave className="h-4 w-4" />
+                      <span>{saving ? 'Guardando...' : 'Guardar cambios'}</span>
+                    </button>
+                  </div>
                 </div>
               </>
             ) : (
@@ -1479,6 +1769,35 @@ export default function TextEditorPage() {
           </section>
         </div>
       </div>
+
+      {/* Notificación flotante (toast) */}
+      {toast && (
+        <div
+          role="status"
+          className={`fixed bottom-5 right-5 z-50 flex items-center gap-2.5 rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-xl transition-all ${
+            toast.type === 'error'
+              ? 'bg-red-600'
+              : toast.type === 'info'
+              ? 'bg-slate-700'
+              : 'bg-emerald-600'
+          }`}
+        >
+          {toast.type === 'error' ? (
+            <IconAlertCircle className="h-4 w-4 shrink-0" />
+          ) : (
+            <IconCheck className="h-4 w-4 shrink-0" />
+          )}
+          <span>{toast.text}</span>
+          <button
+            type="button"
+            onClick={() => setToast(null)}
+            className="ml-1 rounded p-0.5 text-white/80 hover:bg-white/15 hover:text-white"
+            aria-label="Cerrar notificación"
+          >
+            <IconClose className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
     </main>
   )
 }
