@@ -16,10 +16,18 @@ import { APP_GUARD } from '@nestjs/core';
       global: true,
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('SECRET'),
-        signOptions: { expiresIn: '24h' },
-      }),
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('SECRET');
+        if (!secret) {
+          throw new Error(
+            'Falta la variable de entorno SECRET para firmar tokens JWT.',
+          );
+        }
+        return {
+          secret,
+          signOptions: { expiresIn: '24h' },
+        };
+      },
     }),
   ],
   controllers: [AuthController],

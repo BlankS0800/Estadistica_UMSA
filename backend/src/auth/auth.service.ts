@@ -7,6 +7,8 @@ import { JwtService } from '@nestjs/jwt';
 import { compare, encrypt } from 'src/libs/bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 
+const EMAIL_REGEX = /^\S+@\S+\.\S+$/;
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -16,32 +18,33 @@ export class AuthService {
 
   async logIn(email: string, password: string) {
     try {
-      // buscar si esque existe
+      const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+      if (!normalizedEmail || typeof password !== 'string' || password.length === 0) {
+        throw new BadRequestException('Email o contraseña inválidos.');
+      }
 
       const user = await this.prismaService.user.findUnique({
         where: {
-          email,
+          email: normalizedEmail,
         },
       });
 
       if (!user) {
-        throw new BadRequestException('Email o contraseña invalidos.');
+        throw new BadRequestException('Email o contraseña inválidos.');
       }
 
       const isPasswordMatch = await compare(password, user.password);
 
       if (!isPasswordMatch) {
-        throw new BadRequestException('Email o contraseña invalidos.');
+        throw new BadRequestException('Email o contraseña inválidos.');
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: _, ...userWithoutPassword } = user;
-
-      const paylod = {
-        ...userWithoutPassword,
+      const payload = {
+        id: user.id,
+        email: user.email,
       };
 
-      const access_token = await this.jwtService.signAsync(paylod);
+      const access_token = await this.jwtService.signAsync(payload);
 
       return { access_token };
     } catch (error) {
@@ -49,37 +52,48 @@ export class AuthService {
         throw error;
       }
 
-      throw new InternalServerErrorException('Error al hacer log in');
+      throw new InternalServerErrorException('Error al iniciar sesión');
     }
   }
 
   async signUp(email: string, password: string) {
     try {
+      const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+      if (!EMAIL_REGEX.test(normalizedEmail)) {
+        throw new BadRequestException('El correo electrónico no es válido.');
+      }
+
+      if (typeof password !== 'string' || password.length < 8) {
+        throw new BadRequestException(
+          'La contraseña debe tener al menos 8 caracteres.',
+        );
+      }
+
       const userFound = await this.prismaService.user.findUnique({
         where: {
-          email,
+          email: normalizedEmail,
         },
       });
 
-      if (userFound) throw new BadRequestException('El usuario ya existe');
+      if (userFound) {
+        throw new BadRequestException('El usuario ya existe.');
+      }
 
-      const hashedPassword = await encrypt(password);
+      const hashedPassword = await encrypt(password, 12);
 
       const user = await this.prismaService.user.create({
         data: {
-          email,
+          email: normalizedEmail,
           password: hashedPassword,
         },
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: _, ...userWithoutPassword } = user;
-
-      const paylod = {
-        ...userWithoutPassword,
+      const payload = {
+        id: user.id,
+        email: user.email,
       };
 
-      const access_token = await this.jwtService.signAsync(paylod);
+      const access_token = await this.jwtService.signAsync(payload);
 
       return { access_token };
     } catch (error) {
@@ -87,7 +101,7 @@ export class AuthService {
         throw error;
       }
 
-      throw new Error(error);
+      throw new InternalServerErrorException('Error al registrar el usuario');
     }
   }
 }

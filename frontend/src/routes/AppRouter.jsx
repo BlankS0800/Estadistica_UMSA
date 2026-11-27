@@ -5,7 +5,6 @@ import { mockNavItems } from '../services/mockData'
 import { resolvePageByPath } from './pageRegistry'
 import { PrivateRoute, PublicRoute } from '../admin/routes/auth.guard'
 import LogInPage from '../admin/pages/LogInPage'
-import SignUpPage from '../admin/pages/SignUpPage'
 import TextEditorPage from '../admin/pages/TextEditorPage'
 
 function PublicPortalShell() {
@@ -37,7 +36,6 @@ function AppRouter() {
       <Route path="/admin" element={<Navigate to="/admin/editor" replace />} />
       <Route element={<PublicRoute />}>
         <Route path="/admin/login" element={<LogInPage />} />
-        <Route path="/admin/sign-up" element={<SignUpPage />} />
       </Route>
       <Route element={<PrivateRoute />}>
         <Route path="/admin/editor" element={<TextEditorPage />} />
@@ -47,7 +45,8 @@ function AppRouter() {
       <Route path="/editor-texto" element={<Navigate to="/admin/editor" replace />} />
       <Route path="/auth" element={<Navigate to="/admin/login" replace />} />
       <Route path="/auth/log-in" element={<Navigate to="/admin/login" replace />} />
-      <Route path="/auth/sign-up" element={<Navigate to="/admin/sign-up" replace />} />
+      <Route path="/auth/sign-up" element={<Navigate to="/admin/login" replace />} />
+      <Route path="/admin/sign-up" element={<Navigate to="/admin/login" replace />} />
 
       {/* Portal público */}
       <Route path="*" element={<PublicPortalShell />} />

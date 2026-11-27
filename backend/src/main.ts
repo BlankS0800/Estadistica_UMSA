@@ -1,14 +1,30 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { NextFunction, Request, Response } from 'express';
 import { join } from 'path';
 import * as fs from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  app.disable('x-powered-by');
+  app.set('trust proxy', 1);
+
+  // Cabeceras básicas de seguridad HTTP
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    next();
+  });
+
   const corsOrigin = process.env.CORS_ORIGIN;
-  app.enableCors(corsOrigin ? { origin: corsOrigin.split(',') } : undefined);
+  app.enableCors(
+    corsOrigin
+      ? { origin: corsOrigin.split(',').map((origin) => origin.trim()) }
+      : undefined,
+  );
 
   const uploadDir = process.env.UPLOAD_DIR || join(process.cwd(), 'uploads');
   if (!fs.existsSync(uploadDir)) {

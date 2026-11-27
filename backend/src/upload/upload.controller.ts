@@ -11,10 +11,40 @@ import * as path from 'path';
 import * as crypto from 'crypto';
 import { UploadService } from './upload.service';
 
+const ALLOWED_IMAGE_MIMES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+];
+
+const ALLOWED_IMAGE_EXTS = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
+
+const ALLOWED_DOCUMENT_MIMES = ['application/pdf'];
+const ALLOWED_DOCUMENT_EXTS = ['.pdf'];
+
+function isAllowedImage(file: { originalname: string; mimetype: string }): boolean {
+  const ext = path.extname(file.originalname).toLowerCase();
+  return (
+    ALLOWED_IMAGE_MIMES.includes(file.mimetype) &&
+    ALLOWED_IMAGE_EXTS.includes(ext)
+  );
+}
+
+function isAllowedDocument(file: { originalname: string; mimetype: string }): boolean {
+  const ext = path.extname(file.originalname).toLowerCase();
+  return (
+    ALLOWED_DOCUMENT_MIMES.includes(file.mimetype) &&
+    ALLOWED_DOCUMENT_EXTS.includes(ext)
+  );
+}
+
 function createStorage(subfolder: string) {
   return diskStorage({
     destination: (req, file, cb) => {
-      const uploadRoot = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
+      const uploadRoot =
+        process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
       const targetDir = path.join(uploadRoot, subfolder);
       cb(null, targetDir);
     },
@@ -27,22 +57,7 @@ function createStorage(subfolder: string) {
   });
 }
 
-const ALLOWED_IMAGE_MIMES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp',
-  'image/gif',
-  'image/svg+xml',
-];
-
-const ALLOWED_DOCUMENT_MIMES = [
-  'application/pdf',
-];
-
-import { Public } from '../auth/guards/auth.guard';
-
-@Public()
+// Protegido por AuthGuard global: solo usuarios autenticados pueden subir archivos
 @Controller('upload')
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
@@ -55,10 +70,10 @@ export class UploadController {
         fileSize: 10 * 1024 * 1024, // 10 MB
       },
       fileFilter: (req, file, cb) => {
-        if (!ALLOWED_IMAGE_MIMES.includes(file.mimetype)) {
+        if (!isAllowedImage(file)) {
           return cb(
             new BadRequestException(
-              `Tipo de archivo no permitido (${file.mimetype}). Solo se admiten imágenes: JPEG, PNG, WEBP, GIF, SVG.`,
+              `Tipo de archivo no permitido (${file.mimetype}). Solo se admiten imágenes: JPG, PNG, WEBP o GIF.`,
             ),
             false,
           );
@@ -69,7 +84,9 @@ export class UploadController {
   )
   uploadImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
-      throw new BadRequestException('No se proporcionó ningún archivo de imagen.');
+      throw new BadRequestException(
+        'No se proporcionó ningún archivo de imagen.',
+      );
     }
 
     return {
@@ -89,7 +106,7 @@ export class UploadController {
         fileSize: 25 * 1024 * 1024, // 25 MB
       },
       fileFilter: (req, file, cb) => {
-        if (!ALLOWED_DOCUMENT_MIMES.includes(file.mimetype)) {
+        if (!isAllowedDocument(file)) {
           return cb(
             new BadRequestException(
               `Tipo de archivo no permitido (${file.mimetype}). Solo se admiten documentos PDF.`,
@@ -103,7 +120,9 @@ export class UploadController {
   )
   uploadDocument(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
-      throw new BadRequestException('No se proporcionó ningún archivo de documento.');
+      throw new BadRequestException(
+        'No se proporcionó ningún archivo de documento.',
+      );
     }
 
     return {
@@ -120,9 +139,9 @@ export class UploadController {
     FileInterceptor('file', {
       storage: diskStorage({
         destination: (req, file, cb) => {
-          const uploadRoot = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
-          const isDoc = ALLOWED_DOCUMENT_MIMES.includes(file.mimetype);
-          const subfolder = isDoc ? 'documents' : 'images';
+          const uploadRoot =
+            process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
+          const subfolder = isAllowedDocument(file) ? 'documents' : 'images';
           cb(null, path.join(uploadRoot, subfolder));
         },
         filename: (req, file, cb) => {
@@ -136,12 +155,10 @@ export class UploadController {
         fileSize: 25 * 1024 * 1024, // 25 MB max
       },
       fileFilter: (req, file, cb) => {
-        const isImage = ALLOWED_IMAGE_MIMES.includes(file.mimetype);
-        const isDoc = ALLOWED_DOCUMENT_MIMES.includes(file.mimetype);
-        if (!isImage && !isDoc) {
+        if (!isAllowedImage(file) && !isAllowedDocument(file)) {
           return cb(
             new BadRequestException(
-              `Formato no soportado (${file.mimetype}). Solo se permiten imágenes (JPG, PNG, WEBP, GIF, SVG) o documentos PDF.`,
+              `Formato no soportado (${file.mimetype}). Solo se permiten imágenes (JPG, PNG, WEBP, GIF) o documentos PDF.`,
             ),
             false,
           );
@@ -155,8 +172,7 @@ export class UploadController {
       throw new BadRequestException('No se envió ningún archivo.');
     }
 
-    const isDoc = ALLOWED_DOCUMENT_MIMES.includes(file.mimetype);
-    const subfolder = isDoc ? 'documents' : 'images';
+    const subfolder = isAllowedDocument(file) ? 'documents' : 'images';
 
     return {
       url: `/uploads/${subfolder}/${file.filename}`,
