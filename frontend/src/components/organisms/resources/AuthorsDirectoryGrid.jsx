@@ -17,7 +17,7 @@ export default function AuthorsDirectoryGrid({
   return (
     <motion.div key="tab-autores" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
       
-      <div className="flex flex-col md:flex-row items-end justify-between mb-10 border-b-2 border-slate-100 pb-4">
+      <div className="flex flex-col items-start md:flex-row md:items-end justify-between mb-10 border-b-2 border-slate-100 pb-4">
          <div>
            <h2 className="text-3xl md:text-4xl font-black text-[#001d3d] uppercase tracking-tighter mb-2 flex items-center gap-3">
              <Users className="text-[#ea580c]" size={36}/> Índice de Autores

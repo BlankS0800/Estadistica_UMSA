@@ -127,7 +127,7 @@ function RegulationsPage() {
         <section className="relative mx-2 overflow-hidden rounded-[4rem] bg-[#001d3d] px-6 py-24 shadow-2xl md:mx-4 md:rounded-[6rem] md:px-10 md:py-32">
           <StatisticalSeal symbol="§" label="ART" value="CEUB" top="5%" right="5%" className="opacity-[0.12] text-white" />
           <div className="mx-auto max-w-[1440px]">
-            <div className="mb-20 flex flex-col items-end justify-between gap-8 md:flex-row">
+            <div className="mb-20 flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
               <div className="max-w-2xl">
                 <div className="mb-4 flex items-center gap-3">
                   <div className="h-1 w-12 bg-[#c2410c]" />

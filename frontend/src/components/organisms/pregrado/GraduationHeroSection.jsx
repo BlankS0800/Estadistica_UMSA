@@ -12,7 +12,7 @@ function GraduationHeroSection({ hero }) {
         <path d="M0 198 Q190 104 380 198 T760 198" stroke="#9ad6ff" strokeWidth="1.5" opacity="0.75" />
       </svg>
 
-      <div className="relative z-10 mx-auto flex max-w-[1536px] flex-col items-end gap-6 md:flex-row md:justify-between">
+      <div className="relative z-10 mx-auto flex max-w-[1536px] flex-col items-start gap-6 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="mb-2 flex items-center gap-2 text-base sm:text-base md:text-lg font-black uppercase tracking-[0.4em] text-[#ffb184]">
             <HeroIcon size={14} /> {hero.eyebrow}

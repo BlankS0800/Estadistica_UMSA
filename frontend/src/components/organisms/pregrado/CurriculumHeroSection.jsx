@@ -10,7 +10,7 @@ function CurriculumHeroSection({ hero }) {
         <div className="h-full w-full bg-[linear-gradient(0deg,transparent_24%,rgba(255,255,255,0.14)_25%,rgba(255,255,255,0.14)_26%,transparent_27%,transparent_74%,rgba(255,255,255,0.14)_75%,rgba(255,255,255,0.14)_76%,transparent_77%,transparent),linear-gradient(90deg,transparent_24%,rgba(255,255,255,0.11)_25%,rgba(255,255,255,0.11)_26%,transparent_27%,transparent_74%,rgba(255,255,255,0.11)_75%,rgba(255,255,255,0.11)_76%,transparent_77%,transparent)] bg-[length:74px_74px]" />
       </div>
 
-      <div className="relative mx-auto flex max-w-[1536px] flex-col items-end justify-between gap-6 md:flex-row">
+      <div className="relative mx-auto flex max-w-[1536px] flex-col items-start justify-between gap-6 md:flex-row md:items-end">
         <div>
           <p className="mb-2 text-base sm:text-base md:text-lg font-black uppercase tracking-[0.4em] text-[#ea580c]">{hero.eyebrow}</p>
           <h1 className="text-4xl font-black uppercase leading-none tracking-tighter text-white md:text-5xl">

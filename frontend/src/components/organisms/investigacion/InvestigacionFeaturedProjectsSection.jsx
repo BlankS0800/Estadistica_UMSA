@@ -7,7 +7,7 @@ const InvestigacionFeaturedProjectsSection = ({ featured }) => {
     <section className="relative mx-auto max-w-[1440px] overflow-hidden rounded-[4rem] border-t-8 border-[#ea580c] bg-[#001d3d] p-10 text-white shadow-2xl md:p-16">
       <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '32px 32px' }} aria-hidden="true" />
 
-      <div className="relative z-10 mb-12 flex flex-col items-end justify-between gap-6 border-b border-white/10 pb-8 md:flex-row">
+      <div className="relative z-10 mb-12 flex flex-col items-start justify-between gap-6 border-b border-white/10 pb-8 md:flex-row md:items-end">
         <div>
           <h3 className="mb-2 text-3xl font-black uppercase tracking-tighter md:text-5xl">
             {featured.title[0]} <span className="text-[#ea580c]">{featured.title[1]}</span>

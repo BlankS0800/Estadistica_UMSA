@@ -87,7 +87,7 @@ function CurriculumGridSection({ curriculumData, flatSubjects, areaLegend, meta 
       </svg>
 
       <div className="relative z-10 mx-auto max-w-[1536px] px-8">
-        <div className="mb-16 flex flex-col items-end justify-between gap-6 border-b border-white/10 pb-8 lg:flex-row">
+        <div className="mb-16 flex flex-col items-start justify-between gap-6 border-b border-white/10 pb-8 lg:flex-row lg:items-end">
           <div>
             <div className="mb-4 flex items-center gap-3">
               <meta.icon size={16} className="animate-pulse text-orange-600" />

@@ -26,7 +26,7 @@ function OccupationalFieldSection({ section }) {
       </div>
 
       <div className="relative z-10 mx-auto max-w-[1440px]">
-        <div className="mb-20 flex flex-col items-end justify-between gap-8 md:flex-row">
+        <div className="mb-20 flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
           <PregradoSectionHeader tag={section.tag} title={section.title} light />
 
           <div className="mb-4 flex max-w-full overflow-x-auto rounded-full border border-white/10 bg-white/5 p-1.5 backdrop-blur-md no-scrollbar">

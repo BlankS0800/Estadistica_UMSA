@@ -38,7 +38,7 @@ const InvestigacionProjectMemoriesSection = ({ memories, meta, ui }) => {
   return (
     <section id="proyectos" className="scroll-mt-32 px-4 md:px-8">
       <div className="mx-auto max-w-[1440px]">
-        <div className="mb-12 flex flex-col items-end justify-between gap-6 md:flex-row">
+        <div className="mb-12 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
           <InvestigacionSectionHeader tag={meta.tag} title={meta.title} subtitle={meta.subtitle} />
 
         <div className="relative w-full md:w-[350px]">

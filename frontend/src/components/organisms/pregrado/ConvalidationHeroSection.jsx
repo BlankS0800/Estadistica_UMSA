@@ -2,7 +2,7 @@ function ConvalidationHeroSection({ hero, visuals }) {
   const HeaderIcon = visuals?.headerIcon
 
   return (
-    <section className="relative overflow-hidden border-b-8 border-[#ea580c] bg-[linear-gradient(160deg,#001d3d_0%,#003666_55%,#00447e_100%)] px-8 pb-16 pt-32 shadow-sm">
+    <section className="relative overflow-hidden border-b-8 border-[#ea580c] bg-[linear-gradient(160deg,#001d3d_0%,#003666_55%,#00447e_100%)] px-4 sm:px-8 pb-16 pt-28 sm:pt-32 shadow-sm">
       <div className="pointer-events-none absolute inset-0 opacity-[0.08]" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
       <svg className="pointer-events-none absolute right-0 top-0 h-[340px] w-[760px] opacity-[0.15]" viewBox="0 0 760 340" fill="none" aria-hidden="true">
         <path d="M0 168 Q190 74 380 168 T760 168" stroke="#ea580c" strokeWidth="2.4" />
@@ -10,8 +10,8 @@ function ConvalidationHeroSection({ hero, visuals }) {
       </svg>
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.22),transparent_45%),radial-gradient(circle_at_80%_10%,rgba(234,88,12,0.2),transparent_35%),repeating-linear-gradient(0deg,rgba(255,255,255,0.08),rgba(255,255,255,0.08)_1px,transparent_1px,transparent_24px)]" />
 
-      <div className="relative z-10 mx-auto flex max-w-[1536px] flex-col items-end gap-6 md:flex-row md:justify-between">
-        <div>
+      <div className="relative z-10 mx-auto flex max-w-[1536px] flex-col items-start gap-6 md:flex-row md:items-end md:justify-between">
+        <div className="min-w-0 max-w-full">
           <p className="mb-2 flex items-center gap-2 text-base sm:text-base md:text-lg font-black uppercase tracking-[0.4em] text-[#ffb184]">
             {HeaderIcon && <HeaderIcon size={12} />} {hero.eyebrow}
           </p>
