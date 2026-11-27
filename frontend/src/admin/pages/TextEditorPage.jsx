@@ -400,7 +400,6 @@ export default function TextEditorPage() {
   const [toast, setToast] = useState(null)
 
   // UI state for group organization, search, and collapsible accordions
-  const [selectedGroupFilter, setSelectedGroupFilter] = useState('all')
   const [openSectionGroups, setOpenSectionGroups] = useState({})
   const [searchTerm, setSearchTerm] = useState('')
 
@@ -469,18 +468,13 @@ export default function TextEditorPage() {
     const term = searchTerm.trim().toLowerCase()
 
     return sectionGroups
-      .filter((group) => {
-        if (selectedGroupFilter !== 'all' && group.key !== selectedGroupFilter) {
-          return false
-        }
-        return true
-      })
       .map((group) => {
         if (!term) return group
         const matchingSections = group.sections.filter(
           (s) =>
             s.claveCampo.toLowerCase().includes(term) ||
             s.subKey.toLowerCase().includes(term) ||
+            formatFieldLabel(s.subKey, s.tipo).toLowerCase().includes(term) ||
             (s.valor && s.valor.toLowerCase().includes(term)),
         )
         return {
@@ -489,7 +483,7 @@ export default function TextEditorPage() {
         }
       })
       .filter((group) => group.sections.length > 0)
-  }, [sectionGroups, selectedGroupFilter, searchTerm])
+  }, [sectionGroups, searchTerm])
 
   const activeGroup = sectionGroups.find((g) =>
     g.sections.some((s) => s.claveCampo === activeKey),
@@ -532,7 +526,6 @@ export default function TextEditorPage() {
 
   const changePage = (pageSlug) => {
     setActivePageSlug(pageSlug)
-    setSelectedGroupFilter('all')
     setSearchTerm('')
     const targetSections = sections.filter(
       (section) => normalizePageSlug(section.paginaSlug) === pageSlug,
@@ -601,7 +594,6 @@ export default function TextEditorPage() {
 
   const openQuickAccess = (item) => {
     setActivePageSlug(item.slug)
-    setSelectedGroupFilter('all')
     setSearchTerm('')
     setOpenNavGroup(null)
     const targetSections = sections.filter(
@@ -979,39 +971,8 @@ export default function TextEditorPage() {
                 )}
               </div>
 
-              {/* Group filter pills */}
-              {sectionGroups.length > 1 && (
-                <div className="mt-3 flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedGroupFilter('all')}
-                    className={`whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-semibold transition ${
-                      selectedGroupFilter === 'all'
-                        ? 'bg-umsa-blue text-white shadow-xs'
-                        : 'bg-slate-200/80 text-slate-600 hover:bg-slate-300'
-                    }`}
-                  >
-                    Todos ({pageSections.length})
-                  </button>
-                  {sectionGroups.map((group) => (
-                    <button
-                      key={group.key}
-                      type="button"
-                      onClick={() => setSelectedGroupFilter(group.key)}
-                      className={`whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-semibold transition ${
-                        selectedGroupFilter === group.key
-                          ? 'bg-umsa-blue text-white shadow-xs'
-                          : 'bg-slate-200/80 text-slate-600 hover:bg-slate-300'
-                      }`}
-                    >
-                      {group.label} ({group.sections.length})
-                    </button>
-                  ))}
-                </div>
-              )}
-
               {/* Expand / Collapse all controls */}
-              {selectedGroupFilter === 'all' && sectionGroups.length > 1 && (
+              {sectionGroups.length > 1 && (
                 <div className="mt-2.5 flex items-center justify-between text-[11px] text-slate-500">
                   <span>
                     {filteredGroups.length} grupo{filteredGroups.length !== 1 ? 's' : ''}
