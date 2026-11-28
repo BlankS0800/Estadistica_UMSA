@@ -1,7 +1,6 @@
 services:
-  postgres:
+  estadistica-postgres:
     image: postgres:17-alpine
-    container_name: estadistica_postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
@@ -13,30 +12,39 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./initdb:/docker-entrypoint-initdb.d:ro
+    networks:
+      - estadistica_internal
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-usuarios}"]
       interval: 5s
       timeout: 5s
       retries: 10
 
-  backend:
+  estadistica-backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: estadistica_backend
     restart: unless-stopped
     depends_on:
-      postgres:
+      estadistica-postgres:
         condition: service_healthy
     environment:
       NODE_ENV: production
       PORT: 3000
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-123}@postgres:5432/${POSTGRES_DB:-usuarios}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-123}@estadistica-postgres:5432/${POSTGRES_DB:-usuarios}
       SECRET: ${JWT_SECRET:-cambia_esta_clave_secreta_en_produccion}
       UPLOAD_DIR: /app/uploads
       CORS_ORIGIN: ${CORS_ORIGIN:-}
     volumes:
       - uploads_data:/app/uploads
+    networks:
+      - estadistica_internal
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r => process.exit(r.status < 500 ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
 
   frontend:
     build:
@@ -44,12 +52,18 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_URL: /api
-    container_name: estadistica_frontend
     restart: unless-stopped
     depends_on:
-      - backend
+      estadistica-backend:
+        condition: service_healthy
     ports:
       - "${FRONTEND_PORT:-8080}:80"
+    networks:
+      - estadistica_internal
+
+networks:
+  estadistica_internal:
+    driver: bridge
 
 volumes:
   postgres_data:
