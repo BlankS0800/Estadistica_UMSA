@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
 import InstitutionalBackdrop from '../components/atoms/layout/InstitutionalBackdrop'
-import GraduationExcellenceBannerSection from '../components/organisms/pregrado/GraduationExcellenceBannerSection'
 import GraduationHeroSection from '../components/organisms/pregrado/GraduationHeroSection'
 import GraduationModalitiesSection from '../components/organisms/pregrado/GraduationModalitiesSection'
 import {
-  excellenceBanner as defaultBanner,
   graduationHero as defaultHero,
   graduationModalities,
   graduationModalitiesMeta,
@@ -15,7 +13,6 @@ function PregradoGraduationPage() {
   const [hero, setHero] = useState(defaultHero)
   const [modalitiesMeta, setModalitiesMeta] = useState(graduationModalitiesMeta)
   const [modalities, setModalities] = useState(graduationModalities)
-  const [banner, setBanner] = useState(defaultBanner)
 
   useEffect(() => {
     let isMounted = true
@@ -24,7 +21,6 @@ function PregradoGraduationPage() {
       if (data.hero) setHero(data.hero)
       if (data.modalitiesMeta) setModalitiesMeta(data.modalitiesMeta)
       if (data.modalities) setModalities(data.modalities)
-      if (data.banner) setBanner(data.banner)
     })
     return () => {
       isMounted = false
@@ -39,7 +35,6 @@ function PregradoGraduationPage() {
 
         <div className="mx-auto flex max-w-[1500px] flex-col gap-28 px-4 py-20 sm:px-6 lg:px-8">
           <GraduationModalitiesSection meta={modalitiesMeta} modalities={modalities} />
-          <GraduationExcellenceBannerSection banner={banner} />
         </div>
       </main>
     </div>

@@ -8,7 +8,6 @@ import {
   Microscope,
   Presentation,
   Sigma,
-  Star,
   Target,
 } from 'lucide-react'
 
@@ -125,16 +124,6 @@ export const graduationModalities = [
     color: '#b45309',
   },
 ]
-
-export const excellenceBanner = {
-  eyebrow: 'Reconocimiento institucional',
-  title: 'Graduación por Excelencia',
-  quote:
-    'La Universidad Mayor de San Andrés premia el esfuerzo constante. Si tu promedio supera la media exigida y concluiste sin reprobaciones, el H. Consejo de Carrera puede eximir la defensa pública.',
-  ctaLabel: 'Revisar requisitos',
-  icon: Star,
-  accentIcon: GraduationCap,
-}
 
 function buildSectionMap(sections) {
   const map = {}
@@ -267,13 +256,6 @@ export async function loadGraduationPageData() {
       return m
     })
 
-    const banner = {
-      ...excellenceBanner,
-      eyebrow: secMap.get('graduacion_excelencia_eyebrow') || excellenceBanner.eyebrow,
-      title: secMap.get('graduacion_excelencia_titulo') || excellenceBanner.title,
-      quote: secMap.get('graduacion_excelencia_desc') || excellenceBanner.quote,
-      ctaLabel: secMap.get('graduacion_excelencia_cta') || excellenceBanner.ctaLabel,
-    }
 
     return {
       hero,
@@ -281,7 +263,6 @@ export async function loadGraduationPageData() {
       processSteps: dynSteps,
       modalitiesMeta: dynModalitiesMeta,
       modalities: dynModalities,
-      banner,
     }
   } catch (err) {
     console.error('Error cargando datos dinámicos de graduación:', err)
@@ -291,7 +272,6 @@ export async function loadGraduationPageData() {
       processSteps,
       modalitiesMeta: graduationModalitiesMeta,
       modalities: graduationModalities,
-      banner: excellenceBanner,
     }
   }
 }

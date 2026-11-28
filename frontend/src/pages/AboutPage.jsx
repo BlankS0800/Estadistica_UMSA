@@ -11,12 +11,10 @@ import {
   aboutDataFallback,
   getAboutData,
 } from '../services/aboutData'
-import { inicioDataFallback, getInicioData } from '../services/inicioData'
 
 function AboutPage() {
   const [pageData, setPageData] = useState(aboutDataFallback)
   const [apiError, setApiError] = useState('')
-  const [graduateData, setGraduateData] = useState(inicioDataFallback)
 
   useEffect(() => {
     let isCurrent = true
@@ -33,13 +31,6 @@ function AboutPage() {
           setApiError(error.message)
         }
       })
-
-    // Perfil del egresado: usa los mismos campos del editor (inicio_perfil_*, inicio_rol_*) que antes estaban en Inicio
-    getInicioData()
-      .then((data) => {
-        if (isCurrent) setGraduateData(data)
-      })
-      .catch(() => {})
 
     return () => {
       isCurrent = false
@@ -61,7 +52,7 @@ function AboutPage() {
         <div className="render-optimized"><AboutMissionVisionSection missionVision={pageData.missionVision} /></div>
         <div className="render-optimized"><AboutValuesSection values={pageData.values} /></div>
         <div className="render-optimized"><AboutObjectivesSection objectives={pageData.objectives} /></div>
-        <div className="render-optimized"><GraduateProfile profile={graduateData.graduateProfile} roles={graduateData.graduateRoles} /></div>
+        <div className="render-optimized"><GraduateProfile profile={pageData.graduateProfile} roles={pageData.graduateRoles} /></div>
       </div>
     </div>
   )

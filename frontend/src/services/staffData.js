@@ -7,8 +7,6 @@ export const staffHero = {
   description:
     'Profesionales comprometidos con la excelencia académica y el soporte administrativo para la formación de científicos de datos.',
   imageUrl: '/images/institucional/personal_hero.jpeg',
-  badgeSymbol: 'omega',
-  badgeText: 'Talento Humano',
 }
 
 export const teachers = [
@@ -181,8 +179,6 @@ export async function getStaffData() {
     ],
     description: val('plantel_inicio_descripcion', staffHero.description),
     imageUrl: val('plantel_inicio_imagen', staffHero.imageUrl),
-    badgeSymbol: val('plantel_inicio_badge_simbolo', staffHero.badgeSymbol),
-    badgeText: val('plantel_inicio_badge_texto', staffHero.badgeText),
   }
 
   const teachersData =

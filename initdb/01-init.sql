@@ -1890,6 +1890,20 @@ nosotros_mision_texto	/institucional/acerca	Formar profesionales idóneos y comp
 nosotros_vision_titulo	/institucional/acerca	Visión	texto
 nosotros_vision_texto	/institucional/acerca	Ser líder en la formación de profesionales en ciencia estadística, buscando excelencia académica mediante docencia, investigación y extensión.	texto
 nosotros_acreditacion_descripcion	/institucional/acerca	Reconocidos por el CEUuB como carrera de excelencia académica con certificación de calidad en formación estadística..	texto
+nosotros_egresado_etiqueta	/institucional/acerca	Tasa de Empleo Directo	texto
+nosotros_egresado_titulo_01	/institucional/acerca	PERFIL DEL	texto
+nosotros_egresado_titulo_02	/institucional/acerca	EGRESADO	texto
+nosotros_egresado_badge_valor	/institucional/acerca	92	texto
+nosotros_egresado_badge_sufijo	/institucional/acerca	%	texto
+nosotros_egresado_descripcion	/institucional/acerca	Nuestros profesionales dominan el lenguaje de los datos. Están capacitados para liderar la transformación digital mediante el modelado matemático riguroso.	texto
+nosotros_egresado_rol_01_titulo	/institucional/acerca	Analista de Riesgos	texto
+nosotros_egresado_rol_01_subtitulo	/institucional/acerca	Sectores Bancarios y Seguros	texto
+nosotros_egresado_rol_02_titulo	/institucional/acerca	Data Scientist	texto
+nosotros_egresado_rol_02_subtitulo	/institucional/acerca	IA y Machine Learning Avanzado	texto
+nosotros_egresado_rol_03_titulo	/institucional/acerca	Consultor Público	texto
+nosotros_egresado_rol_03_subtitulo	/institucional/acerca	Políticas Basadas en Evidencia	texto
+nosotros_egresado_rol_04_titulo	/institucional/acerca	Investigador	texto
+nosotros_egresado_rol_04_subtitulo	/institucional/acerca	Desarrollo de Nuevas Metodologías	texto
 acreditacion_inicio_titulo_01	/institucional/acreditacion	Garantía de	texto
 acreditacion_inicio_titulo_02	/institucional/acreditacion	calidad	texto
 acreditacion_inicio_titulo_03	/institucional/acreditacion	Académica.	texto
@@ -1974,8 +1988,6 @@ plantel_inicio_titulo_01	/institucional/docentes	Nuestro	texto
 plantel_inicio_titulo_02	/institucional/docentes	Equipo.	texto
 plantel_inicio_descripcion	/institucional/docentes	Profesionales comprometidos con la excelencia académica y el soporte administrativo para la formación de científicos de datos.	texto
 plantel_inicio_imagen	/institucional/docentes	/images/institucional/personal_hero.jpeg	imagen
-plantel_inicio_badge_simbolo	/institucional/docentes	omega	texto
-plantel_inicio_badge_texto	/institucional/docentes	Talento Humano	texto
 convenios_inicio_etiqueta	/institucional/convenios	Alianzas Estratégicas	texto
 convenios_inicio_titulo_01	/institucional/convenios	Conectando	texto
 convenios_inicio_titulo_02	/institucional/convenios	la	texto
@@ -2145,7 +2157,6 @@ admisiones_modalidades_subtitulo	/pregrado/admisiones	Las dos rutas principales 
 calendario_hero_descripcion	/pregrado/calendario-academico	Planificación oficial de actividades académicas, exámenes parciales, finales, mesas de sufragio y recesos universitarios.	texto
 graduacion_hero_titulo_03	/pregrado/modalidades-graduacion	y Titulación.	texto
 graduacion_taller_subtitulo	/pregrado/modalidades-graduacion	Materia terminal del 8vo semestre orientada a la formulación y defensa del trabajo de grado.	texto
-graduacion_excelencia_desc	/pregrado/modalidades-graduacion	Exención de defensa de tesis para estudiantes con promedio sobresaliente durante toda la carrera sin reprobaciones.	texto
 calendario_hero_badge	/pregrado/calendario-academico	Gestión Académica II/2026	texto
 pos_autofin_hero_titulo_03	/postgrado/maestria-autofinanciada	Gestión 2026	texto
 pos_autofin_hero_inversion	/postgrado/maestria-autofinanciada	18.000 Bs.	texto
@@ -2158,7 +2169,6 @@ graduacion_hero_titulo_01	/pregrado/modalidades-graduacion	Modalidades de	texto
 graduacion_hero_titulo_02	/pregrado/modalidades-graduacion	Graduación	texto
 graduacion_hero_descripcion	/pregrado/modalidades-graduacion	Conoce las vías oficiales reglamentadas para obtener el título de Licenciado en Estadística en la Universidad Mayor de San Andrés.	texto
 graduacion_taller_titulo	/pregrado/modalidades-graduacion	El Taller de Titulación es el punto de partida	texto
-graduacion_excelencia_titulo	/pregrado/modalidades-graduacion	Premio al Alto Rendimiento	texto
 pos_terminal_hero_eyebrow	/postgrado/maestria-terminal	Programa de excelencia académica	texto
 pos_terminal_hero_titulo_01	/postgrado/maestria-terminal	Maestría Terminal	texto
 pos_terminal_hero_titulo_02	/postgrado/maestria-terminal	en Estadística	texto
@@ -2431,10 +2441,6 @@ graduacion_mod_03_desc	/pregrado/modalidades-graduacion	Desarrollo de un modelo 
 graduacion_mod_04_titulo	/pregrado/modalidades-graduacion	Graduación por Excelencia	texto
 graduacion_mod_04_badge	/pregrado/modalidades-graduacion	Mérito estudiantil	texto
 graduacion_mod_04_desc	/pregrado/modalidades-graduacion	Titulación directa exenta de defensa para universitarios que mantuvieron alto rendimiento y regularidad.	texto
-graduacion_excelencia_badge	/pregrado/modalidades-graduacion	Reconocimiento institucional	texto
-graduacion_excelencia_cita	/pregrado/modalidades-graduacion	La UMSA premia el esfuerzo constante. Si tu promedio ponderado supera el límite reglamentario sin reprobaciones, el Consejo te exime de defensa.	texto
-graduacion_excelencia_cta_texto	/pregrado/modalidades-graduacion	Revisar reglamento de excelencia	texto
-graduacion_excelencia_cta_url	/pregrado/modalidades-graduacion	#	texto
 pos_terminal_perfil_card_01_titulo	/postgrado/maestria-terminal	Modelado y Matemática Avanzada	texto
 pos_terminal_perfil_card_01_desc	/postgrado/maestria-terminal	Abstracción matemática para resolver problemas complejos usando optimización, simulación estocástica y modelos lineales generalizados.	texto
 pos_terminal_perfil_card_02_titulo	/postgrado/maestria-terminal	Ciencia de Datos y Big Data	texto
@@ -2822,6 +2828,11 @@ contacto_tel_05_rol	/contacto	Representación y eventos	texto
 contacto_tel_05_numero	/contacto	76543210	texto
 contacto_tel_05_extension	/contacto	Celular	texto
 contacto_tel_05_numero_alterno	/contacto		texto
+contacto_tel_06_unidad	/contacto	Laboratorio	texto
+contacto_tel_06_rol	/contacto	Consultas y uso del laboratorio	texto
+contacto_tel_06_numero	/contacto	00000000	texto
+contacto_tel_06_extension	/contacto	N/A	texto
+contacto_tel_06_numero_alterno	/contacto		texto
 contacto_correo_01_unidad	/contacto	Consultas Generales	texto
 contacto_correo_01_correo	/contacto	estadistica@umsa.bo	texto
 contacto_correo_01_descripcion	/contacto	Consultas generales e información sobre la Carrera.	texto

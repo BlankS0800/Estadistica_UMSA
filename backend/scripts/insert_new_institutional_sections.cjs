@@ -43,9 +43,7 @@ const newSeccionPaginaEntries = [
   { clave_campo: 'plantel_inicio_titulo_02', pagina_slug: '/institucional/docentes', valor: 'Equipo.', tipo: 'texto' },
   { clave_campo: 'plantel_inicio_descripcion', pagina_slug: '/institucional/docentes', valor: 'Profesionales comprometidos con la excelencia académica y el soporte administrativo para la formación de científicos de datos.', tipo: 'texto' },
   { clave_campo: 'plantel_inicio_imagen', pagina_slug: '/institucional/docentes', valor: '/images/institucional/personal_hero.jpeg', tipo: 'imagen' },
-  { clave_campo: 'plantel_inicio_badge_simbolo', pagina_slug: '/institucional/docentes', valor: 'omega', tipo: 'texto' },
-  { clave_campo: 'plantel_inicio_badge_texto', pagina_slug: '/institucional/docentes', valor: 'Talento Humano', tipo: 'texto' },
-
+  
   // --- /institucional/convenios (solo textos e imágenes) ---
   { clave_campo: 'convenios_inicio_etiqueta', pagina_slug: '/institucional/convenios', valor: 'Alianzas Estratégicas', tipo: 'texto' },
   { clave_campo: 'convenios_inicio_titulo_01', pagina_slug: '/institucional/convenios', valor: 'Conectando', tipo: 'texto' },

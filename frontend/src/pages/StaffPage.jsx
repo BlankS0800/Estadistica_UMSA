@@ -167,10 +167,6 @@ function StaffPage() {
           <div className="relative overflow-hidden rounded-[2.5rem] shadow-2xl">
             <img src={hero.imageUrl} className="h-[450px] w-full object-cover" alt="Personal UMSA" />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black/60 to-transparent" />
-            <div className="absolute bottom-10 right-10 flex flex-col items-end text-white drop-shadow-2xl">
-              <span className="text-4xl font-black italic tracking-tighter">{hero.badgeSymbol || 'omega'}</span>
-              <p className="mt-1 border-t border-white/40 pt-1 text-[10px] font-bold uppercase tracking-[0.3em]">{hero.badgeText || 'Talento Humano'}</p>
-            </div>
           </div>
         </div>
       </section>

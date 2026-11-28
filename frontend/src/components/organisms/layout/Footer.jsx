@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { SocialLink } from '../../molecules/feedback/Interactive';
 import { 
   footerAbout, 
@@ -185,7 +186,7 @@ export const Footer = () => {
           <div className="flex gap-4">
             <span className="hover:text-slate-400 transition-colors cursor-pointer">Facultad de Ciencias Puras</span>
             <span>·</span>
-            <span className="hover:text-slate-400 transition-colors cursor-pointer font-serif italic">UMSA</span>
+            <Link to="/admin/login" className="hover:text-slate-400 transition-colors cursor-pointer font-serif italic">UMSA</Link>
           </div>
         </div>
       </div>

@@ -123,6 +123,7 @@ const pageTabs = pageGroups.flatMap((group) => group.items)
 const KNOWN_GROUP_LABELS = {
   acreditacion: 'Acreditación',
   hito: 'Hitos Históricos',
+  egresado: 'Perfil del Titulado',
   ieta: 'IETA',
   inicio: 'Inicio',
   mision: 'Misión',

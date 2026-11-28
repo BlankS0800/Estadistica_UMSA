@@ -322,8 +322,6 @@ async function seedPregradoData() {
     { clave_campo: 'graduacion_hero_descripcion', pagina_slug: '/pregrado/modalidades-graduacion', valor: 'Rutas académicas reglamentadas por el CEUB y la UMSA para la obtención del título profesional de Licenciado(a) en Estadística.', tipo: 'texto' },
     { clave_campo: 'graduacion_taller_titulo', pagina_slug: '/pregrado/modalidades-graduacion', valor: 'Taller de Graduación', tipo: 'texto' },
     { clave_campo: 'graduacion_taller_subtitulo', pagina_slug: '/pregrado/modalidades-graduacion', valor: 'Materia terminal del 8vo semestre orientada a la formulación y defensa del trabajo de grado.', tipo: 'texto' },
-    { clave_campo: 'graduacion_excelencia_titulo', pagina_slug: '/pregrado/modalidades-graduacion', valor: 'Graduación por Excelencia', tipo: 'texto' },
-    { clave_campo: 'graduacion_excelencia_desc', pagina_slug: '/pregrado/modalidades-graduacion', valor: 'Exención de defensa de tesis para estudiantes con promedio sobresaliente durante toda la carrera sin reprobaciones.', tipo: 'texto' },
   ];
 
   let insertCount = 0;

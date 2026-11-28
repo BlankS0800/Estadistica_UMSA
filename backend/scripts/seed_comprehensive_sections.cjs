@@ -205,11 +205,6 @@ async function seedComprehensiveSections() {
     { clave_campo: 'graduacion_mod_04_titulo', pagina_slug: '/pregrado/modalidades-graduacion', valor: 'Graduación por Excelencia', tipo: 'texto' },
     { clave_campo: 'graduacion_mod_04_badge', pagina_slug: '/pregrado/modalidades-graduacion', valor: 'Mérito estudiantil', tipo: 'texto' },
     { clave_campo: 'graduacion_mod_04_desc', pagina_slug: '/pregrado/modalidades-graduacion', valor: 'Titulación directa exenta de defensa para universitarios que mantuvieron alto rendimiento y regularidad.', tipo: 'texto' },
-    { clave_campo: 'graduacion_excelencia_badge', pagina_slug: '/pregrado/modalidades-graduacion', valor: 'Reconocimiento institucional', tipo: 'texto' },
-    { clave_campo: 'graduacion_excelencia_titulo', pagina_slug: '/pregrado/modalidades-graduacion', valor: 'Premio al Alto Rendimiento', tipo: 'texto' },
-    { clave_campo: 'graduacion_excelencia_cita', pagina_slug: '/pregrado/modalidades-graduacion', valor: 'La UMSA premia el esfuerzo constante. Si tu promedio ponderado supera el límite reglamentario sin reprobaciones, el Consejo te exime de defensa.', tipo: 'texto' },
-    { clave_campo: 'graduacion_excelencia_cta_texto', pagina_slug: '/pregrado/modalidades-graduacion', valor: 'Revisar reglamento de excelencia', tipo: 'texto' },
-    { clave_campo: 'graduacion_excelencia_cta_url', pagina_slug: '/pregrado/modalidades-graduacion', valor: '#', tipo: 'texto' },
 
     // =========================================================================
     // 6. POSTGRADO: /postgrado/maestria-terminal (prefix: pos_terminal_)

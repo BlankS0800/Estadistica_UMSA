@@ -80,6 +80,7 @@ export const contactDirectoryPhones = [
   { unit: 'Instituto IETA', role: 'Investigación y consultorías', number: '2612824', ext: 'N/A', altNumber: '2612844' },
   { unit: 'Biblioteca Especializada', role: 'Consultas y préstamos', number: '2442100', ext: '130' },
   { unit: 'Centro de Estudiantes', role: 'Representación y eventos', number: '76543210', ext: 'Celular' },
+  { unit: 'Laboratorio', role: 'Consultas y uso del laboratorio', number: '00000000', ext: 'N/A' },
 ]
 
 export const contactDirectoryEmails = [

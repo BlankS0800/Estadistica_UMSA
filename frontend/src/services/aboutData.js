@@ -13,6 +13,7 @@ import {
   Users,
 } from 'lucide-react'
 import { seccionPaginaApi } from './seccionPaginaService'
+import { inicioGraduateProfile, inicioGraduateRoles } from './inicioData'
 
 export const milestones = [
   {
@@ -142,6 +143,8 @@ export const aboutDataFallback = {
   values,
   objectives,
   accreditation,
+  graduateProfile: inicioGraduateProfile,
+  graduateRoles: inicioGraduateRoles,
 }
 
 const ABOUT_PAGE_SLUG = '/institucional/acerca'
@@ -212,6 +215,25 @@ const getAboutDataFromRecords = (records) => {
         id: value(`nosotros_objetivo_${number}_numero`, item.id),
         t: value(`nosotros_objetivo_${number}_titulo`, item.t),
         d: value(`nosotros_objetivo_${number}_descripcion`, item.d),
+      }
+    }),
+    graduateProfile: {
+      ...inicioGraduateProfile,
+      badgeValue: value('nosotros_egresado_badge_valor', inicioGraduateProfile.badgeValue),
+      badgeSuffix: value('nosotros_egresado_badge_sufijo', inicioGraduateProfile.badgeSuffix),
+      badgeLabel: value('nosotros_egresado_etiqueta', inicioGraduateProfile.badgeLabel),
+      titleLines: [
+        value('nosotros_egresado_titulo_01', inicioGraduateProfile.titleLines[0]),
+        value('nosotros_egresado_titulo_02', inicioGraduateProfile.titleLines[1]),
+      ],
+      description: value('nosotros_egresado_descripcion', inicioGraduateProfile.description),
+    },
+    graduateRoles: inicioGraduateRoles.map((role, index) => {
+      const number = String(index + 1).padStart(2, '0')
+      return {
+        ...role,
+        title: value(`nosotros_egresado_rol_${number}_titulo`, role.title),
+        subtitle: value(`nosotros_egresado_rol_${number}_subtitulo`, role.subtitle),
       }
     }),
     accreditation: {
