@@ -1,9 +1,9 @@
---
--- PostgreSQL database dump
---
-
--- Dumped from database version 17.4
--- Dumped by pg_dump version 17.4
+-- ============================================================================
+-- Base de datos inicial - Portal Web Carrera de Estadística (UMSA)
+-- Compatible con PostgreSQL 17
+-- Usuario administrador de prueba: admin@gmail.com / 123
+-- (Cambiar contraseña o crear usuario definitivo en producción con npm run admin:create:prod)
+-- ============================================================================
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,22 +21,11 @@ SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
---
--- Name: User; Type: TABLE; Schema: public; Owner: postgres
---
-
 CREATE TABLE public."User" (
     id text NOT NULL,
     email text NOT NULL,
     password text NOT NULL
 );
-
-
-ALTER TABLE public."User" OWNER TO postgres;
-
---
--- Name: _prisma_migrations; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public._prisma_migrations (
     id character varying(36) NOT NULL,
@@ -49,13 +38,6 @@ CREATE TABLE public._prisma_migrations (
     applied_steps_count integer DEFAULT 0 NOT NULL
 );
 
-
-ALTER TABLE public._prisma_migrations OWNER TO postgres;
-
---
--- Name: administrativo; Type: TABLE; Schema: public; Owner: postgres
---
-
 CREATE TABLE public.administrativo (
     id integer NOT NULL,
     nombre character varying(255) NOT NULL,
@@ -63,13 +45,6 @@ CREATE TABLE public.administrativo (
     correo_institucional character varying(255) NOT NULL,
     foto character varying(255) NOT NULL
 );
-
-
-ALTER TABLE public.administrativo OWNER TO postgres;
-
---
--- Name: administrativo_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
 
 CREATE SEQUENCE public.administrativo_id_seq
     AS integer
@@ -79,19 +54,7 @@ CREATE SEQUENCE public.administrativo_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.administrativo_id_seq OWNER TO postgres;
-
---
--- Name: administrativo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.administrativo_id_seq OWNED BY public.administrativo.id;
-
-
---
--- Name: autor; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.autor (
     id integer NOT NULL,
@@ -101,13 +64,6 @@ CREATE TABLE public.autor (
     ubicacion character varying(255)
 );
 
-
-ALTER TABLE public.autor OWNER TO postgres;
-
---
--- Name: autor_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.autor_id_seq
     AS integer
     START WITH 1
@@ -116,19 +72,7 @@ CREATE SEQUENCE public.autor_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.autor_id_seq OWNER TO postgres;
-
---
--- Name: autor_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.autor_id_seq OWNED BY public.autor.id;
-
-
---
--- Name: auxiliar; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.auxiliar (
     id integer NOT NULL,
@@ -142,13 +86,6 @@ CREATE TABLE public.auxiliar (
     aula character varying(255)
 );
 
-
-ALTER TABLE public.auxiliar OWNER TO postgres;
-
---
--- Name: auxiliar_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.auxiliar_id_seq
     AS integer
     START WITH 1
@@ -157,19 +94,7 @@ CREATE SEQUENCE public.auxiliar_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.auxiliar_id_seq OWNER TO postgres;
-
---
--- Name: auxiliar_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.auxiliar_id_seq OWNED BY public.auxiliar.id;
-
-
---
--- Name: banco_datos; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.banco_datos (
     id integer NOT NULL,
@@ -180,13 +105,6 @@ CREATE TABLE public.banco_datos (
     resumen text
 );
 
-
-ALTER TABLE public.banco_datos OWNER TO postgres;
-
---
--- Name: banco_datos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.banco_datos_id_seq
     AS integer
     START WITH 1
@@ -195,19 +113,7 @@ CREATE SEQUENCE public.banco_datos_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.banco_datos_id_seq OWNER TO postgres;
-
---
--- Name: banco_datos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.banco_datos_id_seq OWNED BY public.banco_datos.id;
-
-
---
--- Name: convalida; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.convalida (
     "Id_materia_act" integer NOT NULL,
@@ -215,13 +121,6 @@ CREATE TABLE public.convalida (
     nombre_materia_antigua character varying(255) NOT NULL,
     sigla_materia_antigua character varying(255) NOT NULL
 );
-
-
-ALTER TABLE public.convalida OWNER TO postgres;
-
---
--- Name: convalida_Id_materia_act_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
 
 CREATE SEQUENCE public."convalida_Id_materia_act_seq"
     AS integer
@@ -231,19 +130,7 @@ CREATE SEQUENCE public."convalida_Id_materia_act_seq"
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public."convalida_Id_materia_act_seq" OWNER TO postgres;
-
---
--- Name: convalida_Id_materia_act_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public."convalida_Id_materia_act_seq" OWNED BY public.convalida."Id_materia_act";
-
-
---
--- Name: convenio; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.convenio (
     id integer NOT NULL,
@@ -251,13 +138,6 @@ CREATE TABLE public.convenio (
     descripcion text NOT NULL,
     sector character varying(255) NOT NULL
 );
-
-
-ALTER TABLE public.convenio OWNER TO postgres;
-
---
--- Name: convenio_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
 
 CREATE SEQUENCE public.convenio_id_seq
     AS integer
@@ -267,19 +147,7 @@ CREATE SEQUENCE public.convenio_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.convenio_id_seq OWNER TO postgres;
-
---
--- Name: convenio_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.convenio_id_seq OWNED BY public.convenio.id;
-
-
---
--- Name: convocatoria; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.convocatoria (
     "Id_convocatoria" integer NOT NULL,
@@ -291,13 +159,6 @@ CREATE TABLE public.convocatoria (
     matriculacion_kardex character varying(255) NOT NULL
 );
 
-
-ALTER TABLE public.convocatoria OWNER TO postgres;
-
---
--- Name: convocatoria_Id_convocatoria_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public."convocatoria_Id_convocatoria_seq"
     AS integer
     START WITH 1
@@ -306,19 +167,7 @@ CREATE SEQUENCE public."convocatoria_Id_convocatoria_seq"
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public."convocatoria_Id_convocatoria_seq" OWNER TO postgres;
-
---
--- Name: convocatoria_Id_convocatoria_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public."convocatoria_Id_convocatoria_seq" OWNED BY public.convocatoria."Id_convocatoria";
-
-
---
--- Name: convocatoria_auxiliatura; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.convocatoria_auxiliatura (
     id integer NOT NULL,
@@ -331,13 +180,6 @@ CREATE TABLE public.convocatoria_auxiliatura (
     estado character varying(100) NOT NULL
 );
 
-
-ALTER TABLE public.convocatoria_auxiliatura OWNER TO postgres;
-
---
--- Name: convocatoria_auxiliatura_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.convocatoria_auxiliatura_id_seq
     AS integer
     START WITH 1
@@ -346,19 +188,7 @@ CREATE SEQUENCE public.convocatoria_auxiliatura_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.convocatoria_auxiliatura_id_seq OWNER TO postgres;
-
---
--- Name: convocatoria_auxiliatura_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.convocatoria_auxiliatura_id_seq OWNED BY public.convocatoria_auxiliatura.id;
-
-
---
--- Name: datos_archivo; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.datos_archivo (
     id integer NOT NULL,
@@ -369,13 +199,6 @@ CREATE TABLE public.datos_archivo (
     id_banco_datos integer
 );
 
-
-ALTER TABLE public.datos_archivo OWNER TO postgres;
-
---
--- Name: datos_archivo_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.datos_archivo_id_seq
     AS integer
     START WITH 1
@@ -384,19 +207,7 @@ CREATE SEQUENCE public.datos_archivo_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.datos_archivo_id_seq OWNER TO postgres;
-
---
--- Name: datos_archivo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.datos_archivo_id_seq OWNED BY public.datos_archivo.id;
-
-
---
--- Name: directivo_estudiante; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.directivo_estudiante (
     id integer NOT NULL,
@@ -404,13 +215,6 @@ CREATE TABLE public.directivo_estudiante (
     cargo character varying(255) NOT NULL,
     area character varying(255) NOT NULL
 );
-
-
-ALTER TABLE public.directivo_estudiante OWNER TO postgres;
-
---
--- Name: directivo_estudiante_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
 
 CREATE SEQUENCE public.directivo_estudiante_id_seq
     AS integer
@@ -420,19 +224,7 @@ CREATE SEQUENCE public.directivo_estudiante_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.directivo_estudiante_id_seq OWNER TO postgres;
-
---
--- Name: directivo_estudiante_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.directivo_estudiante_id_seq OWNED BY public.directivo_estudiante.id;
-
-
---
--- Name: docente; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.docente (
     id integer NOT NULL,
@@ -445,13 +237,6 @@ CREATE TABLE public.docente (
     imagen character varying(255) NOT NULL
 );
 
-
-ALTER TABLE public.docente OWNER TO postgres;
-
---
--- Name: docente_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.docente_id_seq
     AS integer
     START WITH 1
@@ -460,19 +245,7 @@ CREATE SEQUENCE public.docente_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.docente_id_seq OWNER TO postgres;
-
---
--- Name: docente_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.docente_id_seq OWNED BY public.docente.id;
-
-
---
--- Name: documento_digital; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.documento_digital (
     id integer NOT NULL,
@@ -483,13 +256,6 @@ CREATE TABLE public.documento_digital (
     link_descarga character varying(500)
 );
 
-
-ALTER TABLE public.documento_digital OWNER TO postgres;
-
---
--- Name: documento_digital_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.documento_digital_id_seq
     AS integer
     START WITH 1
@@ -498,19 +264,7 @@ CREATE SEQUENCE public.documento_digital_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.documento_digital_id_seq OWNER TO postgres;
-
---
--- Name: documento_digital_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.documento_digital_id_seq OWNED BY public.documento_digital.id;
-
-
---
--- Name: estudiante_autoridad; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.estudiante_autoridad (
     id integer NOT NULL,
@@ -518,13 +272,6 @@ CREATE TABLE public.estudiante_autoridad (
     cargo character varying(255) NOT NULL,
     imagen character varying(255) NOT NULL
 );
-
-
-ALTER TABLE public.estudiante_autoridad OWNER TO postgres;
-
---
--- Name: estudiante_autoridad_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
 
 CREATE SEQUENCE public.estudiante_autoridad_id_seq
     AS integer
@@ -534,19 +281,7 @@ CREATE SEQUENCE public.estudiante_autoridad_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.estudiante_autoridad_id_seq OWNER TO postgres;
-
---
--- Name: estudiante_autoridad_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.estudiante_autoridad_id_seq OWNED BY public.estudiante_autoridad.id;
-
-
---
--- Name: evento; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.evento (
     id integer NOT NULL,
@@ -559,13 +294,6 @@ CREATE TABLE public.evento (
     estado character varying(20) DEFAULT 'published'::character varying NOT NULL
 );
 
-
-ALTER TABLE public.evento OWNER TO postgres;
-
---
--- Name: evento_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.evento_id_seq
     AS integer
     START WITH 1
@@ -574,44 +302,18 @@ CREATE SEQUENCE public.evento_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.evento_id_seq OWNER TO postgres;
-
---
--- Name: evento_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.evento_id_seq OWNED BY public.evento.id;
-
-
---
--- Name: incluye; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.incluye (
     "Id_plan_estudio" integer NOT NULL,
     "Id_materia_act" integer NOT NULL
 );
 
-
-ALTER TABLE public.incluye OWNER TO postgres;
-
---
--- Name: incluye_posgrado; Type: TABLE; Schema: public; Owner: postgres
---
-
 CREATE TABLE public.incluye_posgrado (
     id_modulo integer NOT NULL,
     horas_presencial character varying(100) NOT NULL,
     horas_investigacion character varying(100) NOT NULL
 );
-
-
-ALTER TABLE public.incluye_posgrado OWNER TO postgres;
-
---
--- Name: libro; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.libro (
     id integer NOT NULL,
@@ -625,13 +327,6 @@ CREATE TABLE public.libro (
     id_autor integer
 );
 
-
-ALTER TABLE public.libro OWNER TO postgres;
-
---
--- Name: libro_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.libro_id_seq
     AS integer
     START WITH 1
@@ -640,19 +335,7 @@ CREATE SEQUENCE public.libro_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.libro_id_seq OWNER TO postgres;
-
---
--- Name: libro_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.libro_id_seq OWNED BY public.libro.id;
-
-
---
--- Name: materia_pregrado; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.materia_pregrado (
     "Id_materia_act" integer NOT NULL,
@@ -663,13 +346,6 @@ CREATE TABLE public.materia_pregrado (
     semestre integer NOT NULL
 );
 
-
-ALTER TABLE public.materia_pregrado OWNER TO postgres;
-
---
--- Name: materia_pregrado_Id_materia_act_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public."materia_pregrado_Id_materia_act_seq"
     AS integer
     START WITH 1
@@ -678,19 +354,7 @@ CREATE SEQUENCE public."materia_pregrado_Id_materia_act_seq"
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public."materia_pregrado_Id_materia_act_seq" OWNER TO postgres;
-
---
--- Name: materia_pregrado_Id_materia_act_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public."materia_pregrado_Id_materia_act_seq" OWNED BY public.materia_pregrado."Id_materia_act";
-
-
---
--- Name: matriz_cientifica; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.matriz_cientifica (
     id integer NOT NULL,
@@ -698,13 +362,6 @@ CREATE TABLE public.matriz_cientifica (
     descripcion text NOT NULL,
     autor character varying(255) NOT NULL
 );
-
-
-ALTER TABLE public.matriz_cientifica OWNER TO postgres;
-
---
--- Name: matriz_cientifica_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
 
 CREATE SEQUENCE public.matriz_cientifica_id_seq
     AS integer
@@ -714,32 +371,13 @@ CREATE SEQUENCE public.matriz_cientifica_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.matriz_cientifica_id_seq OWNER TO postgres;
-
---
--- Name: matriz_cientifica_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.matriz_cientifica_id_seq OWNED BY public.matriz_cientifica.id;
-
-
---
--- Name: modulo; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.modulo (
     id_modulo integer NOT NULL,
     titulo_modulo character varying(255) NOT NULL,
     numero_modulo character varying(50) NOT NULL
 );
-
-
-ALTER TABLE public.modulo OWNER TO postgres;
-
---
--- Name: modulo_id_modulo_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
 
 CREATE SEQUENCE public.modulo_id_modulo_seq
     AS integer
@@ -749,19 +387,7 @@ CREATE SEQUENCE public.modulo_id_modulo_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.modulo_id_modulo_seq OWNER TO postgres;
-
---
--- Name: modulo_id_modulo_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.modulo_id_modulo_seq OWNED BY public.modulo.id_modulo;
-
-
---
--- Name: noticia; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.noticia (
     id integer NOT NULL,
@@ -777,13 +403,6 @@ CREATE TABLE public.noticia (
     fecha_expiracion date
 );
 
-
-ALTER TABLE public.noticia OWNER TO postgres;
-
---
--- Name: noticia_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.noticia_id_seq
     AS integer
     START WITH 1
@@ -792,31 +411,12 @@ CREATE SEQUENCE public.noticia_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.noticia_id_seq OWNER TO postgres;
-
---
--- Name: noticia_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.noticia_id_seq OWNED BY public.noticia.id;
-
-
---
--- Name: organiza_posgrado; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.organiza_posgrado (
     id_programa integer NOT NULL,
     id_modulo integer NOT NULL
 );
-
-
-ALTER TABLE public.organiza_posgrado OWNER TO postgres;
-
---
--- Name: pasantia; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.pasantia (
     id integer NOT NULL,
@@ -829,13 +429,6 @@ CREATE TABLE public.pasantia (
     requisitos text NOT NULL
 );
 
-
-ALTER TABLE public.pasantia OWNER TO postgres;
-
---
--- Name: pasantia_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.pasantia_id_seq
     AS integer
     START WITH 1
@@ -844,31 +437,12 @@ CREATE SEQUENCE public.pasantia_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.pasantia_id_seq OWNER TO postgres;
-
---
--- Name: pasantia_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.pasantia_id_seq OWNED BY public.pasantia.id;
-
-
---
--- Name: plan_estudios; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.plan_estudios (
     "Id_plan_estudio" integer NOT NULL,
     nombre_plan character varying(255) NOT NULL
 );
-
-
-ALTER TABLE public.plan_estudios OWNER TO postgres;
-
---
--- Name: plan_estudios_Id_plan_estudio_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
 
 CREATE SEQUENCE public."plan_estudios_Id_plan_estudio_seq"
     AS integer
@@ -878,19 +452,7 @@ CREATE SEQUENCE public."plan_estudios_Id_plan_estudio_seq"
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public."plan_estudios_Id_plan_estudio_seq" OWNER TO postgres;
-
---
--- Name: plan_estudios_Id_plan_estudio_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public."plan_estudios_Id_plan_estudio_seq" OWNED BY public.plan_estudios."Id_plan_estudio";
-
-
---
--- Name: programa; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.programa (
     id_programa integer NOT NULL,
@@ -898,13 +460,6 @@ CREATE TABLE public.programa (
     tipo character varying(100) NOT NULL,
     costo character varying(100) NOT NULL
 );
-
-
-ALTER TABLE public.programa OWNER TO postgres;
-
---
--- Name: programa_id_programa_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
 
 CREATE SEQUENCE public.programa_id_programa_seq
     AS integer
@@ -914,19 +469,7 @@ CREATE SEQUENCE public.programa_id_programa_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.programa_id_programa_seq OWNER TO postgres;
-
---
--- Name: programa_id_programa_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.programa_id_programa_seq OWNED BY public.programa.id_programa;
-
-
---
--- Name: publicaciones_estudiantiles; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.publicaciones_estudiantiles (
     id integer NOT NULL,
@@ -936,13 +479,6 @@ CREATE TABLE public.publicaciones_estudiantiles (
     area character varying(255) NOT NULL
 );
 
-
-ALTER TABLE public.publicaciones_estudiantiles OWNER TO postgres;
-
---
--- Name: publicaciones_estudiantiles_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.publicaciones_estudiantiles_id_seq
     AS integer
     START WITH 1
@@ -951,19 +487,7 @@ CREATE SEQUENCE public.publicaciones_estudiantiles_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.publicaciones_estudiantiles_id_seq OWNER TO postgres;
-
---
--- Name: publicaciones_estudiantiles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.publicaciones_estudiantiles_id_seq OWNED BY public.publicaciones_estudiantiles.id;
-
-
---
--- Name: revista; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.revista (
     id integer NOT NULL,
@@ -975,13 +499,6 @@ CREATE TABLE public.revista (
     link character varying(500)
 );
 
-
-ALTER TABLE public.revista OWNER TO postgres;
-
---
--- Name: revista_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.revista_id_seq
     AS integer
     START WITH 1
@@ -990,19 +507,7 @@ CREATE SEQUENCE public.revista_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.revista_id_seq OWNER TO postgres;
-
---
--- Name: revista_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.revista_id_seq OWNED BY public.revista.id;
-
-
---
--- Name: seccion_pagina; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.seccion_pagina (
     clave_campo character varying(255) NOT NULL,
@@ -1010,13 +515,6 @@ CREATE TABLE public.seccion_pagina (
     valor text NOT NULL,
     tipo character varying(255) NOT NULL
 );
-
-
-ALTER TABLE public.seccion_pagina OWNER TO postgres;
-
---
--- Name: tesis; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.tesis (
     id integer NOT NULL,
@@ -1029,13 +527,6 @@ CREATE TABLE public.tesis (
     link character varying(500)
 );
 
-
-ALTER TABLE public.tesis OWNER TO postgres;
-
---
--- Name: tesis_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.tesis_id_seq
     AS integer
     START WITH 1
@@ -1044,207 +535,61 @@ CREATE SEQUENCE public.tesis_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.tesis_id_seq OWNER TO postgres;
-
---
--- Name: tesis_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.tesis_id_seq OWNED BY public.tesis.id;
-
-
---
--- Name: administrativo id; Type: DEFAULT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.administrativo ALTER COLUMN id SET DEFAULT nextval('public.administrativo_id_seq'::regclass);
 
-
---
--- Name: autor id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.autor ALTER COLUMN id SET DEFAULT nextval('public.autor_id_seq'::regclass);
-
-
---
--- Name: auxiliar id; Type: DEFAULT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.auxiliar ALTER COLUMN id SET DEFAULT nextval('public.auxiliar_id_seq'::regclass);
 
-
---
--- Name: banco_datos id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.banco_datos ALTER COLUMN id SET DEFAULT nextval('public.banco_datos_id_seq'::regclass);
-
-
---
--- Name: convalida Id_materia_act; Type: DEFAULT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.convalida ALTER COLUMN "Id_materia_act" SET DEFAULT nextval('public."convalida_Id_materia_act_seq"'::regclass);
 
-
---
--- Name: convenio id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.convenio ALTER COLUMN id SET DEFAULT nextval('public.convenio_id_seq'::regclass);
-
-
---
--- Name: convocatoria Id_convocatoria; Type: DEFAULT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.convocatoria ALTER COLUMN "Id_convocatoria" SET DEFAULT nextval('public."convocatoria_Id_convocatoria_seq"'::regclass);
 
-
---
--- Name: convocatoria_auxiliatura id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.convocatoria_auxiliatura ALTER COLUMN id SET DEFAULT nextval('public.convocatoria_auxiliatura_id_seq'::regclass);
-
-
---
--- Name: datos_archivo id; Type: DEFAULT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.datos_archivo ALTER COLUMN id SET DEFAULT nextval('public.datos_archivo_id_seq'::regclass);
 
-
---
--- Name: directivo_estudiante id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.directivo_estudiante ALTER COLUMN id SET DEFAULT nextval('public.directivo_estudiante_id_seq'::regclass);
-
-
---
--- Name: docente id; Type: DEFAULT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.docente ALTER COLUMN id SET DEFAULT nextval('public.docente_id_seq'::regclass);
 
-
---
--- Name: documento_digital id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.documento_digital ALTER COLUMN id SET DEFAULT nextval('public.documento_digital_id_seq'::regclass);
-
-
---
--- Name: estudiante_autoridad id; Type: DEFAULT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.estudiante_autoridad ALTER COLUMN id SET DEFAULT nextval('public.estudiante_autoridad_id_seq'::regclass);
 
-
---
--- Name: evento id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.evento ALTER COLUMN id SET DEFAULT nextval('public.evento_id_seq'::regclass);
-
-
---
--- Name: libro id; Type: DEFAULT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.libro ALTER COLUMN id SET DEFAULT nextval('public.libro_id_seq'::regclass);
 
-
---
--- Name: materia_pregrado Id_materia_act; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.materia_pregrado ALTER COLUMN "Id_materia_act" SET DEFAULT nextval('public."materia_pregrado_Id_materia_act_seq"'::regclass);
-
-
---
--- Name: matriz_cientifica id; Type: DEFAULT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.matriz_cientifica ALTER COLUMN id SET DEFAULT nextval('public.matriz_cientifica_id_seq'::regclass);
 
-
---
--- Name: modulo id_modulo; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.modulo ALTER COLUMN id_modulo SET DEFAULT nextval('public.modulo_id_modulo_seq'::regclass);
-
-
---
--- Name: noticia id; Type: DEFAULT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.noticia ALTER COLUMN id SET DEFAULT nextval('public.noticia_id_seq'::regclass);
 
-
---
--- Name: pasantia id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.pasantia ALTER COLUMN id SET DEFAULT nextval('public.pasantia_id_seq'::regclass);
-
-
---
--- Name: plan_estudios Id_plan_estudio; Type: DEFAULT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.plan_estudios ALTER COLUMN "Id_plan_estudio" SET DEFAULT nextval('public."plan_estudios_Id_plan_estudio_seq"'::regclass);
 
-
---
--- Name: programa id_programa; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.programa ALTER COLUMN id_programa SET DEFAULT nextval('public.programa_id_programa_seq'::regclass);
-
-
---
--- Name: publicaciones_estudiantiles id; Type: DEFAULT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.publicaciones_estudiantiles ALTER COLUMN id SET DEFAULT nextval('public.publicaciones_estudiantiles_id_seq'::regclass);
 
-
---
--- Name: revista id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.revista ALTER COLUMN id SET DEFAULT nextval('public.revista_id_seq'::regclass);
-
-
---
--- Name: tesis id; Type: DEFAULT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.tesis ALTER COLUMN id SET DEFAULT nextval('public.tesis_id_seq'::regclass);
 
-
---
--- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
 COPY public."User" (id, email, password) FROM stdin;
-f68b566d-5482-4a93-b7f3-7f35c30273a5	hernan@gmail.com	$2b$10$iNKY7zFezpCK8CPEwMq8ou1WpTVGEJ9buXkGaL/zU1KK/vQ.AtbL.
-9338658f-e4c1-4a64-bc5d-61d21586a1a5	test@test.com	$2b$10$H6KlFjXhkQtvaO3e4L8Qo.6irraI79xzQdEMGCJ4pPiwLqHRsMXCa
-0951254b-e82f-416b-9e2a-27aa4f5c941b	crud-test-1789423792@example.com	$2b$10$natmY7wnEsIEGMEuYzIas.ISQVAYbq5m23rbC48yQoBy109Q3ONzK
-2c131d0b-e055-4510-9959-3a49b6bf8785	verify-1789425998@example.com	$2b$10$fOL/CwxDnRVVSY4e/dC5O.DsvYNarOzYf/yv6IPml9x9.8JC9Oo1G
-ea15cae5-fd74-4d88-8c45-860389a10a13	sequence-test-1789429597@example.com	$2b$10$n9bqNf0OEDAbeEP/3PzsXOuIRZdGtG7G5N.mCSJql/XjiGnNeGNu6
+00000000-0000-4000-8000-000000000001	admin@gmail.com	$2b$10$KnAh3C2xxeGWydE8jbg/6uXCcPJ9a1uambLGXJ//r.KpdcgFKRMQ2
 \.
-
-
---
--- Data for Name: _prisma_migrations; Type: TABLE DATA; Schema: public; Owner: postgres
---
 
 COPY public._prisma_migrations (id, checksum, finished_at, migration_name, logs, rolled_back_at, started_at, applied_steps_count) FROM stdin;
 0ad24e0a-0e9e-43ce-8084-d418334b8513	f34efe54306f4a7e3e75f6ab8aa9868e60231188a19602c7671a7f1d84a1ebe0	2026-09-02 20:24:45.848565-04	20240723022814_init	\N	\N	2026-09-02 20:24:45.840153-04	1
@@ -1259,11 +604,6 @@ dd82c362-cbcb-48d0-9099-c3138e019d89	ecf4cabcd7b1f040c5a562c8d6cfc2782833ff67185
 df068c1b-e4e7-48e1-9061-7141799a5618	aad0318edfe916feb0da5ec0528ae2b469b02037b2144c44747040090f589e97	2026-10-11 20:11:31.846561-04	20260915000000_add_noticia_evento	\N	\N	2026-10-11 20:11:31.760997-04	1
 \.
 
-
---
--- Data for Name: administrativo; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
 COPY public.administrativo (id, nombre, cargo, correo_institucional, foto) FROM stdin;
 1	Silvia Aranibar Silva	Secretaria Ejecutiva	correo	/
 2	Alfredo Candia Chambi	Operador de Computacion	correo	/
@@ -1275,11 +615,6 @@ COPY public.administrativo (id, nombre, cargo, correo_institucional, foto) FROM 
 8	Lidia Mamani Mayta	Portero Mensajero	correo	/
 9	Ana Maria Panca Perez	Secretaria IETA	correo	/
 \.
-
-
---
--- Data for Name: autor; Type: TABLE DATA; Schema: public; Owner: postgres
---
 
 COPY public.autor (id, nombre, area, tipo, ubicacion) FROM stdin;
 1	Wackerly, Dennis D.	Estadística Matemática	persona	Universidad de Florida
@@ -1293,11 +628,6 @@ COPY public.autor (id, nombre, area, tipo, ubicacion) FROM stdin;
 9	Banco Central de Bolivia (BCB)	Indicadores Macroeconómicos	institucion	Estado Plurinacional de Bolivia
 10	Carrera de Estadística UMSA	Colección Institucional	institucion	Universidad Mayor de San Andrés
 \.
-
-
---
--- Data for Name: auxiliar; Type: TABLE DATA; Schema: public; Owner: postgres
---
 
 COPY public.auxiliar (id, nombre, tipo, materia, foto, paralelo, dias_auxiliatura, horario_auxiliatura, aula) FROM stdin;
 1	Richard Daniel Mancilla Mamani	academico	Probabilidad I - Estadistica I	/	A	Lunes	12:00 - 14:00	P2-A2
@@ -1317,21 +647,11 @@ COPY public.auxiliar (id, nombre, tipo, materia, foto, paralelo, dias_auxiliatur
 15	Alex Suxo Poma	interaccion social	\N	/	\N	\N	\N	\N
 \.
 
-
---
--- Data for Name: banco_datos; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
 COPY public.banco_datos (id, titulo, tipo, fuente, anio, resumen) FROM stdin;
 1	Censo Nacional de Población y Vivienda 1976	Censos	Instituto Nacional de Estadística (INE)	1976	Base de datos histórica oficial del Censo Nacional de Población y Vivienda de 1976. Contiene el consolidado nacional de población y vivienda en formato CSV.
 2	Censo Nacional de Población y Vivienda 1992	Censos	Instituto Nacional de Estadística (INE)	1992	Base de datos histórica del Censo de Población y Vivienda de 1992. Incluye el consolidado nacional de población y vivienda, y bases regionales en formato CSV.
 3	Censo Nacional de Población y Vivienda 2001	Censos	Instituto Nacional de Estadística (INE)	2001	Microdatos censales de 2001 con ponderaciones y codificación de municipios.
 \.
-
-
---
--- Data for Name: convalida; Type: TABLE DATA; Schema: public; Owner: postgres
---
 
 COPY public.convalida ("Id_materia_act", "Id_materia_antigua", nombre_materia_antigua, sigla_materia_antigua) FROM stdin;
 1	1	Programación I	INF-111
@@ -1361,11 +681,6 @@ COPY public.convalida ("Id_materia_act", "Id_materia_antigua", nombre_materia_an
 49	49	Taller de Titulación	EST-389
 \.
 
-
---
--- Data for Name: convenio; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
 COPY public.convenio (id, titulo, descripcion, sector) FROM stdin;
 1	Instituto Nacional de Estadística (INE)	Principal aliado estratégico para la práctica censal y encuestas nacionales de gran escala.	Sector Publico
 2	Gobierno Autónomo de La Paz	Desarrollo de proyectos de planificación regional y análisis demográfico departamental.	Sector Publico
@@ -1382,31 +697,16 @@ COPY public.convenio (id, titulo, descripcion, sector) FROM stdin;
 14	prueba convencio	descripcion123	Consultoria
 \.
 
-
---
--- Data for Name: convocatoria; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
 COPY public.convocatoria ("Id_convocatoria", periodo_convocatoria, desc_convocatoria, ins_preu, ins_psa, fecha_entrega_docs, matriculacion_kardex) FROM stdin;
 1	Gestión 2026 - Primer Semestre	Convocatoria oficial para el ingreso a la Carrera de Estadística mediante Prueba de Suficiencia Académica (PSA) y Curso Preuniversitario (Pre-U) de la FCPN.	Agosto - Septiembre (año previo)	Noviembre - Diciembre (año previo)	2026-02-15	Finales de Febrero 2026 en Kárdex Académico
 2	Gestión 2026 - Segundo Semestre	Convocatoria de admisión regular para el segundo periodo académico semestral de la gestión 2026.	Mayo - Junio 2026	Junio - Julio 2026	2026-07-20	Primeros días de Agosto 2026 en Kárdex Académico
 \.
-
-
---
--- Data for Name: convocatoria_auxiliatura; Type: TABLE DATA; Schema: public; Owner: postgres
---
 
 COPY public.convocatoria_auxiliatura (id, materia, tipo, descripcion, fecha_publicacion, fecha_cierre, plazas, estado) FROM stdin;
 1	Auxiliatura de Docencia - Gestión II/2026	Docencia	Selección de auxiliares para áreas de Matemáticas, Probabilidad, Estadística Aplicada y Programación.	2026-04-15	2026-04-30	18	Abierta
 2	Auxiliatura de Laboratorio - Gestión II/2026	Laboratorio	Convocatoria para apoyo técnico en laboratorios de software estadístico (R, Python, SPSS).	2026-04-18	2026-05-05	6	Próximamente
 3	Auxiliatura de Docencia - Gestión I/2026	Docencia	Proceso concluido de selección para el primer semestre de la gestión 2026.	2025-11-10	2025-11-30	16	Concluida
 \.
-
-
---
--- Data for Name: datos_archivo; Type: TABLE DATA; Schema: public; Owner: postgres
---
 
 COPY public.datos_archivo (id, titulo, formato, peso, link_descarga, id_banco_datos) FROM stdin;
 1	Censo Nacional 1976 - BOLIVIA (Completo)	CSV	290 MB	https://drive.google.com/file/d/12gjhJ9_j02UAedZ9xrhKrrLKDY6oVSNT/view?usp=sharing	1
@@ -1416,11 +716,6 @@ COPY public.datos_archivo (id, titulo, formato, peso, link_descarga, id_banco_da
 5	Personas - Chuquisaca	CSV	45 MB	https://drive.google.com/file/d/17ree_T9z9TLJnKDu2uuD1TO-zXgRXmyU/view?usp=sharing	2
 6	Censo Nacional 2001 - Microdatos Consolidados	CSV	480 MB	https://drive.google.com/file/d/censos2001	3
 \.
-
-
---
--- Data for Name: directivo_estudiante; Type: TABLE DATA; Schema: public; Owner: postgres
---
 
 COPY public.directivo_estudiante (id, nombre, cargo, area) FROM stdin;
 1	Jhoseline Gloria Chambi Velasco	Primera Secretaria Ejecutiva	Directiva CEE
@@ -1437,11 +732,6 @@ COPY public.directivo_estudiante (id, nombre, cargo, area) FROM stdin;
 12	Grover Huanca Flores	Primer Suplente	Delegados Académico
 13	Daniel Franklin Céspedes Quispe	Segundo Suplente	Delegados Académico
 \.
-
-
---
--- Data for Name: docente; Type: TABLE DATA; Schema: public; Owner: postgres
---
 
 COPY public.docente (id, nombre, grado_academico, tipo, resumen_cv, correo_institucional, cargo_autoridad, imagen) FROM stdin;
 1	Juan Carlos Flores Lopez	Ph. D.	Titular	Docente titular con experiencia en estadistica y formacion universitaria.	jcflores@fcpn.edu.bo	Director(a) de Carrera	/
@@ -1470,11 +760,6 @@ COPY public.docente (id, nombre, grado_academico, tipo, resumen_cv, correo_insti
 23	Javier Taborga Manrique	Lic.	Interino	Docente de Ingles II en la Carrera de Estadistica.	correo	\N	/
 \.
 
-
---
--- Data for Name: documento_digital; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
 COPY public.documento_digital (id, titulo, tipo, peso, fecha_actualizacion, link_descarga) FROM stdin;
 1	Formulario de Solicitud de Auxiliaturas de Docencia e Investigación	Formularios y Trámites	Carpeta Drive	2026-02-15	https://drive.google.com/drive/folders/1gxt5Gjrn9rKfr9s-G0o10ogmbS7CG9kW?usp=sharing
 2	Formulario Parte de Asistencia (Auxiliares)	Formularios y Trámites	Carpeta Drive	2026-02-15	https://drive.google.com/drive/folders/1ZUGJ7KuqRSYjpwa2o_jUB5Ht7y9bDBDl?usp=sharing
@@ -1482,21 +767,11 @@ COPY public.documento_digital (id, titulo, tipo, peso, fecha_actualizacion, link
 4	Formulario de Declaración Jurada	Formularios y Trámites	450 KB	2026-02-15	https://drive.google.com/uc?export=download&id=1kbBCfn_9rtguukgrwzF8XvTyLcTxq23t
 \.
 
-
---
--- Data for Name: estudiante_autoridad; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
 COPY public.estudiante_autoridad (id, nombre, cargo, imagen) FROM stdin;
 2	Univ. Alejandra Edith Salas Birrueta	Delegada Estudiantil	/images/institucional/estudiante_salas.jpeg
 3	Univ. Alejandra Adela Velarde Machicado	Delegada Estudiantil	/images/institucional/estudiante_velarde.jpeg
 1	Univ. Jhoseline Gloria Chambi Velasco	Delegada Estudiantil	/images/institucional/estudiante_chambi.jpeg
 \.
-
-
---
--- Data for Name: evento; Type: TABLE DATA; Schema: public; Owner: postgres
---
 
 COPY public.evento (id, fecha, color, categoria, titulo, hora, ubicacion, estado) FROM stdin;
 1	2025-03-20	#00447e	Institucional	Inicio Censo Universitario 2025	08:00 — 17:00	Campus Central UMSA	published
@@ -1506,11 +781,6 @@ COPY public.evento (id, fecha, color, categoria, titulo, hora, ubicacion, estado
 5	2025-04-10	#00447e	Investigación	Defensa de Tesis de Maestría en Estadística Aplicada	09:00 — 13:00	Sala del IETA	published
 6	2025-04-18	#ea580c	Seminario	Seminario de Big Data e Inteligencia Artificial en INE Bolivia	10:00 — 12:00	Auditorio de la Facultad de Ciencias Puras	published
 \.
-
-
---
--- Data for Name: incluye; Type: TABLE DATA; Schema: public; Owner: postgres
---
 
 COPY public.incluye ("Id_plan_estudio", "Id_materia_act") FROM stdin;
 1	1
@@ -1587,11 +857,6 @@ COPY public.incluye ("Id_plan_estudio", "Id_materia_act") FROM stdin;
 2	51
 \.
 
-
---
--- Data for Name: incluye_posgrado; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
 COPY public.incluye_posgrado (id_modulo, horas_presencial, horas_investigacion) FROM stdin;
 1	240 hrs	360 hrs
 2	240 hrs	360 hrs
@@ -1615,11 +880,6 @@ COPY public.incluye_posgrado (id_modulo, horas_presencial, horas_investigacion) 
 20	80 hrs	120 hrs
 \.
 
-
---
--- Data for Name: libro; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
 COPY public.libro (id, titulo, editor, descripcion_fisica, codigo_isbn, calificacion_dewey, temas, link, id_autor) FROM stdin;
 1	Estadística Matemática con Aplicaciones	Cengage Learning	944 páginas, il., 27 cm	978-607-481-223-7	519.5 W115e	Estadística Matemática, Probabilidad, Muestreo, Estimación puntual	https://bibliotecas.umsa.bo/cgi-bin/koha/opac-detail.pl?biblionumber=73656	1
 2	Probabilidad y Estadística para Ingeniería y Ciencias	Pearson Educación	792 páginas, il., 25 cm	978-607-32-1416-2	519.2 W218p	Variables aleatorias, Distribuciones de probabilidad, Regresión lineal	https://bibliotecas.umsa.bo/cgi-bin/koha/opac-detail.pl?biblionumber=72723	2
@@ -1627,11 +887,6 @@ COPY public.libro (id, titulo, editor, descripcion_fisica, codigo_isbn, califica
 4	Probabilidad y Estadística para Ingeniería y Ciencias (Devore)	Thomson Paraninfo	750 páginas, il., 26 cm	978-970-686-457-4	519.5 D498p	Inferencia estadística, Pruebas de hipótesis, Métodos no paramétricos	https://bibliotecas.umsa.bo/cgi-bin/koha/opac-detail.pl?biblionumber=72668	4
 5	Técnicas de Muestreo	Compañía Editorial Continental	513 páginas, il., 23 cm	978-968-26-0310-5	519.52 C663t	Muestreo aleatorio simple, Estratificación, Conglomerados, Errores no muestrales	https://bibliotecas.umsa.bo/cgi-bin/koha/opac-detail.pl?biblionumber=72567	5
 \.
-
-
---
--- Data for Name: materia_pregrado; Type: TABLE DATA; Schema: public; Owner: postgres
---
 
 COPY public.materia_pregrado ("Id_materia_act", sigla_materia_act, nombre_materia_act, horas_materia, prerrequisitos, semestre) FROM stdin;
 1	INF-111	Programación I	200	Ninguno	1
@@ -1687,22 +942,12 @@ COPY public.materia_pregrado ("Id_materia_act", sigla_materia_act, nombre_materi
 51	OPT-301	Optativa III	200	Hasta 7° Semestre	8
 \.
 
-
---
--- Data for Name: matriz_cientifica; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
 COPY public.matriz_cientifica (id, titulo, descripcion, autor) FROM stdin;
 1	Ciencia de Datos Aplicada	Modelado predictivo, machine learning y minería de datos para resolver problemas complejos.	Sociedad Científica CEE
 2	Estadística Social y Demográfica	Análisis de censos, encuestas de hogares y proyecciones para políticas públicas.	Línea Demográfica
 3	Bioestadística y Epidemiología	Colaboración en salud pública, epidemiología y análisis estadístico de ensayos clínicos.	Línea Bioestadística
 4	Inferencia Bayesiana y MCMC	Estadística bayesiana, simulación computacional y modelos probabilísticos robustos.	Grupo Bayesiano
 \.
-
-
---
--- Data for Name: modulo; Type: TABLE DATA; Schema: public; Owner: postgres
---
 
 COPY public.modulo (id_modulo, titulo_modulo, numero_modulo) FROM stdin;
 1	Optimización y modelos lineales	Módulo I
@@ -1727,11 +972,6 @@ COPY public.modulo (id_modulo, titulo_modulo, numero_modulo) FROM stdin;
 20	Taller aplicado de modelación económica y financiera	Módulo IV
 \.
 
-
---
--- Data for Name: noticia; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
 COPY public.noticia (id, categoria, color, fecha, titulo, extracto, imagen_url, tiempo_lectura, enlace, estado, fecha_expiracion) FROM stdin;
 7	Comunicado	#00447e	2026-06-02	Comunicado de ampliación para recepción de files de auxiliaturas de cátedra	Se comunica a los postulantes que la entrega física de documentos se extiende excepcionalmente en la secretaría del IETA.	\N	2 min	/estudiantes/convocatorias-auxiliaturas	published	\N
 8	Becas	#ea580c	2026-05-01	Convocatoria caducada para becas de investigación en ciencia de datos	Esta noticia ya no se mostrará públicamente porque su fecha de vencimiento (expiryDate) está en el pasado.	/images/inicio/noticia_becas.jpg	3 min	#	published	2026-05-15
@@ -1742,11 +982,6 @@ COPY public.noticia (id, categoria, color, fecha, titulo, extracto, imagen_url, 
 5	Postgrado	#ea580c	2025-02-27	Becas parciales para diplomados en estadística aplicada en el sector público	Convocatoria abierta para profesionales que buscan especializarse en el análisis de datos masivos y toma de decisiones.	/images/inicio/noticia_becas.jpg	3 min	/postgrado/diplomados	published	\N
 6	Convocatorias	#ea580c	2025-02-20	Convocatoria de Auxiliaturas Académicas para la Gestión 2026	Se publican las plazas oficiales para postulantes a auxiliares de docencia y laboratorio en diversas materias.	/images/inicio/noticia_auxiliaturas.jpg	4 min	/estudiantes/convocatorias-auxiliaturas	published	\N
 \.
-
-
---
--- Data for Name: organiza_posgrado; Type: TABLE DATA; Schema: public; Owner: postgres
---
 
 COPY public.organiza_posgrado (id_programa, id_modulo) FROM stdin;
 1	1
@@ -1771,31 +1006,16 @@ COPY public.organiza_posgrado (id_programa, id_modulo) FROM stdin;
 5	20
 \.
 
-
---
--- Data for Name: pasantia; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
 COPY public.pasantia (id, titulo, tipo, descripcion, area, empresa, fecha_cierre, requisitos) FROM stdin;
 1	Pasante en Análisis Demográfico	Trabajo Dirigido / Grado	Apoyo en procesamiento de datos censales, tabulaciones cruzadas y análisis de indicadores demográficos.	Sector Público	Instituto Nacional de Estadística (INE)	2026-11-30	8° semestre, manejo de SPSS y R.
 2	Asistente de Riesgos y Credit Scoring	Pre-Profesional	Desarrollo y monitoreo de modelos predictivos de riesgo crediticio y comportamiento financiero.	Finanzas	Banco Nacional de Bolivia (BNB)	2026-12-15	7° semestre, SQL, Python y modelos logísticos.
 3	Analista de Datos Económicos	Graduación	Estimación de series macroeconómicas y preparación de informes técnicos cuantitativos.	Gobierno	Ministerio de Economía	2026-12-20	Egresado, econometría y series de tiempo.
 \.
 
-
---
--- Data for Name: plan_estudios; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
 COPY public.plan_estudios ("Id_plan_estudio", nombre_plan) FROM stdin;
 1	Plan Antiguo
 2	Plan Nuevo
 \.
-
-
---
--- Data for Name: programa; Type: TABLE DATA; Schema: public; Owner: postgres
---
 
 COPY public.programa (id_programa, nombre, tipo, costo) FROM stdin;
 1	Maestría Terminal en Estadística	Maestría	Gratuito / Aporte regular UMSA
@@ -1805,11 +1025,6 @@ COPY public.programa (id_programa, nombre, tipo, costo) FROM stdin;
 5	Econometría y Modelos Financieros	Diplomado	4.800 Bs.
 \.
 
-
---
--- Data for Name: publicaciones_estudiantiles; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
 COPY public.publicaciones_estudiantiles (id, titulo, anio, autor, area) FROM stdin;
 1	Predicción de deserción estudiantil usando Random Forest	2025	Nodo R & Python	Ciencia de Datos
 2	Análisis Bayesiano de la inflación interanual en Bolivia	2024	Grupo Bayesiano	Econometría
@@ -1817,22 +1032,12 @@ COPY public.publicaciones_estudiantiles (id, titulo, anio, autor, area) FROM std
 4	Clustering de patologías respiratorias en zonas de altitud	2023	Línea Bioestadística	Salud Pública
 \.
 
-
---
--- Data for Name: revista; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
 COPY public.revista (id, titulo, tipo, publicacion, autor, descripcion, link) FROM stdin;
 1	International Journal of Statistics and Applications	Revista Científica	Scientific & Academic Publishing	Comité Editorial Internacional	Revista científica internacional que publica artículos originales en todas las áreas teóricas y aplicadas de la estadística.	http://www.sapub.org/journal/about.aspx?journalid=1115
 2	Revista Varianza	Revista Científica	IETA - Carrera de Estadística UMSA	Instituto de Estadística Teórica y Aplicada	Revista oficial de investigación de la Carrera de Estadística y el IETA. Publica trabajos teóricos y aplicados con impacto nacional.	https://ojs.umsa.bo/ojs/index.php/varianza
 3	Revista Colombiana de Estadística	Revista Científica	Universidad Nacional de Colombia	Departamento de Estadística UNAL	Publicación científica de referencia en América Latina orientada a la difusión de trabajos teóricos y aplicados de estadística.	https://revistas.unal.edu.co/index.php/estad
 4	Boletín DTIC - Universidad Mayor de San Andrés	Boletín Informativo	Departamento de Tecnologías de Información y Comunicación	DTIC UMSA	Publicaciones oficiales de la UMSA referidas a infraestructura tecnológica, sistemas académicos y de comunicación universitaria.	https://dtic.umsa.bo/
 \.
-
-
---
--- Data for Name: seccion_pagina; Type: TABLE DATA; Schema: public; Owner: postgres
---
 
 COPY public.seccion_pagina (clave_campo, pagina_slug, valor, tipo) FROM stdin;
 nosotros_inicio_etiqueta	/institucional/acerca	prueba1\n	texto
@@ -1861,16 +1066,16 @@ nosotros_hito_05_titulo	/institucional/acerca	Creación del IETA	texto
 nosotros_hito_05_descripcion	/institucional/acerca	Fundación del Instituto de Estadística Teórica y Aplicada para desarrollar investigación científica y consultoría estratégica.	texto
 nosotros_valor_01_titulo	/institucional/acerca	Excelencia Académica	texto
 nosotros_valor_01_descripcion	/institucional/acerca	Compromiso con la formación de profesionales altamente calificados con pensamiento crítico y capacidad analítica.	texto
-nosotros_valor_01_estadistica	/institucional/acerca	R2 = 0.98	texto
+nosotros_valor_01_estadistica	/institucional/acerca		texto
 nosotros_valor_02_titulo	/institucional/acerca	Inclusión e Igualdad	texto
 nosotros_valor_02_descripcion	/institucional/acerca	Educación de calidad accesible para todos los sectores de la sociedad boliviana sin discriminación.	texto
-nosotros_valor_02_estadistica	/institucional/acerca	p < 0.01	texto
+nosotros_valor_02_estadistica	/institucional/acerca		texto
 nosotros_valor_03_titulo	/institucional/acerca	Investigación Científica	texto
 nosotros_valor_03_descripcion	/institucional/acerca	Generación de conocimiento aplicado mediante IETA para resolver problemas nacionales estratégicos.	texto
-nosotros_valor_03_estadistica	/institucional/acerca	n = 25+	texto
+nosotros_valor_03_estadistica	/institucional/acerca		texto
 nosotros_valor_04_titulo	/institucional/acerca	Responsabilidad Social	texto
 nosotros_valor_04_descripcion	/institucional/acerca	Contribución activa al desarrollo sostenible mediante análisis estadístico ético y socialmente responsable.	texto
-nosotros_valor_04_estadistica	/institucional/acerca	sigma = 1.05	texto
+nosotros_valor_04_estadistica	/institucional/acerca		texto
 nosotros_objetivo_01_numero	/institucional/acerca	01	texto
 nosotros_objetivo_01_titulo	/institucional/acerca	Pensamiento Crítico	texto
 nosotros_objetivo_01_descripcion	/institucional/acerca	Generar conocimiento científico con capacidad de análisis reflexivo crítico de apoyo a las decisiones de estado.	texto
@@ -1919,19 +1124,19 @@ acreditacion_credencial_01_subtitulo	/institucional/acreditacion	Certificación 
 acreditacion_credencial_01_organizacion	/institucional/acreditacion	Resolución de Congreso Universitario	texto
 acreditacion_credencial_01_descripcion	/institucional/acreditacion	Aval oficial del CEUB que certifica excelencia en currículo, plantel docente e infraestructura técnica de la carrera.	texto
 acreditacion_credencial_01_cta	/institucional/acreditacion	Ver Resolución Oficial	texto
-acreditacion_credencial_01_estadistica	/institucional/acreditacion	p < 0.05	texto
+acreditacion_credencial_01_estadistica	/institucional/acreditacion	Vigente	texto
 acreditacion_credencial_02_titulo	/institucional/acreditacion	Autoevaluación Continua	texto
 acreditacion_credencial_02_subtitulo	/institucional/acreditacion	Gestión de Calidad Interna	texto
 acreditacion_credencial_02_organizacion	/institucional/acreditacion	Comisión de Evaluación FCPN	texto
 acreditacion_credencial_02_descripcion	/institucional/acreditacion	Proceso sistemático de revisión de indicadores académicos y administrativos para asegurar cumplimiento de estándares internacionales.	texto
 acreditacion_credencial_02_cta	/institucional/acreditacion	Consultar Indicadores	texto
-acreditacion_credencial_02_estadistica	/institucional/acreditacion	CI: 99.5%	texto
+acreditacion_credencial_02_estadistica	/institucional/acreditacion	Continua	texto
 acreditacion_credencial_03_titulo	/institucional/acreditacion	Evaluación de Pares Externos	texto
 acreditacion_credencial_03_subtitulo	/institucional/acreditacion	Veredicto Internacional	texto
 acreditacion_credencial_03_organizacion	/institucional/acreditacion	Pares Académicos del Sistema	texto
 acreditacion_credencial_03_descripcion	/institucional/acreditacion	Reconocimiento otorgado por expertos tras auditoría técnica de procesos de enseñanza, investigación e interacción social.	texto
 acreditacion_credencial_03_cta	/institucional/acreditacion	Informe de Evaluación	texto
-acreditacion_credencial_03_estadistica	/institucional/acreditacion	p < 0.01	texto
+acreditacion_credencial_03_estadistica	/institucional/acreditacion	Certificada	texto
 acreditacion_impacto_titulo_01	/institucional/acreditacion	Impacto en	texto
 acreditacion_impacto_titulo_02	/institucional/acreditacion	tu Carrera	texto
 acreditacion_impacto_descripcion	/institucional/acreditacion	Egresar de un programa acreditado abre oportunidades profesionales con respaldo técnico y rigor científico.	texto
@@ -1998,7 +1203,7 @@ convenios_chip_01_simbolo	/institucional/convenios	pi	texto
 convenios_chip_01_etiqueta	/institucional/convenios	Impacto	texto
 convenios_chip_01_subtitulo	/institucional/convenios	Profesional	texto
 convenios_chip_02_simbolo	/institucional/convenios	lambda	texto
-convenios_chip_02_etiqueta	/institucional/convenios	n = 12	texto
+convenios_chip_02_etiqueta	/institucional/convenios	12+	texto
 convenios_chip_02_subtitulo	/institucional/convenios	Convenios	texto
 convenios_propuesta_etiqueta	/institucional/convenios	Propuesta de Valor	texto
 convenios_propuesta_titulo	/institucional/convenios	Beneficios para Estudiantes	texto
@@ -3017,12 +2222,29 @@ inicio_servicio_07_enlace	/	/investigacion/revista-varianza	texto
 inicio_servicio_08_titulo	/	Proyectos del IETA	texto
 inicio_servicio_08_descripcion	/	Explora las líneas de investigación, consultorías estadísticas y desarrollo académico activo.	texto
 inicio_servicio_08_enlace	/	/investigacion/proyectos	texto
+convalidacion_tabla_imagen	/pregrado/convalidaciones		imagen
+convalidacion_mapeo_tag	/pregrado/convalidaciones	Mapeo analítico	texto
+convalidacion_mapeo_titulo	/pregrado/convalidaciones	Tabla de convalidaciones oficiales	texto
+convalidacion_mapeo_subtitulo	/pregrado/convalidaciones	Consulta la tabla oficial de equivalencias entre planes de estudio y descárgala para tu trámite.	texto
+convalidacion_cta_label	/pregrado/convalidaciones	Descargar tabla	texto
+rec_biblio_hero_imagen	/recursos/biblioteca	/images/pregrado/pregrado_hero.jpg	imagen
+rec_revistas_ieta_url	/recursos/revistas	/investigacion/revista-varianza	texto
+est_pasantias_convenios_url	/estudiantes/pasantias-bolsa-trabajo	/institucional/convenios	texto
+inicio_hero_noticias_boton	/	Últimas noticias	texto
+inicio_noticias_titulo	/	Actualidad institucional	texto
+inicio_noticias_descripcion	/	Comunicados, convocatorias e investigación de la Carrera de Estadística.	texto
+inicio_noticias_buscador	/	Buscar en las noticias	texto
+inicio_noticias_borrar	/	Borrar búsqueda	texto
+inicio_noticias_todas	/	Todas	texto
+inicio_noticias_lectura	/	de lectura	texto
+inicio_noticias_caducada	/	Caducada	texto
+inicio_noticias_mas	/	Ver más noticias	texto
+inicio_noticias_resultados	/	Noticias encontradas: {n}	texto
+inicio_noticias_vacio_titulo	/	No encontramos noticias	texto
+inicio_noticias_vacio_texto	/	Prueba con otras palabras o elige otra categoría.	texto
+acreditacion_inicio_carrusel	/institucional/acreditacion	[{"url":"/images/institucional/acreditacion_hero.jpeg","caption":""}]	carrusel
+autoridades_inicio_carrusel	/institucional/autoridades	[{"url":"/images/institucional/autoridades_hero.jpeg","caption":""}]	carrusel
 \.
-
-
---
--- Data for Name: tesis; Type: TABLE DATA; Schema: public; Owner: postgres
---
 
 COPY public.tesis (id, titulo, tipo, area, tutor, investigador, resumen, link) FROM stdin;
 1	Aplicación práctica del análisis de correspondencia simple, en la interpretación de la gravedad de accidentes de trabajo en Bolivia: caso Instituto Nacional de Salud Ocupacional	Trabajo Dirigido	Análisis de correspondencia	Lic. Alizon Emilze Pérez Butrón	Pérez Butrón, Alizon Emilze	Introducción 2. Metodología 3. Aplicación 4. Conclusiones, aportes y recomendaciones finales sobre accidentabilidad laboral.	https://repositorio.umsa.bo/handle/123456789/5332
@@ -3031,536 +2253,169 @@ COPY public.tesis (id, titulo, tipo, area, tutor, investigador, resumen, link) F
 4	Diseño de encuestas tipo panel rotatorio con traslape parcial	Tesis	Muestreo probabilístico	M.Sc. William Cochran Quispe	Crespo Chuquimia, Mercy	Desarrollo analítico de varianzas compuestas en paneles rotativos y fórmulas de estimación óptima bajo traslape muestral.	https://repositorio.umsa.bo/handle/123456789/5330
 \.
 
-
---
--- Name: administrativo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
 SELECT pg_catalog.setval('public.administrativo_id_seq', 10, false);
-
-
---
--- Name: autor_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
 
 SELECT pg_catalog.setval('public.autor_id_seq', 10, true);
 
-
---
--- Name: auxiliar_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
 SELECT pg_catalog.setval('public.auxiliar_id_seq', 16, false);
-
-
---
--- Name: banco_datos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
 
 SELECT pg_catalog.setval('public.banco_datos_id_seq', 3, true);
 
-
---
--- Name: convalida_Id_materia_act_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
 SELECT pg_catalog.setval('public."convalida_Id_materia_act_seq"', 1, false);
-
-
---
--- Name: convenio_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
 
 SELECT pg_catalog.setval('public.convenio_id_seq', 14, true);
 
-
---
--- Name: convocatoria_Id_convocatoria_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
 SELECT pg_catalog.setval('public."convocatoria_Id_convocatoria_seq"', 2, true);
-
-
---
--- Name: convocatoria_auxiliatura_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
 
 SELECT pg_catalog.setval('public.convocatoria_auxiliatura_id_seq', 3, true);
 
-
---
--- Name: datos_archivo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
 SELECT pg_catalog.setval('public.datos_archivo_id_seq', 6, true);
-
-
---
--- Name: directivo_estudiante_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
 
 SELECT pg_catalog.setval('public.directivo_estudiante_id_seq', 13, true);
 
-
---
--- Name: docente_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
 SELECT pg_catalog.setval('public.docente_id_seq', 27, true);
-
-
---
--- Name: documento_digital_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
 
 SELECT pg_catalog.setval('public.documento_digital_id_seq', 4, true);
 
-
---
--- Name: estudiante_autoridad_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
 SELECT pg_catalog.setval('public.estudiante_autoridad_id_seq', 1, true);
-
-
---
--- Name: evento_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
 
 SELECT pg_catalog.setval('public.evento_id_seq', 6, true);
 
-
---
--- Name: libro_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
 SELECT pg_catalog.setval('public.libro_id_seq', 5, true);
-
-
---
--- Name: materia_pregrado_Id_materia_act_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
 
 SELECT pg_catalog.setval('public."materia_pregrado_Id_materia_act_seq"', 51, true);
 
-
---
--- Name: matriz_cientifica_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
 SELECT pg_catalog.setval('public.matriz_cientifica_id_seq', 4, true);
-
-
---
--- Name: modulo_id_modulo_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
 
 SELECT pg_catalog.setval('public.modulo_id_modulo_seq', 20, true);
 
-
---
--- Name: noticia_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
 SELECT pg_catalog.setval('public.noticia_id_seq', 8, true);
-
-
---
--- Name: pasantia_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
 
 SELECT pg_catalog.setval('public.pasantia_id_seq', 3, true);
 
-
---
--- Name: plan_estudios_Id_plan_estudio_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
 SELECT pg_catalog.setval('public."plan_estudios_Id_plan_estudio_seq"', 2, true);
-
-
---
--- Name: programa_id_programa_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
 
 SELECT pg_catalog.setval('public.programa_id_programa_seq', 5, true);
 
-
---
--- Name: publicaciones_estudiantiles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
 SELECT pg_catalog.setval('public.publicaciones_estudiantiles_id_seq', 4, true);
-
-
---
--- Name: revista_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
 
 SELECT pg_catalog.setval('public.revista_id_seq', 4, true);
 
-
---
--- Name: tesis_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
 SELECT pg_catalog.setval('public.tesis_id_seq', 4, true);
-
-
---
--- Name: User User_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public."User"
     ADD CONSTRAINT "User_pkey" PRIMARY KEY (id);
 
-
---
--- Name: _prisma_migrations _prisma_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public._prisma_migrations
     ADD CONSTRAINT _prisma_migrations_pkey PRIMARY KEY (id);
-
-
---
--- Name: administrativo administrativo_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.administrativo
     ADD CONSTRAINT administrativo_pkey PRIMARY KEY (id);
 
-
---
--- Name: autor autor_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.autor
     ADD CONSTRAINT autor_pkey PRIMARY KEY (id);
-
-
---
--- Name: auxiliar auxiliar_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.auxiliar
     ADD CONSTRAINT auxiliar_pkey PRIMARY KEY (id);
 
-
---
--- Name: banco_datos banco_datos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.banco_datos
     ADD CONSTRAINT banco_datos_pkey PRIMARY KEY (id);
-
-
---
--- Name: convalida convalida_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.convalida
     ADD CONSTRAINT convalida_pkey PRIMARY KEY ("Id_materia_act");
 
-
---
--- Name: convenio convenio_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.convenio
     ADD CONSTRAINT convenio_pkey PRIMARY KEY (id);
-
-
---
--- Name: convocatoria_auxiliatura convocatoria_auxiliatura_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.convocatoria_auxiliatura
     ADD CONSTRAINT convocatoria_auxiliatura_pkey PRIMARY KEY (id);
 
-
---
--- Name: convocatoria convocatoria_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.convocatoria
     ADD CONSTRAINT convocatoria_pkey PRIMARY KEY ("Id_convocatoria");
-
-
---
--- Name: datos_archivo datos_archivo_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.datos_archivo
     ADD CONSTRAINT datos_archivo_pkey PRIMARY KEY (id);
 
-
---
--- Name: directivo_estudiante directivo_estudiante_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.directivo_estudiante
     ADD CONSTRAINT directivo_estudiante_pkey PRIMARY KEY (id);
-
-
---
--- Name: docente docente_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.docente
     ADD CONSTRAINT docente_pkey PRIMARY KEY (id);
 
-
---
--- Name: documento_digital documento_digital_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.documento_digital
     ADD CONSTRAINT documento_digital_pkey PRIMARY KEY (id);
-
-
---
--- Name: estudiante_autoridad estudiante_autoridad_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.estudiante_autoridad
     ADD CONSTRAINT estudiante_autoridad_pkey PRIMARY KEY (id);
 
-
---
--- Name: evento evento_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.evento
     ADD CONSTRAINT evento_pkey PRIMARY KEY (id);
-
-
---
--- Name: incluye incluye_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.incluye
     ADD CONSTRAINT incluye_pkey PRIMARY KEY ("Id_plan_estudio", "Id_materia_act");
 
-
---
--- Name: incluye_posgrado incluye_posgrado_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.incluye_posgrado
     ADD CONSTRAINT incluye_posgrado_pkey PRIMARY KEY (id_modulo);
-
-
---
--- Name: libro libro_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.libro
     ADD CONSTRAINT libro_pkey PRIMARY KEY (id);
 
-
---
--- Name: materia_pregrado materia_pregrado_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.materia_pregrado
     ADD CONSTRAINT materia_pregrado_pkey PRIMARY KEY ("Id_materia_act");
-
-
---
--- Name: matriz_cientifica matriz_cientifica_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.matriz_cientifica
     ADD CONSTRAINT matriz_cientifica_pkey PRIMARY KEY (id);
 
-
---
--- Name: modulo modulo_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.modulo
     ADD CONSTRAINT modulo_pkey PRIMARY KEY (id_modulo);
-
-
---
--- Name: noticia noticia_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.noticia
     ADD CONSTRAINT noticia_pkey PRIMARY KEY (id);
 
-
---
--- Name: organiza_posgrado organiza_posgrado_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.organiza_posgrado
     ADD CONSTRAINT organiza_posgrado_pkey PRIMARY KEY (id_programa, id_modulo);
-
-
---
--- Name: pasantia pasantia_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.pasantia
     ADD CONSTRAINT pasantia_pkey PRIMARY KEY (id);
 
-
---
--- Name: plan_estudios plan_estudios_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.plan_estudios
     ADD CONSTRAINT plan_estudios_pkey PRIMARY KEY ("Id_plan_estudio");
-
-
---
--- Name: programa programa_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.programa
     ADD CONSTRAINT programa_pkey PRIMARY KEY (id_programa);
 
-
---
--- Name: publicaciones_estudiantiles publicaciones_estudiantiles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.publicaciones_estudiantiles
     ADD CONSTRAINT publicaciones_estudiantiles_pkey PRIMARY KEY (id);
-
-
---
--- Name: revista revista_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.revista
     ADD CONSTRAINT revista_pkey PRIMARY KEY (id);
 
-
---
--- Name: seccion_pagina seccion_pagina_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.seccion_pagina
     ADD CONSTRAINT seccion_pagina_pkey PRIMARY KEY (clave_campo);
-
-
---
--- Name: tesis tesis_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.tesis
     ADD CONSTRAINT tesis_pkey PRIMARY KEY (id);
 
-
---
--- Name: User_email_key; Type: INDEX; Schema: public; Owner: postgres
---
-
 CREATE UNIQUE INDEX "User_email_key" ON public."User" USING btree (email);
-
-
---
--- Name: datos_archivo fk_datos_archivo_banco; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.datos_archivo
     ADD CONSTRAINT fk_datos_archivo_banco FOREIGN KEY (id_banco_datos) REFERENCES public.banco_datos(id) ON DELETE CASCADE;
 
-
---
--- Name: libro fk_libro_autor; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.libro
     ADD CONSTRAINT fk_libro_autor FOREIGN KEY (id_autor) REFERENCES public.autor(id) ON DELETE SET NULL;
-
-
---
--- Name: incluye incluye_Id_materia_act_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.incluye
     ADD CONSTRAINT "incluye_Id_materia_act_fkey" FOREIGN KEY ("Id_materia_act") REFERENCES public.materia_pregrado("Id_materia_act") ON UPDATE CASCADE ON DELETE CASCADE;
 
-
---
--- Name: incluye incluye_Id_plan_estudio_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.incluye
     ADD CONSTRAINT "incluye_Id_plan_estudio_fkey" FOREIGN KEY ("Id_plan_estudio") REFERENCES public.plan_estudios("Id_plan_estudio") ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: incluye_posgrado incluye_posgrado_id_modulo_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.incluye_posgrado
     ADD CONSTRAINT incluye_posgrado_id_modulo_fkey FOREIGN KEY (id_modulo) REFERENCES public.modulo(id_modulo) ON UPDATE CASCADE ON DELETE CASCADE;
 
-
---
--- Name: organiza_posgrado organiza_posgrado_id_modulo_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.organiza_posgrado
     ADD CONSTRAINT organiza_posgrado_id_modulo_fkey FOREIGN KEY (id_modulo) REFERENCES public.modulo(id_modulo) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: organiza_posgrado organiza_posgrado_id_programa_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.organiza_posgrado
     ADD CONSTRAINT organiza_posgrado_id_programa_fkey FOREIGN KEY (id_programa) REFERENCES public.programa(id_programa) ON UPDATE CASCADE ON DELETE CASCADE;
 
-
---
--- PostgreSQL database dump complete
---
-
-
--- Claves agregadas para sincronizar el panel /admin con los cambios visuales del portal
-INSERT INTO public.seccion_pagina (clave_campo, pagina_slug, valor, tipo) VALUES
-  ('convalidacion_tabla_imagen', '/pregrado/convalidaciones', '', 'imagen'),
-  ('convalidacion_mapeo_tag', '/pregrado/convalidaciones', 'Mapeo analítico', 'texto'),
-  ('convalidacion_mapeo_titulo', '/pregrado/convalidaciones', 'Tabla de convalidaciones oficiales', 'texto'),
-  ('convalidacion_mapeo_subtitulo', '/pregrado/convalidaciones', 'Consulta la tabla oficial de equivalencias entre planes de estudio y descárgala para tu trámite.', 'texto'),
-  ('convalidacion_cta_label', '/pregrado/convalidaciones', 'Descargar tabla', 'texto'),
-  ('rec_biblio_hero_imagen', '/recursos/biblioteca', '/images/pregrado/pregrado_hero.jpg', 'imagen'),
-  ('rec_revistas_ieta_url', '/recursos/revistas', '/investigacion/revista-varianza', 'texto'),
-  ('est_pasantias_convenios_url', '/estudiantes/pasantias-bolsa-trabajo', '/institucional/convenios', 'texto')
-ON CONFLICT (clave_campo) DO NOTHING;
-
--- Claves de interfaz de noticias (Inicio) y carruseles de imágenes (Acreditación y Autoridades)
-INSERT INTO public.seccion_pagina (clave_campo, pagina_slug, valor, tipo) VALUES
-  ('inicio_hero_noticias_boton', '/', 'Últimas noticias', 'texto'),
-  ('inicio_noticias_titulo', '/', 'Actualidad institucional', 'texto'),
-  ('inicio_noticias_descripcion', '/', 'Comunicados, convocatorias e investigación de la Carrera de Estadística.', 'texto'),
-  ('inicio_noticias_buscador', '/', 'Buscar en las noticias', 'texto'),
-  ('inicio_noticias_borrar', '/', 'Borrar búsqueda', 'texto'),
-  ('inicio_noticias_todas', '/', 'Todas', 'texto'),
-  ('inicio_noticias_lectura', '/', 'de lectura', 'texto'),
-  ('inicio_noticias_caducada', '/', 'Caducada', 'texto'),
-  ('inicio_noticias_mas', '/', 'Ver más noticias', 'texto'),
-  ('inicio_noticias_resultados', '/', 'Noticias encontradas: {n}', 'texto'),
-  ('inicio_noticias_vacio_titulo', '/', 'No encontramos noticias', 'texto'),
-  ('inicio_noticias_vacio_texto', '/', 'Prueba con otras palabras o elige otra categoría.', 'texto'),
-  ('acreditacion_inicio_carrusel', '/institucional/acreditacion', '[{"url":"/images/institucional/acreditacion_hero.jpeg","caption":""}]', 'carrusel'),
-  ('autoridades_inicio_carrusel', '/institucional/autoridades', '[{"url":"/images/institucional/autoridades_hero.jpeg","caption":""}]', 'carrusel')
-ON CONFLICT (clave_campo) DO NOTHING;
-
--- Limpieza de fórmulas decorativas en seccion_pagina
-UPDATE public.seccion_pagina SET valor = '' WHERE clave_campo IN (
-  'nosotros_valor_01_estadistica',
-  'nosotros_valor_02_estadistica',
-  'nosotros_valor_03_estadistica',
-  'nosotros_valor_04_estadistica'
-);
-UPDATE public.seccion_pagina SET valor = 'Vigente' WHERE clave_campo = 'acreditacion_credencial_01_estadistica';
-UPDATE public.seccion_pagina SET valor = 'Continua' WHERE clave_campo = 'acreditacion_credencial_02_estadistica';
-UPDATE public.seccion_pagina SET valor = 'Certificada' WHERE clave_campo = 'acreditacion_credencial_03_estadistica';
-UPDATE public.seccion_pagina SET valor = '12+' WHERE clave_campo = 'convenios_chip_02_etiqueta';
